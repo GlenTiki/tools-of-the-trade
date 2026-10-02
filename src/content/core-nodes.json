@@ -1,0 +1,2472 @@
+[
+  {
+    "id": "p-chunking",
+    "title": "Chunking",
+    "parent": "data",
+    "type": "component",
+    "summary": "Split extracted text into searchable passages. Choose passage size and overlap, and retain headings, source identifiers and nearby context.",
+    "detail": "Compare retrieval hit rate and recall at a fixed result count on the same labelled questions. A boundary can separate a rule from its exception or a table from its heading. Inspect retrieved passages, not scores alone.\n\nExample: A shed rule says structures under a stated height are exempt, except in a protected area. Keep the exception available beside the rule; a perfectly matched fragment can still support the wrong answer.",
+    "inputs": ["Parsed text with headings", "Source and page identifiers"],
+    "outputs": ["Passages with source links"],
+    "failures": [
+      "A boundary can separate a rule from its exception or a table from its heading. Inspect retrieved passages, not scores alone."
+    ],
+    "requirements": ["source-provenance", "retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-doc-parsing",
+        "relation": "related"
+      },
+      {
+        "id": "p-parent-document",
+        "relation": "related"
+      },
+      {
+        "id": "x-retrieval-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Retrieval-Augmented Generation",
+        "url": "https://arxiv.org/abs/2005.11401"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"]
+  },
+  {
+    "id": "p-embedding",
+    "title": "Embedding model",
+    "parent": "search",
+    "type": "component",
+    "summary": "Convert questions and passages into vectors for similarity search. Embeddings also support duplicate detection, grouping and classification from labelled examples.",
+    "detail": "Evaluate retrieval on representative questions, including exact identifiers and paraphrases. Hold the corpus and result count fixed. Similarity does not establish factual support. Changing embedding models generally requires compatible query embeddings and a newly embedded corpus.\n\nExample: “Green bin day” and “recycling collection” may be related. “North ward” and “South ward” can also look similar even though their collection days differ. Evaluate both paraphrases and precise identifiers.\n\nNamed examples, not recommendations: sentence-transformers, BGE. Check the selected release and deployment before adoption.",
+    "inputs": ["Query text", "Passages and embedding model version"],
+    "outputs": ["Query and passage vectors"],
+    "failures": [
+      "Similarity does not establish factual support. Changing embedding models generally requires compatible query embeddings and a newly embedded corpus."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "x-semantic-similarity",
+        "relation": "related"
+      },
+      {
+        "id": "p-vector-index",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sentence Transformers: semantic search",
+        "url": "https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"]
+  },
+  {
+    "id": "p-vector-index",
+    "title": "Vector index",
+    "parent": "search",
+    "type": "component",
+    "summary": "Store and search passage vectors. Select an exact or approximate method according to the required response time, capacity and retrieval quality.",
+    "detail": "Compare returned neighbours with exact search on a sample. Measure latency and recall with realistic filters. Approximate search can miss neighbours. Filtering and changed embeddings can alter results; verify both before replacing an index.\n\nExample: Compare an approximate index with exact neighbours on the same vectors. A faster index that drops the only authorised source is a regression even if its average latency improves.\n\nNamed examples, not recommendations: pgvector, FAISS, Qdrant, Weaviate, Milvus, Chroma. Check the selected release and deployment before adoption.",
+    "inputs": ["Passage vectors", "Metadata and access filters"],
+    "outputs": ["Ranked passage identifiers"],
+    "failures": [
+      "Approximate search can miss neighbours. Filtering and changed embeddings can alter results; verify both before replacing an index."
+    ],
+    "requirements": ["retrieval-relevance", "hosting-capacity"],
+    "related": [
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-hybrid-search",
+        "relation": "related"
+      },
+      {
+        "id": "a-capacity",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "pgvector",
+        "url": "https://github.com/pgvector/pgvector"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"]
+  },
+  {
+    "id": "p-keyword-search",
+    "title": "Keyword search",
+    "parent": "search",
+    "type": "component",
+    "summary": "Find passages through words, codes, names and phrases. Keyword search supplies a useful baseline and complements searches based on meaning.",
+    "detail": "Measure hit rate or recall at a fixed result count, especially for exact identifiers and specialist terms. Different wording can hide relevant passages. Tokenisation and query processing affect matches; inspect failures before assuming an embedding model is necessary.\n\nExample: A resident supplies form code PL-104. Preserve an exact-code baseline: a semantically related form with a different code is not an acceptable match.\n\nNamed examples, not recommendations: Apache Lucene, OpenSearch. Check the selected release and deployment before adoption.",
+    "inputs": ["Question terms", "Indexed passage text"],
+    "outputs": ["Ranked lexical matches"],
+    "failures": [
+      "Different wording can hide relevant passages. Tokenisation and query processing affect matches; inspect failures before assuming an embedding model is necessary."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-hybrid-search",
+        "relation": "related"
+      },
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "x-retrieval-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Introduction to Information Retrieval: evaluation",
+        "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-unranked-retrieval-sets-1.html"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"]
+  },
+  {
+    "id": "p-hybrid-search",
+    "title": "Hybrid search",
+    "parent": "search",
+    "type": "method",
+    "summary": "Combine keyword and vector search so exact terms and paraphrases can both contribute results. Merge ranked lists or tune their relative influence.",
+    "detail": "Compare the combined results with each search alone on identical questions and a fixed final result count. An extra search adds cost and complexity. Better performance is not automatic; test the blend and avoid tuning against the final evaluation set.\n\nExample: Merge two rankings of the same passage IDs, then compare at a fixed final result count. Increasing the output from five to fifty is not a fair demonstration that fusion improved ranking.",
+    "inputs": ["Keyword ranking", "Vector ranking"],
+    "outputs": ["Combined candidate ranking"],
+    "failures": [
+      "An extra search adds cost and complexity. Better performance is not automatic; test the blend and avoid tuning against the final evaluation set."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-keyword-search",
+        "relation": "related"
+      },
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-reranker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "pgvector",
+        "url": "https://github.com/pgvector/pgvector"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"],
+    "code": [
+      {
+        "language": "python",
+        "text": "def fuse(*rankings, constant=60):\n    scores = {}\n    for ranking in rankings:\n        for rank, item in enumerate(dict.fromkeys(ranking), start=1):\n            scores[item] = scores.get(item, 0.0) + 1 / (constant + rank)\n    return sorted(scores.items(), key=lambda item: (-item[1], item[0]))\n\nranked = fuse([\"north\", \"south\"], [\"south\", \"north\"])\nassert ranked[0][0] == \"north\"\nassert abs(ranked[0][1] - (1/61 + 1/62)) < 1e-12\nprint(ranked)\n",
+        "status": "runtime-tested",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "p-reranker",
+    "title": "Reranker",
+    "parent": "search",
+    "type": "component",
+    "summary": "Rescore a shortlist using the question and each passage together. Keep the strongest candidates for the answer model after this second pass.",
+    "detail": "Compare retrieval quality before and after reranking, using the same final result count. Record the additional latency. Scores need not be probabilities or comparable between models. Truncated passages and missing candidates can still limit the result.\n\nExample: Retrieve fifty candidates, rerank them, and give the writer five. If the right source never entered the fifty, the reranker cannot recover it. Count that retrieval miss separately.\n\nNamed examples, not recommendations: BGE reranker. Check the selected release and deployment before adoption.",
+    "inputs": ["Query", "Retrieved candidate passages"],
+    "outputs": ["Rescored shortlist"],
+    "failures": [
+      "Scores need not be probabilities or comparable between models. Truncated passages and missing candidates can still limit the result."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-hybrid-search",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "x-retrieval-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sentence Transformers: retrieve and rerank",
+        "url": "https://www.sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html"
+      }
+    ],
+    "tags": ["Finding parts", "original-catalogue"]
+  },
+  {
+    "id": "p-llm",
+    "title": "Large language model",
+    "parent": "generation",
+    "type": "component",
+    "summary": "Generate answers from supplied context, produce structured fields or propose tool calls. Select a model for the task it must perform.",
+    "detail": "Measure required facts, source support, refusals, cost and latency across repeated runs of an evaluation set. Fluent output can contain unsupported claims. Model choice and settings do not replace evidence checks or controls around tool execution.\n\nExample: The source says Monday, but the model writes Friday with a plausible citation. Fluent prose and a valid source ID are insufficient; check the stated day against the passage.\n\nModel-family examples: Mistral, Qwen and Gemma. Inference runtime examples: llama.cpp and Ollama. These are different roles, not recommendations. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Prompt and authorised context",
+      "Model version and generation settings"
+    ],
+    "outputs": ["Generated answer or structured response"],
+    "failures": [
+      "Fluent output can contain unsupported claims. Model choice and settings do not replace evidence checks or controls around tool execution."
+    ],
+    "requirements": ["answer-grounding"],
+    "related": [
+      {
+        "id": "p-structured-output",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "a-dspy",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Retrieval-Augmented Generation",
+        "url": "https://arxiv.org/abs/2005.11401"
+      }
+    ],
+    "tags": ["Writing parts", "original-catalogue"]
+  },
+  {
+    "id": "p-llm-judge",
+    "title": "Language-model judge",
+    "parent": "evaluation",
+    "type": "component",
+    "summary": "Use a model to score answers against an explicit rubric. Ask for individual decisions and reasons so reviewers can inspect disagreements.",
+    "detail": "Compare its decisions with independently reviewed human labels. Report errors by outcome and repeat a sample to assess consistency. Agreement is not proof of correctness. Position, answer length and model preferences can bias judgements; keep calibration separate from final evaluation.\n\nExample: Ask two reviewers to score a sample before calibrating the judge. Inspect cases where the judge rewards a longer answer that adds unsupported facts. A repeatable judge may repeat the same bias.",
+    "inputs": ["Candidate answer", "Rubric and reference evidence"],
+    "outputs": ["Fact-level scores with reasons"],
+    "failures": [
+      "Agreement is not proof of correctness. Position, answer length and model preferences can bias judgements; keep calibration separate from final evaluation."
+    ],
+    "requirements": ["judge-calibration"],
+    "related": [
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      },
+      {
+        "id": "x-agreement",
+        "relation": "related"
+      },
+      {
+        "id": "x-calibration",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Judging LLM-as-a-Judge",
+        "url": "https://arxiv.org/abs/2306.05685"
+      }
+    ],
+    "tags": ["Marking and checking parts", "original-catalogue"]
+  },
+  {
+    "id": "p-classifier",
+    "title": "Classifier",
+    "parent": "generation",
+    "type": "component",
+    "summary": "Route questions into defined categories, such as topic, answerability or difficulty. Implement the decision with rules, a trained classifier or a prompted model.",
+    "detail": "Report a confusion matrix and results for each class. Choose thresholds against the cost of each error. A high overall score can conceal failures in rare classes. Monitor changing questions and review uncertain cases rather than assuming every route fits.\n\nExample: An answerability classifier accepts all questions and appears accurate when most are answerable. Its false-positive rate on unanswerable questions is still 100%; report each outcome.\n\nNamed examples, not recommendations: scikit-learn. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Question or candidate features",
+      "Label definitions and threshold"
+    ],
+    "outputs": ["Predicted route or class"],
+    "failures": [
+      "A high overall score can conceal failures in rare classes. Monitor changing questions and review uncertain cases rather than assuming every route fits."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-precision-recall",
+        "relation": "related"
+      },
+      {
+        "id": "p-adaptive-rag",
+        "relation": "related"
+      },
+      {
+        "id": "data-splits",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn classification metrics",
+        "url": "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics"
+      }
+    ],
+    "tags": ["Marking and checking parts", "original-catalogue"]
+  },
+  {
+    "id": "p-support-checker",
+    "title": "Support checker",
+    "parent": "generation",
+    "type": "component",
+    "summary": "Compare answer claims with retrieved evidence and flag claims that the passages do not support. Keep the distinction between support, contradiction and uncertainty.",
+    "detail": "Evaluate against human-labelled claims, including numbers, tables and paraphrases. Report missed unsupported claims and incorrect rejections separately. A checker can misread evidence or lose it through truncation. A positive result does not establish that the underlying source is true.\n\nExample: “The fee is waived for students” does not support “The fee is waived for everyone.” The checker must retain the condition, not merely recognise similar vocabulary.",
+    "inputs": ["Answer claims", "Supplied source passages"],
+    "outputs": ["Supported, contradicted or unresolved labels"],
+    "failures": [
+      "A checker can misread evidence or lose it through truncation. A positive result does not establish that the underlying source is true."
+    ],
+    "requirements": ["answer-grounding", "judge-calibration"],
+    "related": [
+      {
+        "id": "x-support-checking",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm-judge",
+        "relation": "related"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "FActScore",
+        "url": "https://arxiv.org/abs/2305.14251"
+      }
+    ],
+    "tags": ["Marking and checking parts", "original-catalogue"]
+  },
+  {
+    "id": "p-moderation-pii",
+    "title": "Personal-data detection and moderation",
+    "parent": "data",
+    "type": "component",
+    "summary": "Detect personal data or harmful content at input and output boundaries. Combine appropriate fixed patterns with model checks where needed.",
+    "detail": "Measure missed detections and incorrect removals for each data category or moderation outcome, using labelled cases. Unusual formats and ambiguous names cause errors. Check before external transfer as well as after generation; output redaction cannot undo an earlier disclosure.\n\nExample: A resident includes a phone number in a question. If it reaches an external model before output filtering runs, later redaction cannot undo that transfer. Test the input boundary independently.\n\nNamed examples, not recommendations: Presidio. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Text crossing a defined boundary",
+      "Detection policy and labelled cases"
+    ],
+    "outputs": ["Flagged or transformed text", "Decision record"],
+    "failures": [
+      "Unusual formats and ambiguous names cause errors. Check before external transfer as well as after generation; output redaction cannot undo an earlier disclosure."
+    ],
+    "requirements": ["source-provenance", "tool-safety"],
+    "related": [
+      {
+        "id": "x-red-teaming",
+        "relation": "related"
+      },
+      {
+        "id": "x-precision-recall",
+        "relation": "related"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Presidio",
+        "url": "https://github.com/data-privacy-stack/presidio"
+      }
+    ],
+    "tags": ["Marking and checking parts", "original-catalogue"]
+  },
+  {
+    "id": "p-agentic-rag",
+    "title": "Agentic retrieval",
+    "parent": "agents",
+    "type": "method",
+    "summary": "Allow a bounded sequence of searches when one query cannot supply enough evidence. The system can revise its query and decide when to stop.",
+    "detail": "Compare final answer quality, retrieval results, search count, latency and cost against a simpler fixed pipeline. More searches can repeat the same mistake or never reach an answer. Set explicit stopping conditions and inspect unsuccessful search sequences.\n\nExample: The first search finds the waste policy but not the holiday calendar. A second targeted search can help. Repeating the same empty query ten times adds cost without evidence.",
+    "inputs": ["Question", "Permitted search tools and stopping policy"],
+    "outputs": ["Evidence from bounded searches", "Answer or explicit failure"],
+    "failures": [
+      "More searches can repeat the same mistake or never reach an answer. Set explicit stopping conditions and inspect unsuccessful search sequences."
+    ],
+    "requirements": ["retrieval-relevance", "tool-safety"],
+    "related": [
+      {
+        "id": "p-query-rewriting",
+        "relation": "related"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "related"
+      },
+      {
+        "id": "a-prompt-injection",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "LangChain agentic retrieval patterns",
+        "url": "https://docs.langchain.com/oss/python/deepagents/rag"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-corrective-rag",
+    "title": "Corrective retrieval",
+    "parent": "search",
+    "type": "method",
+    "summary": "Check the quality of retrieved evidence before generation. Route weak results to a defined fallback, such as rewriting the query and searching again.",
+    "detail": "Measure the checker's errors and compare final answer quality, latency and cost with the original retrieval path. The checker can reject useful evidence or accept weak passages. A fallback needs its own evaluation and must respect the original data-access boundary.\n\nExample: A check rejects an irrelevant planning passage and searches again for the collection calendar. Test whether the fallback improves the answer, and whether the check incorrectly rejects a useful passage.",
+    "inputs": ["Retrieved passages", "Quality check and permitted fallback"],
+    "outputs": ["Accepted or replacement evidence"],
+    "failures": [
+      "The checker can reject useful evidence or accept weak passages. A fallback needs its own evaluation and must respect the original data-access boundary."
+    ],
+    "requirements": ["retrieval-relevance", "judge-calibration"],
+    "related": [
+      {
+        "id": "p-reranker",
+        "relation": "related"
+      },
+      {
+        "id": "p-query-rewriting",
+        "relation": "related"
+      },
+      {
+        "id": "x-precision-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Corrective Retrieval Augmented Generation",
+        "url": "https://arxiv.org/abs/2401.15884"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-self-rag",
+    "title": "Self-RAG",
+    "parent": "search",
+    "type": "method",
+    "summary": "Use a model's retrieval and support assessments to guide whether it searches and whether its answer follows the evidence. Treat these as signals to evaluate.",
+    "detail": "Measure retrieval decisions and evidence support separately, then compare complete answers with a baseline lacking these signals. A model can approve its own mistake. Implementations differ; do not assume a generic self-check reproduces a particular trained Self-RAG method.\n\nExample: A generated reflection says an answer is supported, but the source gives a different date. Keep independent labelled checks. A generic “check your work” prompt is not the trained Self-RAG method.",
+    "inputs": [
+      "Question and retrieved evidence",
+      "A compatible model or defined self-check workflow"
+    ],
+    "outputs": ["Retrieval decisions and assessed answer"],
+    "failures": [
+      "A model can approve its own mistake. Implementations differ; do not assume a generic self-check reproduces a particular trained Self-RAG method."
+    ],
+    "requirements": ["retrieval-relevance", "answer-grounding"],
+    "related": [
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "x-self-consistency",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm-judge",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Self-RAG",
+        "url": "https://arxiv.org/abs/2310.11511"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-adaptive-rag",
+    "title": "Adaptive retrieval",
+    "parent": "search",
+    "type": "method",
+    "summary": "Choose a retrieval path according to the question's assessed difficulty. Simple questions may use a short path; complex questions may require several searches.",
+    "detail": "Compare quality, latency and cost for every route and against a baseline that always takes the longer path. Routing a difficult question to a short path can remove necessary evidence. The claimed saving depends on the actual mix of questions.\n\nExample: A simple bin-day query takes one search; a holiday exception may need two sources. Test the cases misrouted to the short path and compare with always using the longer path.",
+    "inputs": ["Question", "Difficulty routing policy"],
+    "outputs": ["Selected retrieval route"],
+    "failures": [
+      "Routing a difficult question to a short path can remove necessary evidence. The claimed saving depends on the actual mix of questions."
+    ],
+    "requirements": ["retrieval-relevance", "statistical-comparison"],
+    "related": [
+      {
+        "id": "p-classifier",
+        "relation": "related"
+      },
+      {
+        "id": "p-agentic-rag",
+        "relation": "related"
+      },
+      {
+        "id": "x-cost-quality",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Adaptive-RAG",
+        "url": "https://arxiv.org/abs/2403.14403"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-graphrag",
+    "title": "GraphRAG",
+    "parent": "search",
+    "type": "method",
+    "summary": "Use entities, relationships or graph summaries to retrieve evidence across documents. Consider the approach when questions depend on connections that passage matching misses.",
+    "detail": "Compare complete answers and supporting evidence with a passage-retrieval baseline. Include graph construction and update costs. Extraction mistakes can become graph relationships. Stale communities or summaries can persist after source changes, so keep links back to the underlying documents.\n\nExample: A question asks how several departments share responsibility. Preserve links from each graph claim to its source. A stale summary can repeat a relationship removed from the current policy.",
+    "inputs": ["Documents", "Extracted entities and relationships"],
+    "outputs": ["Graph evidence or community summaries"],
+    "failures": [
+      "Extraction mistakes can become graph relationships. Stale communities or summaries can persist after source changes, so keep links back to the underlying documents."
+    ],
+    "requirements": ["source-provenance", "retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-doc-parsing",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "From Local to Global: Graph RAG",
+        "url": "https://arxiv.org/abs/2404.16130"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-late-chunking",
+    "title": "Late chunking",
+    "parent": "search",
+    "type": "method",
+    "summary": "Create chunk representations after the embedding model processes a larger text context. This can preserve information lost when a passage is embedded alone.",
+    "detail": "Compare retrieval on the same documents and questions with and without the technique. Inspect context-dependent failures. The method depends on compatible model outputs and context limits. Processing a larger context does not guarantee that every chunk retains the needed information.\n\nExample: A passage says “this exemption” after a heading defines its scope. Compare embeddings made with and without surrounding context, using the same source and questions.",
+    "inputs": ["Document context", "Compatible embedding model outputs"],
+    "outputs": ["Context-aware chunk vectors"],
+    "failures": [
+      "The method depends on compatible model outputs and context limits. Processing a larger context does not guarantee that every chunk retains the needed information."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-chunking",
+        "relation": "related"
+      },
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Late Chunking",
+        "url": "https://arxiv.org/abs/2409.04701"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-contextual-retrieval",
+    "title": "Contextual retrieval",
+    "parent": "search",
+    "type": "method",
+    "summary": "Add a short description of a passage's document context before indexing it for keyword and vector search. Keep the original passage and source relationship.",
+    "detail": "Compare retrieval quality with the unmodified passage baseline. Include the cost of generating and updating context descriptions. An invented or misleading description can distort both searches. Review a sample and regenerate descriptions when the source context changes.\n\nExample: Add that a passage belongs to the North ward calendar. If the generated note says South ward instead, both keyword and vector retrieval can be misled. Keep the original passage separately.",
+    "inputs": ["Source passage", "Generated contextual description"],
+    "outputs": ["Context-enriched index entry"],
+    "failures": [
+      "An invented or misleading description can distort both searches. Review a sample and regenerate descriptions when the source context changes."
+    ],
+    "requirements": ["source-provenance", "retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-chunking",
+        "relation": "related"
+      },
+      {
+        "id": "p-hybrid-search",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Anthropic: contextual retrieval",
+        "url": "https://www.anthropic.com/engineering/contextual-retrieval"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-multi-vector",
+    "title": "Multi-vector retrieval",
+    "parent": "search",
+    "type": "method",
+    "summary": "Represent a passage with multiple vectors rather than one. Token-level matching can preserve strong local matches that a single passage vector loses.",
+    "detail": "Compare retrieval with a single-vector baseline on the same queries. Measure storage, indexing cost and response time. Additional vectors increase resource use. Matching individual terms still does not establish that the passage contains the complete answer or supports its claims.\n\nExample: A short form code matters more than the paragraph’s general topic. Multiple vectors can preserve local matches, but measure storage and latency alongside retrieval quality.",
+    "inputs": ["Question tokens", "Multiple passage vectors"],
+    "outputs": ["Late-interaction relevance ranking"],
+    "failures": [
+      "Additional vectors increase resource use. Matching individual terms still does not establish that the passage contains the complete answer or supports its claims."
+    ],
+    "requirements": ["retrieval-relevance", "hosting-capacity"],
+    "related": [
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-keyword-search",
+        "relation": "related"
+      },
+      {
+        "id": "a-capacity",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "ColBERT",
+        "url": "https://arxiv.org/abs/2004.12832"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-hyde",
+    "title": "HyDE",
+    "parent": "search",
+    "type": "method",
+    "summary": "Generate a hypothetical answer, embed it and use that representation to retrieve real source passages. Keep the generated answer separate from the evidence.",
+    "detail": "Compare retrieval with a baseline that embeds the original question. Examine results for questions whose wording differs from the documents. Invented details can steer retrieval in the wrong direction. Only retrieved, checked sources should support the eventual answer.\n\nExample: A hypothetical answer helps translate a vague query into likely document language. If it invents Friday as the collection day, do not present that generated text as evidence.",
+    "inputs": ["Original query", "Hypothetical generated document"],
+    "outputs": ["Retrieved real passages"],
+    "failures": [
+      "Invented details can steer retrieval in the wrong direction. Only retrieved, checked sources should support the eventual answer."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-query-rewriting",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hypothetical Document Embeddings",
+        "url": "https://arxiv.org/abs/2212.10496"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-query-rewriting",
+    "title": "Query rewriting",
+    "parent": "search",
+    "type": "method",
+    "summary": "Rewrite, expand or split a question before retrieval. Preserve the user's original intent and combine results from any necessary subquestions.",
+    "detail": "Compare retrieval and final answers against the unchanged query. Include additional searches, latency and cost in the comparison. A rewrite can alter the meaning or introduce assumptions. Splitting a simple question can add work without supplying useful evidence.\n\nExample: Split “When is collection and what if I miss it?” into two searches. Preserve both requests; a rewrite that answers only the collection day is incomplete.",
+    "inputs": ["Original question", "Rewrite or decomposition policy"],
+    "outputs": ["Rewritten query or subqueries"],
+    "failures": [
+      "A rewrite can alter the meaning or introduce assumptions. Splitting a simple question can add work without supplying useful evidence."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-hyde",
+        "relation": "related"
+      },
+      {
+        "id": "p-agentic-rag",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Query Rewriting for Retrieval-Augmented Large Language Models",
+        "url": "https://arxiv.org/abs/2305.14283"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-parent-document",
+    "title": "Parent-document retrieval",
+    "parent": "search",
+    "type": "method",
+    "summary": "Search small passages, then supply their larger parent sections to the answer model. Retain explicit links between each indexed passage and its parent.",
+    "detail": "Measure retrieval matches and whether the supplied parent context contains the facts needed for a supported answer. Larger sections consume context space and can displace other evidence. Check that useful neighbouring information outweighs the extra text and distraction.\n\nExample: Search a short shed-height rule, then provide its full section with the protected-area exception. Check that the parent does not consume all context and hide other required evidence.",
+    "inputs": ["Matched child passage", "Stable parent reference"],
+    "outputs": ["Larger contextual passage"],
+    "failures": [
+      "Larger sections consume context space and can displace other evidence. Check that useful neighbouring information outweighs the extra text and distraction."
+    ],
+    "requirements": ["source-provenance", "retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-chunking",
+        "relation": "related"
+      },
+      {
+        "id": "p-doc-parsing",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "LangChain ParentDocumentRetriever reference",
+        "url": "https://reference.langchain.com/python/langchain-classic/retrievers/parent_document_retriever/ParentDocumentRetriever"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-semantic-cache",
+    "title": "Semantic cache",
+    "parent": "hosting",
+    "type": "component",
+    "summary": "Reuse a previous result when a new question is sufficiently similar in meaning. Scope reuse to the relevant source versions and permitted audience.",
+    "detail": "Measure additional cache hits, incorrect matches and answer quality against fresh execution. Test near-identical questions with materially different answers. Similarity is not equivalence. A wrong match can serve stale or inappropriate information; evaluate the reuse decision as its own classifier.\n\nExample: “North ward green bin” and “South ward green bin” are similar strings with different answers. A cache hit is a prediction that needs evaluation, not evidence of equivalence.",
+    "inputs": ["New query and scope", "Cached query-result pairs"],
+    "outputs": ["Reusable result or cache miss"],
+    "failures": [
+      "Similarity is not equivalence. A wrong match can serve stale or inappropriate information; evaluate the reuse decision as its own classifier."
+    ],
+    "requirements": ["answer-grounding", "source-provenance"],
+    "related": [
+      {
+        "id": "p-caching",
+        "relation": "related"
+      },
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "x-precision-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sentence Transformers: semantic search",
+        "url": "https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html"
+      }
+    ],
+    "tags": ["Patterns for finding better", "original-catalogue"]
+  },
+  {
+    "id": "p-model-size",
+    "title": "Model size",
+    "parent": "hosting",
+    "type": "concept",
+    "summary": "Compare models of different sizes and capabilities for the same task. Route between models only when a simpler single-model baseline cannot meet the trade-off.",
+    "detail": "Measure quality, latency and cost by question type, including failures introduced by the router. A smaller model is not automatically cheaper or adequate in a particular deployment. A routing error can send a difficult task to an unsuitable model.\n\nExample: A smaller model may pass simple extraction but fail on exceptions. Compare task groups and actual deployment cost; parameter count alone does not determine either suitability or price.",
+    "inputs": [
+      "Candidate models and deployment settings",
+      "Representative tasks"
+    ],
+    "outputs": ["Measured model choice or routing policy"],
+    "failures": [
+      "A smaller model is not automatically cheaper or adequate in a particular deployment. A routing error can send a difficult task to an unsuitable model."
+    ],
+    "requirements": ["hosting-capacity", "statistical-comparison"],
+    "related": [
+      {
+        "id": "x-cost-quality",
+        "relation": "related"
+      },
+      {
+        "id": "p-classifier",
+        "relation": "related"
+      },
+      {
+        "id": "a-capacity",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "llama.cpp",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      }
+    ],
+    "tags": ["Cost and speed levers", "original-catalogue"]
+  },
+  {
+    "id": "p-caching",
+    "title": "Caching",
+    "parent": "hosting",
+    "type": "component",
+    "summary": "Reuse embeddings, retrieval results or answers instead of recomputing identical work. Define which inputs and versions make an existing result valid.",
+    "detail": "Measure avoided calls, latency savings and correctness against fresh results. Include invalidation behaviour after a source or prompt change. An incomplete cache key can preserve stale answers or cross access boundaries. Include relevant model, document, prompt and permission context in the reuse policy.\n\nExample: The calendar changes but the question stays the same. An answer cache keyed only by question serves yesterday’s rule. Include the source version and access scope in the reuse policy.",
+    "inputs": [
+      "Request identity and relevant versions",
+      "Stored computation results"
+    ],
+    "outputs": ["Cached output or fresh computation"],
+    "failures": [
+      "An incomplete cache key can preserve stale answers or cross access boundaries. Include relevant model, document, prompt and permission context in the reuse policy."
+    ],
+    "requirements": ["source-provenance", "operational-health"],
+    "related": [
+      {
+        "id": "p-semantic-cache",
+        "relation": "related"
+      },
+      {
+        "id": "x-drift",
+        "relation": "related"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Redis cache-aside and invalidation",
+        "url": "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
+      }
+    ],
+    "tags": ["Cost and speed levers", "original-catalogue"]
+  },
+  {
+    "id": "p-batching",
+    "title": "Batching",
+    "parent": "hosting",
+    "type": "method",
+    "summary": "Process many requests together for workloads such as evaluation or document processing. Distinguish asynchronous provider batches from local inference batches when assessing the benefit.",
+    "detail": "Measure completed outputs, cost and elapsed processing time. Reconcile each output with its input identifier. Discounts and latency vary by service. Partial failures, limits and missing outputs need explicit handling; matching totals alone cannot detect duplicated or mismatched results.\n\nExample: A batch sends 100 requests and returns 100 rows, but one request is duplicated and another missing. Reconcile identifiers, not only totals, before treating the run as complete.",
+    "inputs": ["Identified independent requests", "Batch policy and limits"],
+    "outputs": ["Individually matched results and errors"],
+    "failures": [
+      "Discounts and latency vary by service. Partial failures, limits and missing outputs need explicit handling; matching totals alone cannot detect duplicated or mismatched results."
+    ],
+    "requirements": ["operational-health", "hosting-capacity"],
+    "related": [
+      {
+        "id": "a-capacity",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "p-eval-framework",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "llama.cpp",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      },
+      {
+        "title": "Claude Message Batches: asynchronous processing and result IDs",
+        "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+      }
+    ],
+    "tags": ["Cost and speed levers", "original-catalogue"]
+  },
+  {
+    "id": "p-local-models",
+    "title": "Local models",
+    "parent": "hosting",
+    "type": "concept",
+    "summary": "Run inference on infrastructure you control. Evaluate hardware, model, runtime and operations together rather than treating local execution as free.",
+    "detail": "Compare task quality, latency and resource use with the existing deployment. Test actual model precision and hardware. Compression and memory limits can affect results. Local inference alone does not establish that every surrounding tool, log or telemetry path remains local.\n\nExample: A model runs locally but a surrounding tool exports logs. Inspect the full data path; local inference describes where computation occurs, not every connection made by the application.\n\nNamed examples, not recommendations: llama.cpp, Ollama. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Model weights and runtime",
+      "Hardware and serving configuration"
+    ],
+    "outputs": ["Locally served inference results"],
+    "failures": [
+      "Compression and memory limits can affect results. Local inference alone does not establish that every surrounding tool, log or telemetry path remains local."
+    ],
+    "requirements": ["hosting-capacity", "operational-health"],
+    "related": [
+      {
+        "id": "a-capacity",
+        "relation": "related"
+      },
+      {
+        "id": "p-model-size",
+        "relation": "related"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "llama.cpp",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      }
+    ],
+    "tags": ["Cost and speed levers", "original-catalogue"]
+  },
+  {
+    "id": "p-orchestration",
+    "title": "Orchestration framework",
+    "parent": "agents",
+    "type": "framework",
+    "summary": "Connect parsing, retrieval, generation and checks through reusable workflow abstractions. Choose them according to the pipeline and maintenance needs.",
+    "detail": "Measure the resulting pipeline and test component boundaries. Include the effort to inspect, modify and reproduce a failed run. Framework defaults can hide behaviour or constrain an unusual workflow. Keep task logic and evidence visible rather than relying on the framework name.\n\nExample: A framework retries a failed action automatically. Confirm that the action is safe to repeat rather than assuming retries are harmless because the orchestration library provides them.\n\nNamed examples, not recommendations: LangChain, DSPy. Check the selected release and deployment before adoption.",
+    "inputs": ["Component contracts", "Workflow and error policy"],
+    "outputs": ["Executed workflow with observable transitions"],
+    "failures": [
+      "Framework defaults can hide behaviour or constrain an unusual workflow. Keep task logic and evidence visible rather than relying on the framework name."
+    ],
+    "requirements": ["api-contract", "tool-safety"],
+    "related": [
+      {
+        "id": "a-tool-contract",
+        "relation": "related"
+      },
+      {
+        "id": "a-dspy",
+        "relation": "related"
+      },
+      {
+        "id": "a-tracing",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DSPy",
+        "url": "https://github.com/stanfordnlp/dspy"
+      }
+    ],
+    "tags": ["Wiring it together", "original-catalogue"]
+  },
+  {
+    "id": "p-structured-output",
+    "title": "Structured output",
+    "parent": "generation",
+    "type": "method",
+    "summary": "Request answers in a defined schema for downstream code. Use supported constraints or validation with a bounded correction strategy.",
+    "detail": "Measure first-pass schema validity, correction frequency and semantic correctness. Report missing or unsupported information separately from formatting errors. A valid structure can contain false values. Constraint support varies, and retries add cost without guaranteeing that the facts improve.\n\nExample: An answer has the correct string, list and boolean types but says Friday instead of Monday. Shape validation can pass while the answer is wrong; check semantics separately.\n\nNamed examples, not recommendations: Outlines, Instructor. Check the selected release and deployment before adoption.",
+    "inputs": ["JSON schema", "Prompt and candidate response"],
+    "outputs": ["Validated fields or explicit validation failure"],
+    "failures": [
+      "A valid structure can contain false values. Constraint support varies, and retries add cost without guaranteeing that the facts improve."
+    ],
+    "requirements": ["api-contract", "answer-grounding"],
+    "related": [
+      {
+        "id": "p-llm",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Pydantic models",
+        "url": "https://docs.pydantic.dev/latest/concepts/models/"
+      }
+    ],
+    "tags": ["Wiring it together", "original-catalogue"],
+    "code": [
+      {
+        "language": "python",
+        "text": "from pydantic import BaseModel, ConfigDict\n\nclass Answer(BaseModel):\n    model_config = ConfigDict(strict=True, extra='forbid')\n    answer: str\n    citations: list[str]\n    answerable: bool\n\ndef validate_citations(answer, supplied_ids):\n    if answer.answerable and not answer.citations:\n        raise ValueError('An answer needs a source.')\n    if not set(answer.citations) <= supplied_ids:\n        raise ValueError('The answer cites an unsupplied source.')\n\nanswer = Answer(answer=\"Friday\", citations=[\"north\"], answerable=True)\nvalidate_citations(answer, {\"north\"})\n# The shape and source ID pass; the source could still say Monday.\n",
+        "status": "syntax-checked",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "p-doc-parsing",
+    "title": "Document parsing",
+    "parent": "data",
+    "type": "component",
+    "summary": "Extract text and structure from PDFs, scans, slides and tables before indexing. Preserve page references, reading order and heading relationships.",
+    "detail": "Compare a sample with the original pages. Check table values, reading order and important fields, not just whether extraction produced text. Confident extraction can still be wrong. Missing layout or OCR errors can become retrieval and answer failures later.\n\nExample: A two-column calendar is read across rows and assigns Thursday to the wrong ward. Inspect the extracted values and page positions before blaming retrieval or generation.\n\nNamed examples, not recommendations: Unstructured, Docling. Check the selected release and deployment before adoption.",
+    "inputs": ["Source files with layout", "Extraction configuration"],
+    "outputs": ["Text, structure and source locations"],
+    "failures": [
+      "Confident extraction can still be wrong. Missing layout or OCR errors can become retrieval and answer failures later."
+    ],
+    "requirements": ["source-provenance"],
+    "related": [
+      {
+        "id": "p-chunking",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Docling",
+        "url": "https://github.com/docling-project/docling"
+      }
+    ],
+    "tags": ["Wiring it together", "original-catalogue"]
+  },
+  {
+    "id": "p-eval-framework",
+    "title": "Evaluation framework",
+    "parent": "evaluation",
+    "type": "framework",
+    "summary": "Run versioned datasets and scorers through a repeatable evaluation workflow. Use reports and gates to compare changes and identify regressions.",
+    "detail": "Check scorers against human-reviewed cases, verify output completeness and deliberately trigger a known failure before trusting a passing gate. A convenient built-in metric may measure a different property from the one your task needs. Keep metric definitions and release thresholds explicit.\n\nExample: A runner reports a high average after silently skipping failed cases. Require one visible result per input case, including errors, and prove a known defect makes the gate fail.\n\nNamed examples, not recommendations: DeepEval, TruLens. Check the selected release and deployment before adoption.",
+    "inputs": ["Versioned cases and scorer definitions", "Candidate pipeline"],
+    "outputs": ["Per-case results, summaries and gate decisions"],
+    "failures": [
+      "A convenient built-in metric may measure a different property from the one your task needs. Keep metric definitions and release thresholds explicit."
+    ],
+    "requirements": ["statistical-comparison", "judge-calibration"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "x-mutation",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DeepEval",
+        "url": "https://github.com/confident-ai/deepeval"
+      }
+    ],
+    "tags": ["Wiring it together", "original-catalogue"]
+  },
+  {
+    "id": "p-tracing",
+    "title": "Tracing standard",
+    "parent": "operations",
+    "type": "concept",
+    "summary": "Record connected steps and their timing in a common format. Link retrieved evidence, model activity and outcomes to the version that produced them.",
+    "detail": "Check expected spans and fields against a known request. Confirm failures and omitted outputs remain visible across component boundaries. Missing instrumentation obscures the cause of failure. Captured prompts and passages can contain sensitive data; control access, collection and retention.\n\nExample: A trace records a generated answer but omits the passages supplied to the writer. You cannot distinguish a retrieval miss from an ignored passage; verify expected fields with a known request.\n\nNamed examples, not recommendations: OpenTelemetry. Check the selected release and deployment before adoption.",
+    "inputs": ["Request and component events", "Capture and retention policy"],
+    "outputs": ["Linked spans with versions and outcomes"],
+    "failures": [
+      "Missing instrumentation obscures the cause of failure. Captured prompts and passages can contain sensitive data; control access, collection and retention."
+    ],
+    "requirements": ["operational-health", "source-provenance"],
+    "related": [
+      {
+        "id": "a-tracing",
+        "relation": "related"
+      },
+      {
+        "id": "p-eval-framework",
+        "relation": "related"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenTelemetry traces",
+        "url": "https://opentelemetry.io/docs/concepts/signals/traces/"
+      }
+    ],
+    "tags": ["Wiring it together", "original-catalogue"]
+  },
+  {
+    "id": "x-wilson",
+    "title": "Wilson interval",
+    "parent": "math",
+    "type": "metric",
+    "summary": "A confidence interval expresses uncertainty in a measured proportion.",
+    "detail": "A confidence interval expresses uncertainty in a measured proportion. A 95% procedure has approximately 95% coverage across repeated samples under its assumptions. It does not assign a 95% probability to this particular fixed interval. Question selection and dependence still matter.\n\nIllustrative: 16 correct answers out of 20 gives a Wilson interval of approximately 58% to 92%.",
+    "inputs": [
+      "Count of correct cases",
+      "Total scored cases and confidence level"
+    ],
+    "outputs": ["Interval for a proportion"],
+    "failures": [
+      "A small or unrepresentative sample can mislead even when the formula is correct."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "confidence",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "statsmodels binomial proportion intervals",
+        "url": "https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportion_confint.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "p̂ = s/n; d = 1 + z²/n; centre = (p̂ + z²/(2n))/d; radius = z√(p̂(1−p̂)/n + z²/(4n²))/d. Interval: centre ± radius. Requires n > 0 and 0 ≤ s ≤ n; use a suitable sampling model.",
+    "code": [
+      {
+        "language": "python",
+        "text": "from math import sqrt\n\ndef wilson(successes, total, z=1.96):\n    if total <= 0 or not 0 <= successes <= total:\n        raise ValueError('Use 0 <= successes <= total and total > 0.')\n    p = successes / total\n    denominator = 1 + z * z / total\n    centre = (p + z * z / (2 * total)) / denominator\n    radius = z * sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / denominator\n    return centre - radius, centre + radius\n\nlow, high = wilson(16, 20)\nassert abs(low - 0.584) < 0.001\nassert abs(high - 0.919) < 0.001\nprint(round(low, 3), round(high, 3))\n",
+        "status": "runtime-tested",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "x-rule-of-three",
+    "title": "Rule of three",
+    "parent": "math",
+    "type": "method",
+    "summary": "With zero failures in n independent trials having the same failure probability, 3/n approximates a one-sided 95% upper confidence bound.",
+    "detail": "With zero failures in n independent trials having the same failure probability, 3/n approximates a one-sided 95% upper confidence bound. Generalising to real traffic also requires representative cases. Zero observed failures is not a guarantee, and repeated copies of one question are not independent evidence.\n\nIllustrative: zero failures in 60 trials gives an approximate 5% upper bound; the exact binomial bound is 4.87%.",
+    "inputs": ["Number of independent trials", "Zero observed failures"],
+    "outputs": ["Approximate one-sided upper bound"],
+    "failures": ["Zero observed failures does not establish zero risk."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-wilson",
+        "relation": "related"
+      },
+      {
+        "id": "confidence",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "statsmodels binomial proportion intervals",
+        "url": "https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportion_confint.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "For n independent Bernoulli trials with zero failures: approximate 95% upper failure bound = 3/n; exact one-sided bound = 1 − 0.05^(1/n). Assumes a common failure probability."
+  },
+  {
+    "id": "x-precision-recall",
+    "title": "Precision, recall and false-positive rate",
+    "parent": "math",
+    "type": "metric",
+    "summary": "For an answerability decision, precision is the proportion of yes decisions that are correct.",
+    "detail": "For an answerability decision, precision is the proportion of yes decisions that are correct. Recall is the proportion of answerable questions accepted. False-positive rate is the proportion of unanswerable questions accepted. Name each denominator; threshold choice depends on the consequences of both errors.\n\nIllustrative: 8 true positives, 4 false positives, 2 false negatives and 6 true negatives give 67% precision, 80% recall and 40% false-positive rate.",
+    "inputs": ["Binary predictions", "Reviewed binary labels"],
+    "outputs": ["Precision, recall and false-positive rate"],
+    "failures": [
+      "The same numerator can produce different claims when the denominator is omitted."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "p-classifier",
+        "relation": "related"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Introduction to Information Retrieval: evaluation",
+        "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-unranked-retrieval-sets-1.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "Precision = TP/(TP+FP); recall = TP/(TP+FN); false-positive rate = FP/(FP+TN). A zero denominator is undefined; report it explicitly."
+  },
+  {
+    "id": "x-retrieval-recall",
+    "title": "Retrieval recall and hit rate",
+    "parent": "math",
+    "type": "metric",
+    "summary": "Recall at k measures the fraction of labelled relevant passages retrieved among the first k results.",
+    "detail": "Recall at k measures the fraction of labelled relevant passages retrieved among the first k results. Hit rate at k measures questions with at least one relevant result. They coincide when each question has one relevant passage. Neither establishes that the answer used the evidence.\n\nIllustrative: evidence appears for 8 of 10 questions in the top three results, giving an 80% hit rate at three.",
+    "inputs": [
+      "Retrieved identifiers at k",
+      "Labelled relevant identifiers per query"
+    ],
+    "outputs": ["Hit rate at k and mean recall at k"],
+    "failures": [
+      "An unlabelled relevant passage can make a valid result appear wrong."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "p-reranker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Introduction to Information Retrieval: evaluation",
+        "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-unranked-retrieval-sets-1.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "Per query: recall@k = |retrieved@k ∩ relevant| / |relevant|. Hit@k = 1 when the intersection is nonempty, else 0. Average over eligible queries; report queries with no relevant labels separately.",
+    "code": [
+      {
+        "language": "python",
+        "text": "def evaluate(cases, search):\n    if not cases or any(not case['expected_ids'] for case in cases):\n        raise ValueError('Use non-empty, answerable retrieval cases.')\n    hits, recalls = [], []\n    for case in cases:\n        expected = case['expected_ids']\n        found = set(search(case['question'], k=2)) & expected\n        hits.append(bool(found))\n        recalls.append(len(found) / len(expected))\n    return {\n        'questions': len(cases),\n        'hit_rate_at_2': sum(hits) / len(hits),\n        'recall_at_2': sum(recalls) / len(recalls),\n    }\n\ncases = [{\"question\": \"Which rules apply?\", \"expected_ids\": {\"rule\", \"exception\"}}]\nresult = evaluate(cases, lambda query, k: [\"rule\"])\nassert result[\"hit_rate_at_2\"] == 1.0\nassert result[\"recall_at_2\"] == 0.5\nprint(result)\n",
+        "status": "runtime-tested",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "x-compounding",
+    "title": "Compounding error and independence",
+    "parent": "math",
+    "type": "method",
+    "summary": "If every stage must succeed, independent stage success probabilities can be multiplied.",
+    "detail": "If every stage must succeed, independent stage success probabilities can be multiplied. Without independence, multiply conditional probabilities given earlier success, not isolated stage accuracies. Recovery paths can change what counts as success. Measure the complete workflow; stage scores alone do not determine its reliability.\n\nIllustrative: five independent stages, each succeeding with probability 0.95, all succeed with probability 0.95⁵, or about 77.4%.",
+    "inputs": [
+      "Stage success definitions",
+      "Joint or conditional success measurements"
+    ],
+    "outputs": ["An explicitly qualified pipeline model"],
+    "failures": [
+      "Multiplying marginal rates without independence can give the wrong result."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "p-orchestration",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Conditional probability and the chain rule",
+        "url": "https://www.sp21.eecs70.org/static/notes/n14.pdf"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "P(A₁ ∩ … ∩ Aₙ) = P(A₁) × P(A₂ | A₁) × … × P(Aₙ | A₁…Aₙ₋₁). Under independence only, this reduces to ∏P(Aᵢ)."
+  },
+  {
+    "id": "x-noise-band",
+    "title": "Run-to-run variation",
+    "parent": "math",
+    "type": "method",
+    "summary": "Repeated runs reveal variation in a fixed evaluation setup.",
+    "detail": "Repeated runs reveal variation in a fixed evaluation setup. Their observed range is descriptive, not a significance test or a boundary below which changes are meaningless. Compare matched cases and uncertainty. Repetition does not correct an unrepresentative question set or eliminate selection bias.\n\nIllustrative: scores of 81, 84, 80, 83 and 82 have a mean of 82 and an observed range of 80–84.",
+    "inputs": [
+      "Repeated comparable runs",
+      "Fixed case and configuration identifiers"
+    ],
+    "outputs": ["Observed score variation"],
+    "failures": ["The observed range is not a test of significance."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "x-bootstrap",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "NIST: confidence intervals",
+        "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-agreement",
+    "title": "Agreement between markers: kappa",
+    "parent": "math",
+    "type": "metric",
+    "summary": "Cohen’s kappa compares observed agreement with agreement expected from the two markers’ label frequencies.",
+    "detail": "Cohen’s kappa compares observed agreement with agreement expected from the two markers’ label frequencies. Report it alongside raw agreement, sample size and the disagreement table. Class imbalance and small samples affect interpretation. Agreement between people or models does not establish factual correctness.\n\nIllustrative: 85% observed agreement and 65% expected agreement give kappa = (0.85 − 0.65) / (1 − 0.65) = 0.571.",
+    "inputs": ["Paired reviewer labels", "Defined categories"],
+    "outputs": ["Raw agreement and Cohen kappa"],
+    "failures": [
+      "Agreement can be high while both reviewers repeat the same mistake."
+    ],
+    "requirements": ["judge-calibration"],
+    "related": [
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm-judge",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn Cohen kappa",
+        "url": "https://sklearn.org/stable/modules/generated/sklearn.metrics.cohen_kappa_score.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "κ = (pₒ − pₑ)/(1 − pₑ), where pₒ is observed agreement and pₑ comes from the reviewers’ label frequencies. Undefined when pₑ = 1."
+  },
+  {
+    "id": "x-held-out",
+    "title": "Held-out set",
+    "parent": "math",
+    "type": "dataset",
+    "summary": "Reserve evaluation cases that do not guide prompt, model or threshold choices.",
+    "detail": "Reserve evaluation cases that do not guide prompt, model or threshold choices. They help assess performance beyond the examples used for development. Repeated decisions based on their results turn them into a tuning set. Keep final evaluation representative and record when its cases change.\n\nIllustrative: report 96 of 100 on the development set separately from 82 of 100 on an untouched evaluation set.",
+    "inputs": ["Cases withheld from tuning", "Declared evaluation policy"],
+    "outputs": ["Independent final evaluation evidence"],
+    "failures": [
+      "Repeated optimisation against the final test makes it a development set."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "data-splits",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: data leakage",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-pinning",
+    "title": "Pinning versions and settings",
+    "parent": "math",
+    "type": "method",
+    "summary": "Record and hold fixed the dataset, rubric, prompt, model version and supported generation settings for a comparison.",
+    "detail": "Record and hold fixed the dataset, rubric, prompt, model version and supported generation settings for a comparison. This reduces uncontrolled differences; it does not guarantee deterministic outputs. Evaluate the settings you intend to deploy, and record provider changes that cannot be pinned.",
+    "inputs": [
+      "Model, prompt and dataset versions",
+      "Recorded generation settings"
+    ],
+    "outputs": ["Reproducible experiment configuration"],
+    "failures": ["Recorded settings do not guarantee deterministic execution."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "x-digest",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: data leakage",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-digest",
+    "title": "Digest pin",
+    "parent": "math",
+    "type": "method",
+    "summary": "Store a cryptographic digest of an approved file and compare it when the file is used.",
+    "detail": "Store a cryptographic digest of an approved file and compare it when the file is used. A mismatch reveals changed bytes. A match does not prove the content is correct or complete. Review intentional updates and reconcile the records before accepting a new digest.\n\nIllustrative: changing one expected fact in an evaluation fixture changes its digest and fails the integrity check.",
+    "inputs": ["Approved file bytes", "Expected cryptographic digest"],
+    "outputs": ["Integrity check result"],
+    "failures": [
+      "A hash of incorrect or incomplete data faithfully preserves that error."
+    ],
+    "requirements": ["source-provenance"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "x-pinning",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Python hashlib",
+        "url": "https://docs.python.org/3/library/hashlib.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "digest = SHA-256(exact file bytes). Compare with the approved digest; do not silently replace the expected value when validation fails.",
+    "code": [
+      {
+        "language": "python",
+        "text": "from hashlib import sha256\n\noriginal = b\"North ward: Monday\"\nchanged = b\"North ward: Friday\"\nassert sha256(original).hexdigest() != sha256(changed).hexdigest()\nprint(sha256(original).hexdigest())\n",
+        "status": "runtime-tested",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "x-mutation",
+    "title": "Proving an automatic check can fail",
+    "parent": "math",
+    "type": "method",
+    "summary": "Introduce a controlled defect that the check is meant to detect, confirm the check fails, then restore the correct behaviour.",
+    "detail": "Introduce a controlled defect that the check is meant to detect, confirm the check fails, then restore the correct behaviour. Verify that the changed code actually ran. One detected defect demonstrates a working check for that case, not complete coverage of every failure.\n\nIllustrative: alter a known result or omit a required output, then confirm the gate reports that specific failure.",
+    "inputs": ["A known correct fixture", "One controlled defect"],
+    "outputs": ["Evidence that the intended check can fail"],
+    "failures": [
+      "The altered code may not run, or the failure may come from an unrelated error."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "p-eval-framework",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "mutmut mutation testing",
+        "url": "https://mutmut.readthedocs.io/en/latest/"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-bootstrap",
+    "title": "Bootstrap confidence interval",
+    "parent": "math",
+    "type": "method",
+    "summary": "Estimate uncertainty by resampling observed units with replacement and recalculating the statistic.",
+    "detail": "Estimate uncertainty by resampling observed units with replacement and recalculating the statistic. For two versions answering the same questions, resample matched question pairs together. Use a method appropriate to the statistic and dependence structure. Resampling cannot repair unrepresentative data or create new independent observations.\n\nResample question pairs, calculate the mean score difference each time, then construct an interval for that difference. The fraction of resamples favouring B is not itself a confidence interval.",
+    "inputs": [
+      "Matched results or correctly grouped observations",
+      "Statistic and resampling procedure"
+    ],
+    "outputs": ["Bootstrap distribution and confidence interval"],
+    "failures": [
+      "Resampling individual rows can break dependence between cases or paired versions."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-causal",
+        "relation": "related"
+      },
+      {
+        "id": "confidence",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "SciPy bootstrap",
+        "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-power-analysis",
+    "title": "Power analysis",
+    "parent": "math",
+    "type": "method",
+    "summary": "Plan sample size for a specified comparison, meaningful effect, false-positive threshold and desired probability of detecting that effect.",
+    "detail": "Plan sample size for a specified comparison, meaningful effect, false-positive threshold and desired probability of detecting that effect. Baseline rates, variability, pairing and dependence also matter. A five-point improvement has no universal sample requirement. State the assumptions before collecting data rather than calculating reassuring power afterwards.",
+    "inputs": [
+      "Meaningful effect and baseline variability",
+      "Error threshold, target power and design"
+    ],
+    "outputs": ["Planned sample size under stated assumptions"],
+    "failures": [
+      "There is no universal question count for detecting a five-point change."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "x-causal",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "statsmodels power analysis",
+        "url": "https://www.statsmodels.org/stable/generated/statsmodels.stats.power.NormalIndPower.solve_power.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-krippendorff",
+    "title": "Krippendorff’s alpha",
+    "parent": "math",
+    "type": "metric",
+    "summary": "Measure agreement among raters using a distance appropriate to nominal, ordinal or numerical judgements.",
+    "detail": "Measure agreement among raters using a distance appropriate to nominal, ordinal or numerical judgements. Alpha accommodates multiple raters and missing ratings. Report the scale, sample and uncertainty alongside the coefficient. Weighted Cohen’s kappa also handles ordinal ratings from two raters; graded scores do not make kappa unusable.",
+    "inputs": [
+      "Ratings across reviewers and items",
+      "Scale-appropriate disagreement distance"
+    ],
+    "outputs": ["Agreement estimate with uncertainty"],
+    "failures": [
+      "The choice of nominal or ordinal distance changes the estimand."
+    ],
+    "requirements": ["judge-calibration"],
+    "related": [
+      {
+        "id": "x-agreement",
+        "relation": "related"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Computing Krippendorff’s Alpha-Reliability",
+        "url": "https://www.asc.upenn.edu/sites/default/files/2021-03/Computing%20Krippendorff%27s%20Alpha-Reliability.pdf"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "α = 1 − Dₒ/Dₑ, where Dₒ is observed disagreement and Dₑ is expected disagreement. Define the scale and distance; Dₑ = 0 makes this ratio undefined."
+  },
+  {
+    "id": "x-calibration",
+    "title": "Calibration",
+    "parent": "math",
+    "type": "metric",
+    "summary": "Compare predicted probabilities with observed outcomes on labelled data.",
+    "detail": "Compare predicted probabilities with observed outcomes on labelled data. Predictions near 90% should correspond to approximately 90% positive outcomes for the defined event. Examine sample counts, uncertainty and relevant subgroups. Verbal confidence and token probabilities are not automatically calibrated probabilities that an entire answer is correct.\n\nIllustrative: among 100 answers each assigned 90% correctness probability, 70 are correct. The observed correctness frequency is 70%, with sampling uncertainty.",
+    "inputs": ["Predicted probability for a defined event", "Observed labels"],
+    "outputs": ["Calibration curve and supporting counts"],
+    "failures": [
+      "A model saying “90% sure” is not automatically reporting a valid probability."
+    ],
+    "requirements": ["judge-calibration"],
+    "related": [
+      {
+        "id": "p-classifier",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm-judge",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn probability calibration",
+        "url": "https://scikit-learn.org/stable/modules/calibration.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "For probability bin B: mean prediction = Σpᵢ/|B|; observed frequency = Σyᵢ/|B|. Report bin sizes and uncertainty; a coarse curve can hide subgroup errors."
+  },
+  {
+    "id": "x-drift",
+    "title": "Drift",
+    "parent": "math",
+    "type": "concept",
+    "summary": "Track changes in incoming questions, source material, expected answers and system performance over time.",
+    "detail": "Track changes in incoming questions, source material, expected answers and system performance over time. Distribution change and quality degradation are related but different observations. Compare defined windows and relevant task groups with suitable baselines. Repeat-run variation on unchanged cases does not establish whether live traffic has changed.",
+    "inputs": [
+      "Versioned traffic samples and source records",
+      "Comparable performance measurements"
+    ],
+    "outputs": ["Evidence of changing data or outcomes"],
+    "failures": [
+      "A distribution change need not imply degradation; degradation can occur without the monitored distribution changing."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "a-tracing",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Evidently data drift methods",
+        "url": "https://docs.evidentlyai.com/metrics/explainer_drift"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-bandits",
+    "title": "Multi-armed bandits",
+    "parent": "math",
+    "type": "method",
+    "summary": "Adapt traffic allocation using observed rewards while retaining exploration.",
+    "detail": "Adapt traffic allocation using observed rewards while retaining exploration. This can prioritise useful choices during an experiment, but does not guarantee faster or clearer inference. Outcome-dependent assignment complicates comparison beyond unequal sample sizes. Log assignment probabilities and use methods designed for the adaptive experiment and its objective.",
+    "inputs": [
+      "Defined rewards and assignment policy",
+      "Sequential observations with assignment probabilities"
+    ],
+    "outputs": ["Adaptive allocation and policy-aware estimates"],
+    "failures": [
+      "Adaptive assignment is not interchangeable with a fixed randomised comparison."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-sequential-testing",
+        "relation": "related"
+      },
+      {
+        "id": "x-causal",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Design-Based Inference for Multi-arm Bandits",
+        "url": "https://arxiv.org/abs/2302.14136"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-sequential-testing",
+    "title": "Sequential testing and repeated looks",
+    "parent": "math",
+    "type": "method",
+    "summary": "Repeatedly checking an ordinary fixed-sample significance test and stopping at a favourable result can inflate false positives.",
+    "detail": "Repeatedly checking an ordinary fixed-sample significance test and stopping at a favourable result can inflate false positives. Prespecify the stopping rule or use a sequential procedure with valid error control. Confidence sequences support repeated inspection under their assumptions; casually reusing conventional intervals does not provide that protection.",
+    "inputs": [
+      "Sequential outcomes",
+      "Prespecified stopping rule or valid sequential procedure"
+    ],
+    "outputs": ["Evidence with controlled repeated-look error"],
+    "failures": [
+      "Repeatedly inspecting ordinary fixed-sample intervals can inflate false positives."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-power-analysis",
+        "relation": "related"
+      },
+      {
+        "id": "x-bandits",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Time-uniform confidence sequences",
+        "url": "https://arxiv.org/abs/1810.08240"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-causal",
+    "title": "Fair comparisons and causal claims",
+    "parent": "math",
+    "type": "method",
+    "summary": "A score difference can reflect different questions, users or operating conditions rather than the changed component.",
+    "detail": "A score difference can reflect different questions, users or operating conditions rather than the changed component. Offline, compare versions on matched cases with controlled settings. Online, randomise at an appropriate unit where feasible. Observational comparisons require explicit assumptions; randomisation alone does not remove interference or measurement errors.",
+    "inputs": [
+      "Comparable cases and explicit intervention",
+      "Assignment and measurement policy"
+    ],
+    "outputs": ["A qualified comparison of alternatives"],
+    "failures": [
+      "Different traffic or timing can explain the apparent improvement."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "x-bootstrap",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Design-Based Inference for Multi-arm Bandits",
+        "url": "https://arxiv.org/abs/2302.14136"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-self-consistency",
+    "title": "Consistency across generated answers",
+    "parent": "math",
+    "type": "method",
+    "summary": "Compare repeated answers to identify unstable factual claims or reasoning outcomes.",
+    "detail": "Compare repeated answers to identify unstable factual claims or reasoning outcomes. Disagreement can guide investigation, but it can also reflect harmless wording or legitimate alternatives. Agreement does not establish truth: a model can repeat the same error. Validate the detection method against independently checked cases.",
+    "inputs": ["Repeated model answers", "Defined agreement measure"],
+    "outputs": ["Unstable claims for investigation"],
+    "failures": ["Consistent repetition can preserve the same false claim."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "x-noise-band",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "SelfCheckGPT",
+        "url": "https://arxiv.org/abs/2303.08896"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-support-checking",
+    "title": "Checking a claim against its source",
+    "parent": "math",
+    "type": "method",
+    "summary": "Separate an answer into claims and assess whether supplied passages support, contradict or leave each claim unresolved.",
+    "detail": "Separate an answer into claims and assess whether supplied passages support, contradict or leave each claim unresolved. This measures grounding in those passages, not their truth or completeness. The checker still needs validation against reviewed labels, particularly for numerical, qualified or context-dependent statements.\n\nIllustrative: six of eight claims are supported and two are unresolved. The unresolved claims need investigation; their origin cannot be inferred from that result alone.",
+    "inputs": ["Atomic answer claims", "Evidence passages and reviewed labels"],
+    "outputs": ["Support, contradiction or unresolved decisions"],
+    "failures": [
+      "A supported statement can still inherit a false or outdated source."
+    ],
+    "requirements": ["answer-grounding"],
+    "related": [
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "FActScore",
+        "url": "https://arxiv.org/abs/2305.14251"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-semantic-similarity",
+    "title": "Semantic similarity scoring",
+    "parent": "math",
+    "type": "metric",
+    "summary": "Compare generated and reference answers using representations of meaning rather than exact wording.",
+    "detail": "Compare generated and reference answers using representations of meaning rather than exact wording. This can recognise paraphrases, but similarity is not factual equivalence or entailment. Negation, numbers and omitted conditions can change correctness while leaving similarity high. Pair the score with checks of required facts and source support.",
+    "inputs": ["Compatible vectors", "A selected similarity measure"],
+    "outputs": ["Similarity score, not truth probability"],
+    "failures": [
+      "Negation and changed numbers can remain close in embedding space."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sentence Transformers: semantic search",
+        "url": "https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "cosine(a,b) = (a·b)/(‖a‖‖b‖), for nonzero vectors in the same space. Values measure angle-based similarity; zero vectors need explicit handling."
+  },
+  {
+    "id": "x-bias-benchmark",
+    "title": "Bias and toxicity benchmarks",
+    "parent": "math",
+    "type": "method",
+    "summary": "Use defined test cases to investigate harmful content and differences across relevant groups.",
+    "detail": "Use defined test cases to investigate harmful content and differences across relevant groups. State the harm being measured, the comparator and the context in which a difference is inappropriate. Report subgroup coverage and uncertainty. Passing one benchmark neither establishes universal fairness nor replaces task-specific review.",
+    "inputs": [
+      "Defined harm and context",
+      "Relevant test cases and reviewed outcomes"
+    ],
+    "outputs": ["Scoped evidence about group differences or harm"],
+    "failures": ["Passing one benchmark cannot establish universal fairness."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "x-red-teaming",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Red Teaming Language Models to Reduce Harms",
+        "url": "https://arxiv.org/abs/2209.07858"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "x-cost-quality",
+    "title": "Cost and quality trade-offs",
+    "parent": "math",
+    "type": "method",
+    "summary": "Compare configurations on consistent tasks using quality, cost and relevant operating constraints.",
+    "detail": "Compare configurations on consistent tasks using quality, cost and relevant operating constraints. A Pareto frontier identifies options not dominated on the chosen measures. Include uncertainty, latency and other required limits before discarding alternatives. A cheaper configuration with the same point estimate is not necessarily equivalent in quality.",
+    "inputs": [
+      "Comparable quality and cost measurements",
+      "Latency, capacity and safety constraints"
+    ],
+    "outputs": ["Candidate configurations and trade-offs"],
+    "failures": ["Equal point estimates do not establish equivalent quality."],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "p-model-size",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "pymoo multi-objective optimisation",
+        "url": "https://pymoo.org/getting_started/part_1.html"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"],
+    "formula": "A dominates B on cost and quality when cost(A) ≤ cost(B) and quality(A) ≥ quality(B), with at least one strict inequality. Apply only to comparable measures and consider uncertainty and other constraints."
+  },
+  {
+    "id": "x-red-teaming",
+    "title": "Red-teaming",
+    "parent": "math",
+    "type": "method",
+    "summary": "Use scoped adversarial attempts to discover failures beyond ordinary evaluation cases.",
+    "detail": "Use scoped adversarial attempts to discover failures beyond ordinary evaluation cases. Define the threat model, permitted actions and how outcomes are judged. Preserve successful attacks as regression cases and continue discovery. Success rates on a curated or adaptive attack set are not estimates of failure prevalence in ordinary traffic.",
+    "inputs": [
+      "Threat model and permitted scope",
+      "Adversarial cases and outcome rubric"
+    ],
+    "outputs": ["Discovered failures and regression cases"],
+    "failures": [
+      "Attack-set success rate is not ordinary traffic failure prevalence."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-prompt-injection",
+        "relation": "related"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Red Teaming Language Models to Reduce Harms",
+        "url": "https://arxiv.org/abs/2209.07858"
+      }
+    ],
+    "tags": ["evaluation", "original-explainer"]
+  },
+  {
+    "id": "data",
+    "title": "Data and evidence",
+    "parent": "home",
+    "type": "concept",
+    "summary": "Prepare trustworthy inputs and keep their origins visible.",
+    "detail": "Start with what the task needs, who may use it and how a reviewer can find the original. Parsing and chunking prepare source material. Annotation creates labels. Training changes a model; evaluation measures it. These are different uses of data, even when they begin with the same documents.\n\nExample: a council calendar can be an answer source. Questions written from that calendar become evaluation cases only after their expected answers and source references are reviewed.",
+    "inputs": ["Source documents", "Task and access boundaries"],
+    "outputs": ["Versioned source records", "Prepared and labelled data"],
+    "failures": [
+      "Correct text can lose meaning when layout or provenance is discarded."
+    ],
+    "requirements": ["source-provenance"],
+    "related": [
+      {
+        "id": "p-doc-parsing",
+        "relation": "related"
+      },
+      {
+        "id": "p-chunking",
+        "relation": "related"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "data-splits",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Datasheets for Datasets",
+        "url": "https://arxiv.org/abs/1803.09010"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "search",
+    "title": "Search and retrieval",
+    "parent": "home",
+    "type": "concept",
+    "summary": "Find the evidence needed for a particular question.",
+    "detail": "Begin with a simple retrieval baseline and labelled relevant passages. Add keyword, vector, hybrid or reranking steps only to address an observed failure. Hold the final result count fixed when comparing alternatives. Retrieval returns evidence candidates; it does not establish that a generated answer used them correctly.\n\nExample: finding a bin calendar for the wrong ward is a relevant-topic match but a task failure.",
+    "inputs": ["Question", "Authorised document corpus"],
+    "outputs": ["Ranked evidence with source IDs"],
+    "failures": [
+      "A high similarity score can hide the wrong date, ward or policy version."
+    ],
+    "requirements": ["retrieval-relevance"],
+    "related": [
+      {
+        "id": "p-keyword-search",
+        "relation": "related"
+      },
+      {
+        "id": "p-embedding",
+        "relation": "related"
+      },
+      {
+        "id": "p-hybrid-search",
+        "relation": "related"
+      },
+      {
+        "id": "x-retrieval-recall",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Introduction to Information Retrieval: evaluation",
+        "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-unranked-retrieval-sets-1.html"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "generation",
+    "title": "Generation and answers",
+    "parent": "home",
+    "type": "concept",
+    "summary": "Turn available context into an answer, structured result or proposed action.",
+    "detail": "Define the expected outcome before choosing a model. Separate output shape from factual support, and separate proposed tool calls from executed actions. Prompt versions and generation settings belong in the experiment record. Use a refusal or unresolved state when the task cannot be completed from the permitted information.\n\nExample: valid JSON containing a fabricated collection day is still a failed answer.",
+    "inputs": ["Prompt and permitted context", "Expected response contract"],
+    "outputs": ["Answer or explicit unresolved result"],
+    "failures": ["Fluent or well-formed output can still be unsupported."],
+    "requirements": ["answer-grounding"],
+    "related": [
+      {
+        "id": "p-llm",
+        "relation": "related"
+      },
+      {
+        "id": "p-structured-output",
+        "relation": "related"
+      },
+      {
+        "id": "p-support-checker",
+        "relation": "related"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Retrieval-Augmented Generation",
+        "url": "https://arxiv.org/abs/2005.11401"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "evaluation",
+    "title": "Evaluation and decisions",
+    "parent": "home",
+    "type": "concept",
+    "summary": "Choose the evidence that tells you whether this system meets its task.",
+    "detail": "Define failures and their consequences, then select the appropriate checks. Retrieval needs relevance labels. A judge needs reviewed decisions. Tools need contract, permission and side-effect tests. Hosting needs workload and recovery measurements. A golden dataset is useful for task behaviour, but it is not a substitute for every engineering check.\n\nKeep per-case outcomes, version identifiers, missing outputs and uncertainty visible before interpreting a summary score.",
+    "inputs": ["Task criteria", "Candidate system and cases"],
+    "outputs": ["Evidence-backed comparison", "Explicit unresolved risks"],
+    "failures": [
+      "One average score can conceal missing cases and unacceptable failures."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "p-eval-framework",
+        "relation": "related"
+      },
+      {
+        "id": "math",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DeepEval",
+        "url": "https://github.com/confident-ai/deepeval"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "math",
+    "title": "Methods and mathematical detail",
+    "parent": "evaluation",
+    "type": "concept",
+    "summary": "Understand the calculation, its assumptions and what the number cannot tell you.",
+    "detail": "Choose the question first: accuracy, agreement, uncertainty, comparison, calibration or cost. Then select a statistic whose inputs match the task. A metric name without its denominator and unit of analysis is incomplete. Some methods require independent observations, while paired comparisons must preserve the relationship between versions.\n\nThe worked figures are illustrative. Interactive calculations expose arithmetic; they do not validate the dataset or choose an acceptable risk for you.",
+    "inputs": [
+      "Defined evaluation question",
+      "Appropriate observations and assumptions"
+    ],
+    "outputs": ["Interpretable calculation with limits"],
+    "failures": [
+      "Correct arithmetic can support the wrong claim when its assumptions do not hold."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "confidence",
+        "relation": "related"
+      },
+      {
+        "id": "x-precision-recall",
+        "relation": "related"
+      },
+      {
+        "id": "x-wilson",
+        "relation": "related"
+      },
+      {
+        "id": "x-bootstrap",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "NIST: confidence intervals",
+        "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "golden-dataset",
+    "title": "Build a golden dataset",
+    "parent": "evaluation",
+    "type": "dataset",
+    "summary": "Create reviewed examples that define the behaviour your project must demonstrate.",
+    "detail": "Start with task groups and failure costs. Select representative cases, then add distinct edge and failure cases without pretending that a failure-heavy collection represents live traffic. Record case ID, question, expected facts or action, relevant source IDs, answerability, reviewer and version. Include conflicting sources, missing evidence and exceptions where they matter.\n\nA golden dataset means reviewed expectations, not a particular split. Mark each case as development, regression or held-out evaluation. Do not repeatedly tune on cases later described as untouched.\n\nExample: North ward asks for green-bin day; source calendar-v3 says Monday. Expected facts include the ward, bin colour and day. A question about an absent holiday schedule should remain unresolved.",
+    "inputs": [
+      "Task groups and representative questions",
+      "Authoritative sources and reviewers"
+    ],
+    "outputs": [
+      "Versioned cases with reviewed expectations",
+      "Explicit split and coverage record"
+    ],
+    "failures": [
+      "Model-generated expected answers can repeat the system’s own errors.",
+      "Repeated or related cases can leak across splits."
+    ],
+    "requirements": ["source-provenance", "statistical-comparison"],
+    "related": [
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      },
+      {
+        "id": "data-splits",
+        "relation": "related"
+      },
+      {
+        "id": "synthetic-eval-risks",
+        "relation": "related"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "related"
+      },
+      {
+        "id": "x-power-analysis",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Datasheets for Datasets",
+        "url": "https://arxiv.org/abs/1803.09010"
+      }
+    ],
+    "tags": ["guided-workflow"],
+    "code": [
+      {
+        "language": "python",
+        "text": "case = {\n    \"id\": \"north-green-day\",\n    \"question\": \"When is the North ward green bin collected?\",\n    \"required_facts\": [\"North ward\", \"green bin\", \"Monday\"],\n    \"source_ids\": [\"calendar-v3:north\"],\n    \"answerable\": True,\n    \"split\": \"development\",\n}\nassert case[\"source_ids\"] and case[\"required_facts\"]\n",
+        "status": "syntax-checked",
+        "source": "Tools of the Trade workshop: standalone local example, no model call"
+      }
+    ]
+  },
+  {
+    "id": "annotation-rubric",
+    "title": "Write and calibrate the rubric",
+    "parent": "golden-dataset",
+    "type": "method",
+    "summary": "Make the expected result clear enough that reviewers can disagree usefully.",
+    "detail": "Define each required fact or permitted action, what counts as unsupported content, and when a case cannot be scored. Have reviewers label a shared sample independently, discuss disagreements and refine the instructions on development cases. Freeze the rubric for the comparison and validate any automated judge against reviewed labels.\n\nExample: “Names Monday” alone is insufficient if the question also identifies the ward and bin colour. Mark each required fact and any invented exception. Do not quietly change expected facts after seeing a candidate’s result.",
+    "inputs": ["Task criteria", "Source-backed examples and counterexamples"],
+    "outputs": ["Reviewed labels", "Versioned rubric and disagreement log"],
+    "failures": [
+      "Ambiguous labels make apparent system differences impossible to interpret."
+    ],
+    "requirements": ["judge-calibration"],
+    "related": [
+      {
+        "id": "x-agreement",
+        "relation": "related"
+      },
+      {
+        "id": "x-krippendorff",
+        "relation": "related"
+      },
+      {
+        "id": "p-llm-judge",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Judging LLM-as-a-Judge",
+        "url": "https://arxiv.org/abs/2306.05685"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "data-splits",
+    "title": "Separate training, development and test data",
+    "parent": "data",
+    "type": "dataset",
+    "summary": "Give each example a declared role before using it to improve or measure the system.",
+    "detail": "Training examples update weights or serve as optimisation inputs. Development examples guide choices such as prompts, thresholds and model selection. A final test set supports a comparison after those choices are fixed. A regression set catches known failures and may be visible during development; it is not automatically an independent final test.\n\nSplit at the unit that prevents leakage: document, user, event or time period where appropriate. Two paraphrases of the same source question in different files do not create independent evidence.",
+    "inputs": [
+      "Cases and relationships between them",
+      "Declared development and evaluation policy"
+    ],
+    "outputs": [
+      "Documented splits",
+      "Checks for overlaps and inappropriate reuse"
+    ],
+    "failures": [
+      "Tuning repeatedly against the final test makes it a development set."
+    ],
+    "requirements": ["adaptation-holdout"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "related"
+      },
+      {
+        "id": "x-held-out",
+        "relation": "related"
+      },
+      {
+        "id": "a-training-data",
+        "relation": "related"
+      },
+      {
+        "id": "a-dspy",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: data leakage",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "synthetic-eval-risks",
+    "title": "Review synthetic evaluation cases",
+    "parent": "golden-dataset",
+    "type": "method",
+    "summary": "Use generated candidates to extend coverage, then check their facts and independence.",
+    "detail": "Record the source, generator, prompt, transformations and reviewer for a synthetic case. Validate expected answers against independent evidence. Check duplicates and related examples across splits. A model can help draft questions but cannot make its own answers authoritative by placing them in a dataset.\n\nExample: a generator creates ten versions of the same bin-day question. They may test wording variation, but they do not provide ten independent policy scenarios. Report their shared origin and retain real or independently authored evaluation cases.",
+    "inputs": [
+      "Generated candidates and provenance",
+      "Independent sources and human review"
+    ],
+    "outputs": [
+      "Accepted or rejected reviewed cases",
+      "Lineage and overlap record"
+    ],
+    "failures": [
+      "Synthetic cases may preserve the generator’s blind spots or copy training examples."
+    ],
+    "requirements": ["synthetic-review", "adaptation-holdout"],
+    "related": [
+      {
+        "id": "data-splits",
+        "relation": "related"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "related"
+      },
+      {
+        "id": "a-synthetic-data",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Datasheets for Datasets",
+        "url": "https://arxiv.org/abs/1803.09010"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "evaluation-baseline",
+    "title": "Run a controlled baseline",
+    "parent": "evaluation",
+    "type": "method",
+    "summary": "Measure a known version before claiming that a change helps.",
+    "detail": "Pin the candidate version, cases, source corpus, prompt, rubric and supported model settings. Pilot the runner on a few known cases, including a controlled failure. Verify output identifiers and errors before the full run. Compare alternatives on matched cases and preserve repeated runs where randomness matters.\n\nReport per-group outcomes, denominators, latency, cost and missing results. Keep first failures visible when investigating a retry. A later successful attempt is additional evidence, not permission to erase an earlier invariant failure.",
+    "inputs": [
+      "Versioned candidate and cases",
+      "Fixed rubric and execution configuration"
+    ],
+    "outputs": ["Per-case results", "Comparable baseline and failure record"],
+    "failures": [
+      "A skipped case or wrong system version can make an apparent improvement meaningless."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-pinning",
+        "relation": "related"
+      },
+      {
+        "id": "x-bootstrap",
+        "relation": "related"
+      },
+      {
+        "id": "x-mutation",
+        "relation": "related"
+      },
+      {
+        "id": "x-cost-quality",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DeepEval",
+        "url": "https://github.com/confident-ai/deepeval"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  },
+  {
+    "id": "confidence",
+    "title": "Interpret confidence and uncertainty",
+    "parent": "evaluation",
+    "type": "concept",
+    "summary": "Distinguish confidence in a prediction from uncertainty in an evaluation result.",
+    "detail": "Prediction calibration asks whether stated probabilities match observed outcomes. A confidence interval describes uncertainty in a statistic under a sampling procedure. Neither is the model’s tone of voice. Repeated runs estimate variation for the selected cases; they do not make those cases representative of future traffic.\n\nExample: a classifier reports 90% confidence for one answer while a small test set gives a wide interval for overall accuracy. These are different quantities and must not be merged into a universal readiness score.",
+    "inputs": [
+      "Defined event or metric",
+      "Labels, sample design and repeated results"
+    ],
+    "outputs": [
+      "A qualified interpretation",
+      "Explicit limitations and unresolved uncertainty"
+    ],
+    "failures": [
+      "A precise-looking percentage may hide a small denominator or an invalid sampling assumption."
+    ],
+    "requirements": ["statistical-comparison"],
+    "related": [
+      {
+        "id": "x-calibration",
+        "relation": "related"
+      },
+      {
+        "id": "x-wilson",
+        "relation": "related"
+      },
+      {
+        "id": "x-noise-band",
+        "relation": "related"
+      },
+      {
+        "id": "x-power-analysis",
+        "relation": "related"
+      }
+    ],
+    "sources": [
+      {
+        "title": "NIST: confidence intervals",
+        "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm"
+      }
+    ],
+    "tags": ["guided-workflow"]
+  }
+]

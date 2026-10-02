@@ -1,0 +1,101 @@
+[
+  {
+    "id": "api-contract",
+    "title": "Define the API contract",
+    "why": "Inputs and failures must have predictable behavior.",
+    "dataset": "Valid, invalid, absent, empty and unauthorized request cases.",
+    "metric": "Schema validity, expected error types and authorization outcomes.",
+    "evidence": "Versioned contract tests; explicit timeout and retry behavior.",
+    "decision": "Which callers and tenants may access which resources?"
+  },
+  {
+    "id": "source-provenance",
+    "title": "Establish the source of the data",
+    "why": "Retrieval and training inherit source errors and access limits.",
+    "dataset": "Representative documents, formats, access labels and deletion cases.",
+    "metric": "Parse accuracy, source coverage and access-control violations.",
+    "evidence": "Document lineage, licensed use, retention and corpus version.",
+    "decision": "What may leave the boundary, and what must be removed?"
+  },
+  {
+    "id": "retrieval-relevance",
+    "title": "Build a retrieval golden dataset",
+    "why": "An answer cannot cite evidence it never retrieved.",
+    "dataset": "Realistic questions with reviewed relevant passage IDs, including no-answer and difficult slices.",
+    "metric": "Recall@k, hit@k, ranking quality and latency at a fixed k.",
+    "evidence": "Frozen corpus, labeled relevance, baseline and held-out results.",
+    "decision": "What counts as sufficient evidence for each question?"
+  },
+  {
+    "id": "answer-grounding",
+    "title": "Evaluate the answer against evidence",
+    "why": "Plausible language and valid citations do not prove support.",
+    "dataset": "Questions, trusted sources, answer rubrics and unanswerable cases.",
+    "metric": "Task success, supported claims, omissions and correct abstention.",
+    "evidence": "Human-reviewed rubrics and output/source pairs by risk slice.",
+    "decision": "Which unsupported claim could cause harm?"
+  },
+  {
+    "id": "tool-safety",
+    "title": "Test the tool and permission boundary",
+    "why": "A tool call can change real state.",
+    "dataset": "Authorized and denied actions, injection attempts, cancellation, stale state and duplicate requests.",
+    "metric": "Invariant violations, task completion and incorrect side effects.",
+    "evidence": "Recorded tool arguments, permission decisions and state assertions.",
+    "decision": "Which actions require a person, and who may approve them?"
+  },
+  {
+    "id": "judge-calibration",
+    "title": "Calibrate automated evaluators",
+    "why": "An evaluator can agree with itself and still be wrong.",
+    "dataset": "Independent human labels, borderline cases and disagreement examples.",
+    "metric": "Agreement, per-class precision/recall and systematic judge bias.",
+    "evidence": "Rubric version, calibration set and adjudication record.",
+    "decision": "When do people review disagreement or low confidence?"
+  },
+  {
+    "id": "statistical-comparison",
+    "title": "Compare changes with uncertainty",
+    "why": "A small observed improvement can be noise.",
+    "dataset": "Paired cases from a held-out set, representative slices and repeat runs where needed.",
+    "metric": "Paired differences, suitable confidence intervals and practical effect size.",
+    "evidence": "Predeclared decision rule, sample unit and uncertainty analysis.",
+    "decision": "What improvement matters, and how costly is a false win?"
+  },
+  {
+    "id": "operational-health",
+    "title": "Connect quality to operations",
+    "why": "A service needs both dependable operation and useful outputs.",
+    "dataset": "Expected load, failures, canary traffic and sampled production cases.",
+    "metric": "Error rates, tail latency, cost, task quality and drift.",
+    "evidence": "Minimized traces, alert ownership, runbook and rollback proof.",
+    "decision": "What triggers rollback, and which content may telemetry retain?"
+  },
+  {
+    "id": "hosting-capacity",
+    "title": "Validate model-serving capacity",
+    "why": "A model that fits in memory may still miss the service target.",
+    "dataset": "Representative prompt lengths, concurrency and burst workloads.",
+    "metric": "Time to first token, tokens/s, tail latency, memory and task quality.",
+    "evidence": "Load-test configuration, model/license provenance and capacity limits.",
+    "decision": "Which quantization and batching choices preserve quality?"
+  },
+  {
+    "id": "adaptation-holdout",
+    "title": "Protect the adaptation holdout",
+    "why": "Optimization can learn quirks of your metric or dataset.",
+    "dataset": "Separate train, development and independent test sets split by entity or time where needed.",
+    "metric": "Held-out task success, regressions, leakage and safety slices.",
+    "evidence": "Dataset lineage, experiment configuration and comparison to the base system.",
+    "decision": "Why should prompt optimization or training beat the simpler baseline?"
+  },
+  {
+    "id": "synthetic-review",
+    "title": "Review synthetic data before use",
+    "why": "Generated examples can repeat errors and hide missing cases.",
+    "dataset": "Labeled source of each synthetic case, deduplication and independently collected examples.",
+    "metric": "Diversity, review error rate, leakage and real-data performance.",
+    "evidence": "Generator version, human review and separation from evaluation gold.",
+    "decision": "Which real cases are missing from the synthetic distribution?"
+  }
+]

@@ -1,0 +1,1336 @@
+[
+  {
+    "id": "agents",
+    "title": "Agents and tool execution",
+    "parent": "home",
+    "type": "component",
+    "summary": "Turn model suggestions into controlled actions.",
+    "detail": "An agent combines a model, state, tools and an execution loop. Make the boundary between a proposed action and an authorized effect visible. Evaluate the resulting state, not only the final message.",
+    "inputs": ["Task", "Available tools", "Execution policy"],
+    "outputs": ["Answer or action result", "Execution history"],
+    "failures": ["A persuasive final answer can conceal a failed action."],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "p-orchestration",
+        "relation": "contains"
+      },
+      {
+        "id": "a-tool-loop",
+        "relation": "contains"
+      }
+    ],
+    "sources": [
+      {
+        "title": "AI SDK agent loops",
+        "url": "https://ai-sdk.dev/docs/agents/overview"
+      }
+    ]
+  },
+  {
+    "id": "operations",
+    "title": "Operations and evidence",
+    "parent": "home",
+    "type": "component",
+    "summary": "Keep the service understandable when it succeeds or fails.",
+    "detail": "Separate operational health from answer quality. Correlate requests, model calls and tool outcomes, then link failures to reproducible evaluation cases. Define retention and access for the evidence itself.",
+    "inputs": ["Requests", "Telemetry", "Quality assessments"],
+    "outputs": ["Operational decisions", "Incident evidence"],
+    "failures": ["A green uptime dashboard can coexist with wrong answers."],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-tracing",
+        "relation": "contains"
+      },
+      {
+        "id": "a-slo",
+        "relation": "contains"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenTelemetry signals",
+        "url": "https://opentelemetry.io/docs/concepts/signals/"
+      },
+      {
+        "title": "Google SRE: service level objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      }
+    ]
+  },
+  {
+    "id": "hosting",
+    "title": "Model hosting and capacity",
+    "parent": "home",
+    "type": "component",
+    "summary": "Choose where inference runs and test the resource budget.",
+    "detail": "Compare provider APIs with a model server you operate. Evaluate the intended context lengths and concurrency on the actual hardware. Cloud deployment, local inference and on-premises operation are distinct choices.",
+    "inputs": ["Model artifacts", "Hardware or provider", "Workload"],
+    "outputs": ["Inference endpoint", "Capacity measurements"],
+    "failures": [
+      "A model that loads can still fail under concurrent long contexts."
+    ],
+    "requirements": ["hosting-capacity"],
+    "related": [
+      {
+        "id": "p-local-models",
+        "relation": "contains"
+      },
+      {
+        "id": "a-capacity",
+        "relation": "contains"
+      }
+    ],
+    "sources": [
+      {
+        "title": "vLLM documentation",
+        "url": "https://docs.vllm.ai/en/latest/"
+      },
+      {
+        "title": "llama.cpp project",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      }
+    ]
+  },
+  {
+    "id": "adaptation",
+    "title": "Adaptation and learning",
+    "parent": "home",
+    "type": "component",
+    "summary": "Improve behavior using examples and an explicit objective.",
+    "detail": "Prompt optimization changes instructions or demonstrations. Fine-tuning changes model weights. Both need independent evaluation, data provenance and a baseline that justifies the extra complexity.",
+    "inputs": ["Task examples", "Baseline", "Metric"],
+    "outputs": ["Candidate program or model", "Comparison results"],
+    "failures": [
+      "Optimizing the test set makes the reported improvement unreliable."
+    ],
+    "requirements": ["adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-prompt-optimization",
+        "relation": "contains"
+      },
+      {
+        "id": "a-sft",
+        "relation": "contains"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Joint prompt and weight optimization paper",
+        "url": "https://arxiv.org/abs/2407.10930"
+      }
+    ]
+  },
+  {
+    "id": "a-tool-loop",
+    "title": "Tool-calling loop",
+    "parent": "agents",
+    "type": "method",
+    "summary": "Let the model request a tool, then return its result.",
+    "detail": "The application owns argument validation, authorization, execution and stopping conditions. Feed typed results or explicit errors back into the next model step. Bound steps, duration and spend; a tool request is not permission.",
+    "inputs": ["Conversation", "Tool schemas", "Budget"],
+    "outputs": ["Tool result", "Next model step", "Stop reason"],
+    "failures": [
+      "Repeated calls exhaust the budget.",
+      "A failed tool is described as successful."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-tool-contract",
+        "relation": "requires"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "requires"
+      },
+      {
+        "id": "p-orchestration",
+        "relation": "implemented_by"
+      }
+    ],
+    "sources": [
+      {
+        "title": "AI SDK agent loops",
+        "url": "https://ai-sdk.dev/docs/agents/overview"
+      }
+    ]
+  },
+  {
+    "id": "a-tool-contract",
+    "title": "Tool contracts",
+    "parent": "agents",
+    "type": "concept",
+    "summary": "Specify what a tool accepts, returns and changes.",
+    "detail": "A useful contract describes the input schema, result schema, error states and side effects. Server validation must also check resource ownership. A syntactically valid resource ID may refer to someone else’s data.",
+    "inputs": ["Arguments", "Caller identity"],
+    "outputs": ["Validated invocation", "Typed result or error"],
+    "failures": [
+      "Schema-valid arguments target an unauthorized resource.",
+      "An empty result conceals a tool error."
+    ],
+    "requirements": ["api-contract", "tool-safety"],
+    "related": [
+      {
+        "id": "a-mcp",
+        "relation": "can_use"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MCP tool contracts and security",
+        "url": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools"
+      }
+    ]
+  },
+  {
+    "id": "a-acp",
+    "title": "ACP: Agent Client Protocol",
+    "parent": "agents",
+    "type": "protocol",
+    "summary": "Connect a user interface to an agent session.",
+    "detail": "ACP defines session prompts, streamed updates, capability negotiation and cancellation. Optional capabilities determine available behavior such as session loading. It connects a client to an agent, not directly to interchangeable model weights.",
+    "inputs": ["Client capabilities", "Session prompt"],
+    "outputs": ["Session updates", "Permission request", "Stop reason"],
+    "failures": [
+      "Assuming every backend supports resume.",
+      "Treating a reported tool event as proof of safe execution."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-tool-loop",
+        "relation": "reports"
+      },
+      {
+        "id": "a-chap",
+        "relation": "can_connect_to"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Agent Client Protocol",
+        "url": "https://agentclientprotocol.com/protocol/v1/overview"
+      }
+    ],
+    "code": [
+      {
+        "language": "json",
+        "status": "illustrative",
+        "source": "https://agentclientprotocol.com/protocol/v1/overview",
+        "text": "{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"session/cancel\",\n  \"params\": {\n    \"sessionId\": \"example-session\"\n  }\n}"
+      }
+    ]
+  },
+  {
+    "id": "a-mcp",
+    "title": "MCP: Model Context Protocol",
+    "parent": "agents",
+    "type": "protocol",
+    "summary": "Connect an application to tools, resources and prompts.",
+    "detail": "An MCP host manages clients connected to servers. Capability discovery and tool invocation standardize a seam; the host still decides how context reaches the model and when an action is permitted.",
+    "inputs": ["Server capabilities", "Tool arguments"],
+    "outputs": ["Resources", "Tool results"],
+    "failures": [
+      "Server content contains malicious instructions.",
+      "Tool discovery is mistaken for authorization."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-tool-contract",
+        "relation": "exposes"
+      },
+      {
+        "id": "a-authorization",
+        "relation": "requires"
+      },
+      {
+        "id": "a-prompt-injection",
+        "relation": "threatened_by"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MCP architecture",
+        "url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture"
+      }
+    ]
+  },
+  {
+    "id": "a-chap",
+    "title": "CHAP: Collaborative Human-Agent Protocol",
+    "parent": "agents",
+    "type": "protocol",
+    "summary": "Record structured work, reviews and decisions between participants.",
+    "detail": "CHAP coordinates task state and review decisions. Profiles add capabilities; deployments must verify actual enforcement. Evidence-chain consistency does not prove complete records or factual artifacts. Mako’s example maps ACP permissions to core, review and control interactions.",
+    "inputs": ["Participants", "Tasks", "Review artifacts"],
+    "outputs": ["Task transitions", "Recorded decisions", "Audit evidence"],
+    "failures": [
+      "A recorded approval can concern a factually wrong artifact.",
+      "Advertising a profile is mistaken for verified enforcement."
+    ],
+    "requirements": ["tool-safety", "operational-health"],
+    "related": [
+      {
+        "id": "a-acp",
+        "relation": "can_govern_reviews_from"
+      },
+      {
+        "id": "a-mcp",
+        "relation": "can_record_calls_from"
+      },
+      {
+        "id": "a-tracing",
+        "relation": "complements"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Brightbeam CHAP specification",
+        "url": "https://github.com/BrightbeamAI/chap/blob/main/SPECIFICATION.md"
+      }
+    ]
+  },
+  {
+    "id": "a-authorization",
+    "title": "Authorization at execution",
+    "parent": "agents",
+    "type": "method",
+    "summary": "Check whether this caller may perform this action now.",
+    "detail": "Enforce scope and resource ownership at the tool boundary. A model choice, UI confirmation or tool description must not substitute for server authorization. Tests should attempt forbidden actions and verify that no effect occurs.",
+    "inputs": ["Caller", "Requested action", "Resource", "Policy"],
+    "outputs": ["Allow or deny decision"],
+    "failures": [
+      "The model supplies a more privileged account ID.",
+      "Approval applies to different arguments than the execution."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-tool-contract",
+        "relation": "constrains"
+      },
+      {
+        "id": "a-prompt-injection",
+        "relation": "limits_impact_of"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MCP tool contracts and security",
+        "url": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools"
+      },
+      {
+        "title": "OWASP prompt injection",
+        "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+      }
+    ]
+  },
+  {
+    "id": "a-retry",
+    "title": "Bounded retries",
+    "parent": "agents",
+    "type": "method",
+    "summary": "Retry transient failures without repeating harmful effects.",
+    "detail": "Classify errors before retrying. Cap attempts and use backoff. A timeout can occur after a remote write succeeded, so the next attempt needs an idempotent operation or an outcome check.",
+    "inputs": ["Failure category", "Attempt count", "Deadline"],
+    "outputs": ["Retry or final failure"],
+    "failures": [
+      "Blind retries create duplicate writes.",
+      "Nested retry policies multiply load."
+    ],
+    "requirements": ["tool-safety", "operational-health"],
+    "related": [
+      {
+        "id": "a-idempotency",
+        "relation": "requires_for_writes"
+      },
+      {
+        "id": "a-cancel",
+        "relation": "must_respect"
+      }
+    ],
+    "sources": [
+      {
+        "title": "AWS: retries and idempotent APIs",
+        "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/"
+      }
+    ]
+  },
+  {
+    "id": "a-idempotency",
+    "title": "Idempotent actions",
+    "parent": "agents",
+    "type": "concept",
+    "summary": "Make a repeated request represent the same intended action.",
+    "detail": "Use a caller-supplied operation identity and store the accepted result at the effect boundary. Bind that identity to the request meaning. Reusing a key with changed arguments must not silently replay an unrelated result.",
+    "inputs": ["Operation ID", "Arguments"],
+    "outputs": ["One logical effect", "Repeatable response"],
+    "failures": [
+      "A fresh key on each retry creates duplicates.",
+      "Deduplication state expires before a delayed retry."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-retry",
+        "relation": "enables"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "belongs_in"
+      }
+    ],
+    "sources": [
+      {
+        "title": "AWS: retries and idempotent APIs",
+        "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/"
+      }
+    ]
+  },
+  {
+    "id": "a-cancel",
+    "title": "Cancellation and stale results",
+    "parent": "agents",
+    "type": "method",
+    "summary": "Stop further work and explain what already happened.",
+    "detail": "Propagate cancellation through the session and pending permission requests. Reject late approvals for cancelled work. Cancellation does not undo an external effect that already completed; report that outcome separately.",
+    "inputs": ["Session ID", "Cancellation signal"],
+    "outputs": ["Cancelled state", "Known completed effects"],
+    "failures": [
+      "A late approval restarts cancelled work.",
+      "The UI claims a completed external action was undone."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-acp",
+        "relation": "defines_session_signal"
+      },
+      {
+        "id": "a-chap",
+        "relation": "records_decision_state"
+      }
+    ],
+    "sources": [
+      {
+        "title": "ACP tool calls and permission requests",
+        "url": "https://agentclientprotocol.com/protocol/v1/tool-calls"
+      }
+    ]
+  },
+  {
+    "id": "a-prompt-injection",
+    "title": "Prompt injection",
+    "parent": "agents",
+    "type": "concept",
+    "summary": "Untrusted content can try to redirect the agent.",
+    "detail": "Treat retrieved text, web pages and tool results as data. Keep credentials and authority outside model-produced arguments. Exercise malicious fixtures through the whole tool path; a prompt-only warning cannot enforce access boundaries.",
+    "inputs": ["Untrusted text", "Privileged tools"],
+    "outputs": ["Threat cases", "Boundary tests"],
+    "failures": [
+      "A document instructs the agent to disclose secrets.",
+      "A tool result impersonates a trusted instruction."
+    ],
+    "requirements": ["tool-safety"],
+    "related": [
+      {
+        "id": "a-authorization",
+        "relation": "mitigated_by"
+      },
+      {
+        "id": "a-tool-contract",
+        "relation": "tests"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OWASP prompt injection",
+        "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+      }
+    ]
+  },
+  {
+    "id": "a-langgraph",
+    "title": "LangChain and LangGraph",
+    "parent": "agents",
+    "type": "framework",
+    "summary": "Compose model and tool steps with explicit workflow state.",
+    "detail": "LangChain provides model, tool and agent abstractions. LangGraph supplies lower-level stateful orchestration, persistence and interrupts. Evaluate whether a plain function workflow is sufficient before adding graph state and checkpoint maintenance.",
+    "inputs": ["State", "Nodes", "Transitions"],
+    "outputs": ["Workflow execution", "Checkpoints"],
+    "failures": [
+      "A replay repeats an external side effect.",
+      "Persistent state and deployed code no longer agree."
+    ],
+    "requirements": ["tool-safety", "operational-health"],
+    "related": [
+      {
+        "id": "p-orchestration",
+        "relation": "implements"
+      },
+      {
+        "id": "a-idempotency",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "LangGraph overview",
+        "url": "https://docs.langchain.com/oss/python/langgraph/overview"
+      }
+    ]
+  },
+  {
+    "id": "a-llamaindex",
+    "title": "LlamaIndex",
+    "parent": "agents",
+    "type": "framework",
+    "summary": "Connect data retrieval and agent workflows.",
+    "detail": "LlamaIndex provides ingestion, retrieval, query and agent components. Keep document IDs and retrieval evidence visible through abstractions so a failed answer can be traced back to the selected passages.",
+    "inputs": ["Documents", "Retrievers", "Tools"],
+    "outputs": ["Context", "Agent or query response"],
+    "failures": [
+      "A convenient integration hides source provenance.",
+      "Changing the retriever silently changes answer support."
+    ],
+    "requirements": ["source-provenance", "retrieval-relevance"],
+    "related": [
+      {
+        "id": "a-tool-loop",
+        "relation": "can_implement"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "evaluated_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "LlamaIndex framework",
+        "url": "https://developers.llamaindex.ai/python/framework/"
+      }
+    ]
+  },
+  {
+    "id": "a-tracing",
+    "title": "Request and agent traces",
+    "parent": "operations",
+    "type": "method",
+    "summary": "Follow one request across retrieval, models and tools.",
+    "detail": "Use related spans to locate latency and failures. Record configuration IDs, safe document references and error categories. Treat prompt text and tool arguments as sensitive data; recording every value is not required for useful diagnostics.",
+    "inputs": ["Request ID", "Span events"],
+    "outputs": ["Correlated execution evidence"],
+    "failures": [
+      "Traces expose private content.",
+      "Missing spans make the apparent path incomplete."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-otel",
+        "relation": "implemented_with"
+      },
+      {
+        "id": "p-tracing",
+        "relation": "extends"
+      },
+      {
+        "id": "a-monitoring",
+        "relation": "complements"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenTelemetry signals",
+        "url": "https://opentelemetry.io/docs/concepts/signals/"
+      }
+    ]
+  },
+  {
+    "id": "a-otel",
+    "title": "OpenTelemetry",
+    "parent": "operations",
+    "type": "framework",
+    "summary": "Collect telemetry with shared instrumentation interfaces.",
+    "detail": "OpenTelemetry supplies APIs, SDKs and signal conventions. An exporter sends selected telemetry to a chosen destination. It is not a storage backend or a quality evaluator; configure collection and access deliberately.",
+    "inputs": ["Instrumentation", "Exporter configuration"],
+    "outputs": ["Traces", "Metrics", "Logs"],
+    "failures": [
+      "Exporter settings send content to an unintended destination.",
+      "Sampling omits a rare failure."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-tracing",
+        "relation": "enables"
+      },
+      {
+        "id": "a-langfuse",
+        "relation": "can_connect_to"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenTelemetry signals",
+        "url": "https://opentelemetry.io/docs/concepts/signals/"
+      }
+    ],
+    "code": [
+      {
+        "language": "python",
+        "status": "runtime-tested",
+        "source": "https://opentelemetry.io/docs/concepts/signals/",
+        "text": "from opentelemetry.sdk.trace import TracerProvider\nfrom opentelemetry.sdk.trace.export import SimpleSpanProcessor\nfrom opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter\n\nexporter = InMemorySpanExporter()\nprovider = TracerProvider()\nprovider.add_span_processor(SimpleSpanProcessor(exporter))\ntracer = provider.get_tracer(\"map.example\")\nwith tracer.start_as_current_span(\"retrieve\") as span:\n    span.set_attribute(\"example.result_count\", 2)\nfinished, = exporter.get_finished_spans()\nassert dict(finished.attributes) == {\"example.result_count\": 2}\nprovider.shutdown()\n"
+      }
+    ]
+  },
+  {
+    "id": "a-monitoring",
+    "title": "Monitoring and alerts",
+    "parent": "operations",
+    "type": "method",
+    "summary": "Detect user-visible degradation across many requests.",
+    "detail": "Track latency distributions, error rates and load. Add separately measured quality signals for AI behavior. Alert on actionable symptoms with an owner and response path rather than every noisy metric.",
+    "inputs": ["Service indicators", "Traffic slices"],
+    "outputs": ["Dashboard", "Actionable alert"],
+    "failures": [
+      "Average latency conceals slow tails.",
+      "Telemetry success is mistaken for answer correctness."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-slo",
+        "relation": "guided_by"
+      },
+      {
+        "id": "a-incidents",
+        "relation": "triggers"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google SRE: service level objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      }
+    ]
+  },
+  {
+    "id": "a-slo",
+    "title": "Service objectives and error budgets",
+    "parent": "operations",
+    "type": "metric",
+    "summary": "Define how much failure the service can tolerate.",
+    "detail": "Specify eligible requests, what counts as good, the target and the measurement window. Pair availability and latency objectives with separate quality evaluation. An SLO is an engineering target; an SLA adds contractual consequences.",
+    "inputs": ["Good and eligible event counts", "Target", "Window"],
+    "outputs": ["Indicator", "Remaining error budget"],
+    "failures": [
+      "The denominator excludes affected users.",
+      "An uptime target is presented as a factual-accuracy promise."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-monitoring",
+        "relation": "measured_by"
+      },
+      {
+        "id": "a-rollback",
+        "relation": "informs"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google SRE: service level objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      }
+    ],
+    "formula": "good_event_rate = good_events / eligible_events; allowed_bad_fraction = 1 - target"
+  },
+  {
+    "id": "a-incidents",
+    "title": "Incident response",
+    "parent": "operations",
+    "type": "method",
+    "summary": "Contain harm, restore service and preserve evidence.",
+    "detail": "Assign an incident lead, record decisions and separate mitigation from investigation. For AI incidents, capture the affected model, prompt, corpus and tool policy versions without copying private content into unrestricted channels.",
+    "inputs": ["Alert", "Impact evidence", "Runbook"],
+    "outputs": ["Mitigation", "Incident record", "Follow-up tests"],
+    "failures": [
+      "Responders change multiple variables without a record.",
+      "Sensitive examples are copied into broad logs."
+    ],
+    "requirements": ["operational-health"],
+    "related": [
+      {
+        "id": "a-rollback",
+        "relation": "can_use"
+      },
+      {
+        "id": "a-versioning",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google SRE: incident response",
+        "url": "https://sre.google/workbook/incident-response/"
+      }
+    ]
+  },
+  {
+    "id": "a-rollback",
+    "title": "Release and rollback",
+    "parent": "operations",
+    "type": "method",
+    "summary": "Restore a known working configuration after a regression.",
+    "detail": "Release a versioned bundle and check a limited rollout before wider traffic. Preserve the prior model, prompt, index and tool contracts. Reverting code cannot automatically reverse external writes already performed.",
+    "inputs": ["Candidate bundle", "Baseline", "Release criteria"],
+    "outputs": ["Promoted or restored version"],
+    "failures": [
+      "The old index cannot be reconstructed.",
+      "Rollback is confused with undoing external effects."
+    ],
+    "requirements": ["operational-health", "adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-versioning",
+        "relation": "requires"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "compares_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google SRE: incident response",
+        "url": "https://sre.google/workbook/incident-response/"
+      },
+      {
+        "title": "MLflow for agents and LLMs",
+        "url": "https://mlflow.org/docs/latest/genai/"
+      }
+    ]
+  },
+  {
+    "id": "a-langfuse",
+    "title": "Langfuse",
+    "parent": "operations",
+    "type": "tool",
+    "summary": "Inspect traces and connect examples to evaluation.",
+    "detail": "Langfuse combines LLM observability, prompt management and evaluation workflows. Use it to investigate individual failures and compare runs; reviewed labels and evaluator calibration remain the team’s responsibility.",
+    "inputs": ["Instrumented calls", "Datasets", "Scores"],
+    "outputs": ["Trace views", "Evaluation results"],
+    "failures": [
+      "Trace capture contains personal data.",
+      "A score is accepted without examining the rubric."
+    ],
+    "requirements": ["operational-health", "judge-calibration"],
+    "related": [
+      {
+        "id": "a-tracing",
+        "relation": "implements"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "uses"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Langfuse documentation",
+        "url": "https://langfuse.com/docs"
+      }
+    ]
+  },
+  {
+    "id": "a-mlflow",
+    "title": "MLflow",
+    "parent": "operations",
+    "type": "tool",
+    "summary": "Track AI experiments, traces and evaluation results.",
+    "detail": "Record the configuration and artifacts behind each run so candidate behavior can be compared and reproduced. MLflow supplies tracking and evaluation tooling, not a task-independent definition of a correct answer.",
+    "inputs": ["Run configuration", "Artifacts", "Traces", "Evaluators"],
+    "outputs": ["Comparable runs", "Versioned evidence"],
+    "failures": [
+      "Two scores refer to different datasets.",
+      "An artifact version is missing from the result."
+    ],
+    "requirements": ["operational-health", "adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-versioning",
+        "relation": "supports"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "compares_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MLflow for agents and LLMs",
+        "url": "https://mlflow.org/docs/latest/genai/"
+      }
+    ]
+  },
+  {
+    "id": "a-eval-tools",
+    "title": "Evaluation frameworks",
+    "parent": "operations",
+    "type": "framework",
+    "summary": "Automate checks while retaining control of the question being measured.",
+    "detail": "Ragas supports evaluation workflows; DeepEval offers test-oriented evaluation; promptfoo compares prompts and runs assertions; TruLens links traces and feedback. Choose by the required metric, data path and reproducibility, not by a single headline score.",
+    "inputs": ["Cases", "Expected behavior", "Metric or rubric"],
+    "outputs": ["Case-level results", "Regression signal"],
+    "failures": [
+      "A judge rewards fluent unsupported text.",
+      "Different tool defaults make scores incomparable."
+    ],
+    "requirements": ["judge-calibration", "statistical-comparison"],
+    "related": [
+      {
+        "id": "golden-dataset",
+        "relation": "requires"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ragas documentation",
+        "url": "https://docs.ragas.io/en/stable/"
+      },
+      {
+        "title": "DeepEval quickstart",
+        "url": "https://deepeval.com/docs/getting-started"
+      },
+      {
+        "title": "Promptfoo documentation",
+        "url": "https://www.promptfoo.dev/docs/intro/"
+      },
+      {
+        "title": "TruLens documentation",
+        "url": "https://www.trulens.org/"
+      }
+    ]
+  },
+  {
+    "id": "a-vllm",
+    "title": "vLLM",
+    "parent": "hosting",
+    "type": "tool",
+    "summary": "Serve supported models with an optimized inference engine.",
+    "detail": "vLLM manages inference execution, scheduling and memory for supported configurations. Benchmark the chosen model and hardware with realistic input and output lengths. An API-compatible endpoint still needs deployment authentication and capacity controls.",
+    "inputs": ["Model weights", "Serving configuration", "Requests"],
+    "outputs": ["Generated tokens", "Serving measurements"],
+    "failures": [
+      "A supported model exceeds memory at target concurrency.",
+      "Throughput improves while user latency worsens."
+    ],
+    "requirements": ["hosting-capacity"],
+    "related": [
+      {
+        "id": "a-capacity",
+        "relation": "evaluated_by"
+      },
+      {
+        "id": "p-batching",
+        "relation": "uses"
+      }
+    ],
+    "sources": [
+      {
+        "title": "vLLM documentation",
+        "url": "https://docs.vllm.ai/en/latest/"
+      }
+    ]
+  },
+  {
+    "id": "a-llamacpp",
+    "title": "llama.cpp",
+    "parent": "hosting",
+    "type": "tool",
+    "summary": "Run compatible models across local hardware options.",
+    "detail": "llama.cpp provides inference and server tooling with quantized model support. Choose a compatible artifact and backend, then test quality and speed on the actual machine. A local endpoint is not automatically private if exposed on the network.",
+    "inputs": ["Compatible model artifact", "Hardware backend"],
+    "outputs": ["Local inference", "Server response"],
+    "failures": [
+      "The model format or backend is incompatible.",
+      "A bound network interface exposes the endpoint."
+    ],
+    "requirements": ["hosting-capacity"],
+    "related": [
+      {
+        "id": "p-local-models",
+        "relation": "implements"
+      },
+      {
+        "id": "a-quantization",
+        "relation": "can_use"
+      }
+    ],
+    "sources": [
+      {
+        "title": "llama.cpp project",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      }
+    ]
+  },
+  {
+    "id": "a-ollama",
+    "title": "Ollama",
+    "parent": "hosting",
+    "type": "tool",
+    "summary": "Manage models and call an inference API.",
+    "detail": "Ollama exposes model APIs and local model management. Make the server destination and model identity explicit. A client library can target another host, so local installation alone does not establish where each request runs.",
+    "inputs": ["Model name", "Server address", "Prompt"],
+    "outputs": ["Model response"],
+    "failures": [
+      "An environment setting targets an unintended server.",
+      "A model tag changes without a recorded revision."
+    ],
+    "requirements": ["hosting-capacity", "source-provenance"],
+    "related": [
+      {
+        "id": "p-local-models",
+        "relation": "implements"
+      },
+      {
+        "id": "a-versioning",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ollama API introduction",
+        "url": "https://docs.ollama.com/api/introduction"
+      }
+    ]
+  },
+  {
+    "id": "a-capacity",
+    "title": "Inference capacity",
+    "parent": "hosting",
+    "type": "metric",
+    "summary": "Measure how many requests fit within latency and memory limits.",
+    "detail": "Test context length, output length, concurrency and workload mix together. Separate time to first token from later token speed. Weight size is only part of memory use; caches and runtime buffers also consume capacity.",
+    "inputs": ["Hardware", "Model", "Concurrent workload"],
+    "outputs": ["Latency distribution", "Throughput", "Memory use"],
+    "failures": [
+      "A short-prompt benchmark hides long-context failures.",
+      "A weight-only estimate ignores runtime memory."
+    ],
+    "requirements": ["hosting-capacity"],
+    "related": [
+      {
+        "id": "p-model-size",
+        "relation": "affected_by"
+      },
+      {
+        "id": "p-batching",
+        "relation": "affected_by"
+      },
+      {
+        "id": "p-caching",
+        "relation": "affected_by"
+      },
+      {
+        "id": "a-quantization",
+        "relation": "affected_by"
+      }
+    ],
+    "sources": [
+      {
+        "title": "vLLM documentation",
+        "url": "https://docs.vllm.ai/en/latest/"
+      }
+    ],
+    "formula": "ideal_weight_bytes = parameter_count × bits_per_weight / 8; total_memory > weight_bytes in a running server",
+    "code": [
+      {
+        "language": "python",
+        "status": "runtime-tested",
+        "text": "parameters = 8_000_000_000\nbits_per_weight = 4\nideal_weight_bytes = parameters * bits_per_weight // 8\nprint(ideal_weight_bytes / 1_000_000_000, 'GB of ideal weights only')\nassert ideal_weight_bytes == 4_000_000_000\n"
+      }
+    ]
+  },
+  {
+    "id": "a-quantization",
+    "title": "Quantization",
+    "parent": "hosting",
+    "type": "method",
+    "summary": "Use lower-precision representations to reduce resource needs.",
+    "detail": "A lower-precision artifact can reduce weight memory and may improve speed on supported hardware. Measure task quality after conversion. Precision labels alone do not determine accuracy, runtime support or end-to-end memory use.",
+    "inputs": ["Model weights", "Quantization method"],
+    "outputs": ["Quantized artifact", "Quality comparison"],
+    "failures": [
+      "A rare task regresses despite average score stability.",
+      "The hardware lacks an efficient kernel for the format."
+    ],
+    "requirements": ["hosting-capacity", "adaptation-holdout"],
+    "related": [
+      {
+        "id": "p-model-size",
+        "relation": "changes_storage_for"
+      },
+      {
+        "id": "a-capacity",
+        "relation": "evaluated_by"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "compares_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "llama.cpp project",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      }
+    ]
+  },
+  {
+    "id": "a-dspy",
+    "title": "DSPy",
+    "parent": "adaptation",
+    "type": "framework",
+    "summary": "Optimize a language-model program against an explicit metric.",
+    "detail": "DSPy expresses programs as modules and offers optimizers for instructions, demonstrations and supported weight-training paths. The program, examples and metric define the objective. Keep final evaluation cases outside optimization.",
+    "inputs": ["Program", "Training examples", "Metric"],
+    "outputs": ["Optimized program", "Measured candidate"],
+    "failures": [
+      "The optimizer exploits a weak metric.",
+      "Evaluation examples leak into demonstrations."
+    ],
+    "requirements": ["adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-prompt-optimization",
+        "relation": "can_implement"
+      },
+      {
+        "id": "a-sft",
+        "relation": "can_use"
+      },
+      {
+        "id": "data-splits",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DSPy optimizers",
+        "url": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md"
+      }
+    ]
+  },
+  {
+    "id": "a-prompt-optimization",
+    "title": "Prompt optimization",
+    "parent": "adaptation",
+    "type": "method",
+    "summary": "Search for instructions and examples that improve task results.",
+    "detail": "Optimize prompt instructions or demonstrations while keeping model weights fixed. DSPy MIPROv2 is one implementation. Compare the result on untouched cases and record the search budget; an improved training score alone is insufficient.",
+    "inputs": ["Initial prompt", "Examples", "Metric"],
+    "outputs": ["Candidate prompt", "Held-out comparison"],
+    "failures": [
+      "The prompt memorizes examples.",
+      "The objective favors verbosity over usefulness."
+    ],
+    "requirements": ["adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-dspy",
+        "relation": "implemented_by"
+      },
+      {
+        "id": "a-training-data",
+        "relation": "uses"
+      },
+      {
+        "id": "data-splits",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MIPRO prompt optimization paper",
+        "url": "https://arxiv.org/abs/2406.11695"
+      }
+    ],
+    "code": [
+      {
+        "language": "python",
+        "status": "illustrative",
+        "source": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md",
+        "text": "import dspy\n\n# Supply your configured program, metric and separate data splits.\noptimizer = dspy.MIPROv2(metric=task_metric)\ncandidate = optimizer.compile(program, trainset=train_cases)\n# Evaluate candidate on untouched test_cases before release.\n"
+      }
+    ]
+  },
+  {
+    "id": "a-sft",
+    "title": "Supervised fine-tuning",
+    "parent": "adaptation",
+    "type": "method",
+    "summary": "Train model behavior from input and desired-output examples.",
+    "detail": "SFT updates trainable weights to reduce a training objective on examples. The dataset format and loss masking determine which tokens teach the model. Check task gains and regressions against the original model on held-out data.",
+    "inputs": ["Base model", "Labeled examples", "Training configuration"],
+    "outputs": ["Updated weights or adapter", "Evaluation results"],
+    "failures": [
+      "Train and test cases overlap.",
+      "The model learns incorrect or private target text."
+    ],
+    "requirements": ["adaptation-holdout", "source-provenance"],
+    "related": [
+      {
+        "id": "a-training-data",
+        "relation": "requires"
+      },
+      {
+        "id": "a-lora",
+        "relation": "can_use"
+      },
+      {
+        "id": "evaluation-baseline",
+        "relation": "compares_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "TRL supervised fine-tuning",
+        "url": "https://huggingface.co/docs/trl/sft_trainer"
+      }
+    ]
+  },
+  {
+    "id": "a-peft",
+    "title": "PEFT",
+    "parent": "adaptation",
+    "type": "framework",
+    "summary": "Adapt a model while training a subset of parameters.",
+    "detail": "The PEFT library implements parameter-efficient methods and adapter workflows. It can reduce the training and storage burden compared with full fine-tuning. Runtime compatibility and task quality still need validation.",
+    "inputs": ["Base model", "Adapter method", "Training data"],
+    "outputs": ["Adapter parameters", "Adapted model"],
+    "failures": [
+      "The adapter is paired with a different base revision.",
+      "A smaller trainable set fails to learn the target behavior."
+    ],
+    "requirements": ["adaptation-holdout", "hosting-capacity"],
+    "related": [
+      {
+        "id": "a-lora",
+        "relation": "implements"
+      },
+      {
+        "id": "a-sft",
+        "relation": "can_support"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hugging Face PEFT",
+        "url": "https://huggingface.co/docs/peft/index"
+      }
+    ]
+  },
+  {
+    "id": "a-lora",
+    "title": "LoRA adapters",
+    "parent": "adaptation",
+    "type": "method",
+    "summary": "Learn a low-rank update to selected model weights.",
+    "detail": "LoRA represents an update through smaller matrices while the base weights can remain frozen. Rank controls adaptation capacity and parameter count. Store the base revision with the adapter and evaluate their combination.",
+    "inputs": ["Base weights", "Rank", "Training examples"],
+    "outputs": ["Low-rank adapter"],
+    "failures": [
+      "A low rank cannot express the required change.",
+      "An adapter is loaded onto an incompatible base model."
+    ],
+    "requirements": ["adaptation-holdout"],
+    "related": [
+      {
+        "id": "a-peft",
+        "relation": "implemented_by"
+      },
+      {
+        "id": "a-versioning",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hugging Face PEFT",
+        "url": "https://huggingface.co/docs/peft/index"
+      },
+      {
+        "title": "LoRA research paper",
+        "url": "https://arxiv.org/abs/2106.09685"
+      }
+    ],
+    "formula": "W′ = W + ΔW; ΔW = B A, where rank(ΔW) ≤ r"
+  },
+  {
+    "id": "a-training-data",
+    "title": "Training data and splits",
+    "parent": "adaptation",
+    "type": "dataset",
+    "summary": "Choose examples that represent the intended behavior.",
+    "detail": "Record provenance, permissions, labels and split membership. Separate related documents or conversations before splitting so near-duplicates do not leak into evaluation. Preserve unknown labels as unknown rather than inventing negatives.",
+    "inputs": ["Source examples", "Labeling policy", "Split rules"],
+    "outputs": ["Versioned train, validation and test sets"],
+    "failures": [
+      "Near-duplicates inflate apparent performance.",
+      "Missing labels become false negative labels."
+    ],
+    "requirements": ["source-provenance", "adaptation-holdout"],
+    "related": [
+      {
+        "id": "data-splits",
+        "relation": "specified_by"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "uses"
+      },
+      {
+        "id": "a-versioning",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "TRL supervised fine-tuning",
+        "url": "https://huggingface.co/docs/trl/sft_trainer"
+      },
+      {
+        "title": "DSPy optimizers",
+        "url": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md"
+      }
+    ]
+  },
+  {
+    "id": "a-synthetic-data",
+    "title": "Synthetic training examples",
+    "parent": "adaptation",
+    "type": "dataset",
+    "summary": "Generate candidate examples, then review their quality and coverage.",
+    "detail": "Synthetic examples can expand scenarios and formats. Retain generator and seed-source provenance, verify labels and check duplicates against held-out cases. A generator’s confidence is not independent evidence that its answer is correct.",
+    "inputs": ["Seed scenarios", "Generator", "Review rubric"],
+    "outputs": ["Reviewed candidate examples"],
+    "failures": [
+      "The generator repeats the base model’s mistakes.",
+      "Synthetic examples contaminate the final evaluation."
+    ],
+    "requirements": [
+      "synthetic-review",
+      "source-provenance",
+      "adaptation-holdout"
+    ],
+    "related": [
+      {
+        "id": "synthetic-eval-risks",
+        "relation": "constrained_by"
+      },
+      {
+        "id": "a-training-data",
+        "relation": "can_extend"
+      },
+      {
+        "id": "annotation-rubric",
+        "relation": "requires"
+      }
+    ],
+    "sources": [
+      {
+        "title": "DSPy optimizers",
+        "url": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md"
+      },
+      {
+        "title": "Ragas documentation",
+        "url": "https://docs.ragas.io/en/stable/"
+      }
+    ]
+  },
+  {
+    "id": "a-versioning",
+    "title": "Version the complete system",
+    "parent": "adaptation",
+    "type": "concept",
+    "summary": "Record enough configuration to explain and reproduce a result.",
+    "detail": "Track model revision, tokenizer, prompt, code, dataset, index, adapter and evaluator versions as applicable. A model name alone does not identify the system. Reproduction also depends on runtime and nondeterministic behavior.",
+    "inputs": ["Artifacts", "Configuration", "Run identifiers"],
+    "outputs": ["Release manifest", "Comparable evidence"],
+    "failures": [
+      "A mutable model tag changes between runs.",
+      "The index or evaluator version is absent."
+    ],
+    "requirements": ["adaptation-holdout", "operational-health"],
+    "related": [
+      {
+        "id": "a-mlflow",
+        "relation": "can_implement"
+      },
+      {
+        "id": "a-rollback",
+        "relation": "enables"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "references"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MLflow for agents and LLMs",
+        "url": "https://mlflow.org/docs/latest/genai/"
+      }
+    ]
+  },
+  {
+    "id": "a-haystack",
+    "title": "Haystack",
+    "parent": "agents",
+    "type": "framework",
+    "summary": "Build search and agent workflows from reusable components.",
+    "detail": "Haystack connects document stores, retrievers, generators and tools through pipelines. Keep each component’s contract and evaluation visible. A pipeline that executes successfully can still select irrelevant evidence or generate an unsupported answer.",
+    "inputs": ["Documents", "Pipeline components", "Task inputs"],
+    "outputs": [
+      "Retrieval or generation results",
+      "Pipeline execution evidence"
+    ],
+    "failures": [
+      "A component upgrade changes result meaning.",
+      "Pipeline success is mistaken for answer correctness."
+    ],
+    "requirements": ["retrieval-relevance", "answer-grounding"],
+    "related": [
+      {
+        "id": "p-orchestration",
+        "relation": "implements"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "evaluated_with"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Haystack introduction",
+        "url": "https://docs.haystack.deepset.ai/docs/intro"
+      }
+    ]
+  }
+]

@@ -1,0 +1,117 @@
+[
+  {
+    "id": "home",
+    "title": "Intelligence engineering",
+    "parent": null,
+    "type": "concept",
+    "summary": "Build useful intelligence. Know what makes it work.",
+    "detail": "Follow the request from a web API through data, retrieval, generation and tools. Each boundary needs an explicit contract and evidence that the system behaves as intended. Select components to create a working evaluation plan.",
+    "inputs": ["A user need", "A consequence of failure"],
+    "outputs": ["A system design", "An evidence plan"],
+    "failures": ["A polished demo without representative evidence"],
+    "requirements": [],
+    "related": [],
+    "sources": [],
+    "tags": ["tools of the trade", "onboarding", "Brightbeam"]
+  },
+  {
+    "id": "api",
+    "title": "API & gateway",
+    "parent": "home",
+    "type": "component",
+    "summary": "Start at the interface your application exposes.",
+    "detail": "A gateway routes and governs calls. The application still owns task semantics, authorization, deadlines and the response contract. Keep model inference APIs, agent-facing tool gateways and application APIs distinct.",
+    "inputs": ["Authenticated request", "Tenant and task context"],
+    "outputs": [
+      "Validated response or explicit error",
+      "Request-level telemetry"
+    ],
+    "failures": [
+      "Cross-tenant access",
+      "An invalid answer with HTTP 200",
+      "Retries that duplicate side effects"
+    ],
+    "requirements": ["api-contract", "operational-health"],
+    "related": [
+      {
+        "id": "search",
+        "relation": "can call"
+      },
+      {
+        "id": "generation",
+        "relation": "can call"
+      },
+      {
+        "id": "agents",
+        "relation": "can delegate to"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenAPI specification",
+        "url": "https://spec.openapis.org/oas/latest.html"
+      }
+    ],
+    "tags": ["endpoint", "rest", "http", "gateway"]
+  },
+  {
+    "id": "api-contract",
+    "title": "Request & response contract",
+    "parent": "api",
+    "type": "method",
+    "summary": "Decide what a successful response actually means.",
+    "detail": "Validate inputs, return stable error types and test authorization independently of model behavior. A valid JSON response establishes shape. It does not establish factual correctness.",
+    "inputs": ["Request schema", "Authorization policy"],
+    "outputs": ["Typed response", "Documented error behavior"],
+    "failures": [
+      "Missing values coerced into empty strings",
+      "Unbounded requests",
+      "Model text treated as trusted code"
+    ],
+    "requirements": ["api-contract"],
+    "related": [
+      {
+        "id": "p-structured-output",
+        "relation": "uses"
+      }
+    ],
+    "sources": [
+      {
+        "title": "JSON Schema",
+        "url": "https://json-schema.org/understanding-json-schema"
+      }
+    ]
+  },
+  {
+    "id": "gateway-routing",
+    "title": "Model routing & budgets",
+    "parent": "api",
+    "type": "component",
+    "summary": "Choose where a request runs and what it may consume.",
+    "detail": "Record provider, model, prompt and retrieval versions for each evaluated configuration. Test fallback routes on the same tasks. A fallback may differ in tool support, safety behavior, quality and data location.",
+    "inputs": ["Provider policy", "Latency and token budgets"],
+    "outputs": ["Chosen deployment", "Explicit fallback or error"],
+    "failures": [
+      "Silent model changes",
+      "Provider retry storms",
+      "Data sent to an unapproved region"
+    ],
+    "requirements": ["api-contract", "operational-health"],
+    "related": [
+      {
+        "id": "hosting",
+        "relation": "depends on"
+      },
+      {
+        "id": "x-pinning",
+        "relation": "needs"
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenTelemetry generative AI conventions",
+        "url": "https://opentelemetry.io/docs/specs/semconv/gen-ai/"
+      }
+    ]
+  }
+]

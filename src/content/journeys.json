@@ -1,0 +1,138 @@
+[
+  {
+    "id": "first-api",
+    "title": "Ship your first grounded API",
+    "audience": "Web engineer · begin here",
+    "summary": "Turn a familiar endpoint into a system that can find evidence, answer and be tested.",
+    "steps": [
+      {
+        "node": "api",
+        "task": "Write the user outcome and response contract."
+      },
+      {
+        "node": "data",
+        "task": "Identify source ownership and allowed use."
+      },
+      {
+        "node": "search",
+        "task": "Retrieve evidence before you generate."
+      },
+      {
+        "node": "golden-dataset",
+        "task": "Label real questions and relevant sources."
+      },
+      {
+        "node": "generation",
+        "task": "Require supported answers and explicit abstention."
+      },
+      {
+        "node": "evaluation-baseline",
+        "task": "Measure a simple baseline before adding complexity."
+      },
+      {
+        "node": "operations",
+        "task": "Observe failures and prepare a rollback."
+      }
+    ]
+  },
+  {
+    "id": "agent",
+    "title": "Give an agent tools safely",
+    "audience": "Engineer + product owner",
+    "summary": "Connect an interactive agent, constrain its tools and keep people in consequential decisions.",
+    "steps": [
+      {
+        "node": "api",
+        "task": "Specify the task and what success changes."
+      },
+      {
+        "node": "agents",
+        "task": "Separate the agent loop from its integrations."
+      },
+      {
+        "node": "p-orchestration",
+        "task": "Define the workflow and failure states."
+      },
+      {
+        "node": "evaluation",
+        "task": "Test outputs and the sequence of actions."
+      },
+      {
+        "node": "annotation-rubric",
+        "task": "Agree how people judge success."
+      },
+      {
+        "node": "operations",
+        "task": "Make decisions and failures inspectable."
+      }
+    ]
+  },
+  {
+    "id": "quality",
+    "title": "Decide if a change is better",
+    "audience": "Stakeholder + engineer",
+    "summary": "Ask for evidence you can act on, from representative cases to uncertainty and release decisions.",
+    "steps": [
+      {
+        "node": "evaluation",
+        "task": "Define the consequence of a wrong answer."
+      },
+      {
+        "node": "golden-dataset",
+        "task": "Capture representative and difficult cases."
+      },
+      {
+        "node": "data-splits",
+        "task": "Protect independent evaluation data."
+      },
+      {
+        "node": "annotation-rubric",
+        "task": "Agree an observable success rubric."
+      },
+      {
+        "node": "p-llm-judge",
+        "task": "Calibrate automated judging against people."
+      },
+      {
+        "node": "x-bootstrap",
+        "task": "Compare paired outcomes with uncertainty."
+      },
+      {
+        "node": "operations",
+        "task": "Choose release and rollback criteria."
+      }
+    ]
+  },
+  {
+    "id": "adapt",
+    "title": "Adapt and host a model",
+    "audience": "Engineer · deeper exploration",
+    "summary": "Compare prompts, weights and hosting choices while protecting a trustworthy evaluation set.",
+    "steps": [
+      {
+        "node": "evaluation-baseline",
+        "task": "Record quality, cost and latency today."
+      },
+      {
+        "node": "adaptation",
+        "task": "Choose what you want optimization to change."
+      },
+      {
+        "node": "data-splits",
+        "task": "Keep training and test evidence separate."
+      },
+      {
+        "node": "synthetic-eval-risks",
+        "task": "Check what generated data cannot tell you."
+      },
+      {
+        "node": "hosting",
+        "task": "Plan capacity and operational ownership."
+      },
+      {
+        "node": "x-cost-quality",
+        "task": "Compare practical gains and service costs."
+      }
+    ]
+  }
+]
