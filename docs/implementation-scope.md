@@ -8,7 +8,7 @@ Teach people to connect user needs to business rules, system components, evaluat
 
 ## First complete experience
 
-A guided tutorial uses a fictional product-support assistant. A blank project follows the same steps: outcome, needs, rules and sources, architecture, evaluation, delivery and agent handoff. Role selection explains what to contribute and what a chosen collaborator should challenge. The existing 111-topic field guide, journeys, platform views and calculators remain available in React.
+A guided tutorial uses a fictional product-support assistant. A blank project follows the same steps: outcome, needs, rules and sources, architecture, evaluation, delivery and agent handoff. Role selection explains what to contribute and what a chosen collaborator should challenge. The field guide, journeys, platform views and calculators remain available in React.
 
 The visual editor uses React Flow. Engineers can add, connect and reposition components, inspect data structures and internal processes, and link needs and rules. A deterministic starting architecture uses one service and adds persistence or asynchronous workers only when selected requirements justify them. It is editable and never a claim that an architecture has been validated.
 

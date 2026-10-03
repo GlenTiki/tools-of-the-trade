@@ -1665,6 +1665,10 @@
       {
         "id": "p-llm-judge",
         "relation": "related"
+      },
+      {
+        "id": "x-selective-prediction",
+        "relation": "informs_answer_threshold"
       }
     ],
     "sources": [
@@ -1958,6 +1962,10 @@
       {
         "id": "evaluation-baseline",
         "relation": "related"
+      },
+      {
+        "id": "x-unit-economics",
+        "relation": "includes_outcome_cost"
       }
     ],
     "sources": [
@@ -2243,6 +2251,10 @@
       {
         "id": "x-power-analysis",
         "relation": "related"
+      },
+      {
+        "id": "x-construct-validity",
+        "relation": "defines_success_with"
       }
     ],
     "sources": [

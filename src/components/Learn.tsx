@@ -131,7 +131,7 @@ export default function Learn({ onUseConcept }: LearnProps) {
             className={view.id === "home" ? "is-active" : ""}
             onClick={() => navigate("home")}
           >
-            Overview <span>111</span>
+            Overview <span>{concepts.length}</span>
           </button>
           {areas.map((area, index) => (
             <button
@@ -604,6 +604,7 @@ function Related({
   return (
     <section className="learn-panel">
       <h2>Connected concepts</h2>
+      <p>Curated conceptual links.</p>
       <div className="learn-related">
         {concept.related.map((relation) => (
           <button

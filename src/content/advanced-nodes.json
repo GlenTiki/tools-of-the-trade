@@ -646,6 +646,10 @@
       {
         "id": "a-rollback",
         "relation": "informs"
+      },
+      {
+        "id": "a-user-slo",
+        "relation": "agreed_through"
       }
     ],
     "sources": [
@@ -1063,6 +1067,10 @@
       {
         "id": "data-splits",
         "relation": "requires"
+      },
+      {
+        "id": "x-goodhart",
+        "relation": "can_overoptimize_proxy"
       }
     ],
     "sources": [
@@ -1332,5 +1340,267 @@
         "url": "https://docs.haystack.deepset.ai/docs/intro"
       }
     ]
+  },
+  {
+    "id": "x-construct-validity",
+    "title": "Does the metric measure the user need?",
+    "parent": "evaluation",
+    "type": "concept",
+    "summary": "Construct validity asks whether your chosen measure represents the outcome people actually need.",
+    "detail": "A correctly computed score can measure the wrong thing. Name the user task, the proxy and what the proxy misses. Check negative cases and affected groups against an independent task outcome.\n\nIllustrative: an answer cites its source accurately but omits the exception that determines whether the customer qualifies. Grounding alone does not establish useful advice.\n\nDirector and domain expert define the outcome. The business analyst records its meaning; QA tests disagreements; engineers preserve the observations needed to challenge the metric.",
+    "inputs": [
+      "User need and measurable proxy",
+      "Negative examples and affected groups"
+    ],
+    "outputs": ["Documented blind spots", "Independent task-success check"],
+    "failures": [
+      "Correct arithmetic hides an invalid proxy.",
+      "Aggregate success hides a group’s failures."
+    ],
+    "requirements": ["answer-grounding", "judge-calibration"],
+    "related": [
+      {
+        "id": "annotation-rubric",
+        "relation": "makes_explicit"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "tested_with"
+      },
+      {
+        "id": "x-goodhart",
+        "relation": "can_be_distorted_by"
+      }
+    ],
+    "sources": [
+      {
+        "title": "NIST AI RMF Core: Map 2.3 and Measure 1",
+        "url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+      }
+    ],
+    "tags": [
+      "cross-role",
+      "construct validity",
+      "director",
+      "business analyst",
+      "domain expert",
+      "QA",
+      "engineer"
+    ]
+  },
+  {
+    "id": "x-goodhart",
+    "title": "When a score becomes a target",
+    "parent": "evaluation",
+    "type": "concept",
+    "summary": "Goodhart effects occur when stronger optimization of a proxy stops improving the outcome you care about.",
+    "detail": "A useful proxy can become unreliable under noise, changed conditions or strategic behavior. This is a family of failure mechanisms, not a claim that every metric inevitably fails.\n\nIllustrative: rewarding answer rate discourages necessary abstention. Rewarding containment can hide unresolved customer cases. Track the actual outcome alongside the target.\n\nDirectors resolve conflicting incentives. QA keeps independent review and untouched cases. Engineers record coverage and failure slices. A held-out set can expose overfitting; it cannot repair an outcome that the metric never measured.",
+    "inputs": [
+      "Rewarded metric and intended outcome",
+      "Independent cases and reviewer incentives"
+    ],
+    "outputs": ["Proxy failure examples", "Balanced decision criteria"],
+    "failures": [
+      "The evaluator rewards the same shortcut as the system.",
+      "A better score hides unresolved cases."
+    ],
+    "requirements": ["adaptation-holdout", "statistical-comparison"],
+    "related": [
+      {
+        "id": "x-held-out",
+        "relation": "checked_with"
+      },
+      {
+        "id": "x-construct-validity",
+        "relation": "depends_on_valid_measure"
+      },
+      {
+        "id": "x-selective-prediction",
+        "relation": "exposes_coverage_tradeoff"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Manheim and Garrabrant: Categorizing Variants of Goodhart’s Law",
+        "url": "https://arxiv.org/abs/1803.04585"
+      }
+    ],
+    "tags": [
+      "cross-role",
+      "Goodhart",
+      "incentives",
+      "director",
+      "QA",
+      "engineer"
+    ]
+  },
+  {
+    "id": "x-selective-prediction",
+    "title": "Answer, ask, or refer",
+    "parent": "evaluation",
+    "type": "concept",
+    "summary": "Selective prediction evaluates error among answered cases together with how many cases the system answers.",
+    "detail": "A reject option trades coverage against error on accepted predictions. The cited source treats classifiers; applying the pattern to generated answers is a teaching extension. A confidence score is not automatically a calibrated probability. Choose thresholds on development cases and evaluate them on held-out cases.\n\nIllustrative: 80 of 100 cases answered with 8 errors gives 80% coverage and 10% selective error. A stricter threshold answers 60 with 3 errors: 60% coverage and 5% error, with referrals rising from 20 to 40. This improvement is not guaranteed.\n\nDomain experts and QA define error costs. Operations checks reviewer capacity; engineers test the rule. Hard business constraints remain constraints, not costs to trade away.",
+    "inputs": [
+      "Answered, referred and incorrect counts",
+      "Decision costs and reviewer capacity"
+    ],
+    "outputs": [
+      "Coverage and selective error",
+      "Answer, clarification or referral rule"
+    ],
+    "failures": [
+      "Low coverage flatters reported accuracy.",
+      "Confidence language substitutes for calibration."
+    ],
+    "requirements": ["answer-grounding", "judge-calibration"],
+    "related": [
+      {
+        "id": "x-precision-recall",
+        "relation": "distinguishes_error_types"
+      },
+      {
+        "id": "x-calibration",
+        "relation": "checks_probabilities"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "tested_with"
+      },
+      {
+        "id": "a-chap",
+        "relation": "supports_human_checkpoint"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Franc, Prusa and Voracek: Optimal Strategies for Reject Option Classifiers",
+        "url": "https://www.jmlr.org/papers/volume24/21-0048/21-0048.pdf"
+      }
+    ],
+    "tags": [
+      "cross-role",
+      "selective prediction",
+      "abstention",
+      "risk coverage",
+      "domain expert",
+      "QA",
+      "operations",
+      "engineer"
+    ],
+    "formula": "coverage = answered / eligible; selective error = incorrect answers / answered. Each ratio is undefined when its denominator is zero."
+  },
+  {
+    "id": "a-user-slo",
+    "title": "Agree on a service promise",
+    "parent": "operations",
+    "type": "concept",
+    "summary": "A user-centered SLO connects service indicators, ownership and recovery decisions to an actual user journey.",
+    "detail": "Define eligible events, what counts as good and the measurement window. Keep response availability separate from answer correctness and task completion. The denominator must include the users the promise covers.\n\nIllustrative: HTTP 200 proves a response arrived, not that the customer received the correct exception. A separate reviewed sample checks that outcome.\n\nThe product owner defines the promise with users; SRE owns measurement and recovery. QA checks quality evidence. Name who may pause, release or roll back. Operational feedback proposes reviewed dataset or rule changes; it does not silently retrain the system.",
+    "inputs": [
+      "User journey and eligible events",
+      "Indicators, window and named owners"
+    ],
+    "outputs": [
+      "Service promise and response policy",
+      "Reviewed feedback proposals"
+    ],
+    "failures": [
+      "Availability is presented as answer correctness.",
+      "Feedback silently changes the evaluation baseline."
+    ],
+    "requirements": ["operational-health", "answer-grounding"],
+    "related": [
+      {
+        "id": "a-slo",
+        "relation": "quantified_by"
+      },
+      {
+        "id": "a-rollback",
+        "relation": "acted_on_with"
+      },
+      {
+        "id": "x-drift",
+        "relation": "reviewed_with"
+      },
+      {
+        "id": "a-tracing",
+        "relation": "observed_with"
+      },
+      {
+        "id": "golden-dataset",
+        "relation": "improved_through_review"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google SRE Workbook: Implementing SLOs",
+        "url": "https://sre.google/workbook/implementing-slos/"
+      }
+    ],
+    "tags": [
+      "cross-role",
+      "user-centered SLO",
+      "service promise",
+      "product owner",
+      "SRE",
+      "QA",
+      "operations"
+    ]
+  },
+  {
+    "id": "x-unit-economics",
+    "title": "Cost per useful outcome",
+    "parent": "operations",
+    "type": "concept",
+    "summary": "Unit economics connects attributable costs to verified outcomes within an explicit scope and measurement window.",
+    "detail": "Define the successful outcome and cost boundary before comparing options. Include model calls, retrieval, retries, human review and operations where attributable. State how shared costs are allocated. Compare alternatives at equivalent quality and disclose uncertainty.\n\nIllustrative: 100 cost units divided by 20 verified successful outcomes gives 5 per outcome. With zero verified successes, the ratio is undefined. Cheap tokens alone cannot establish useful value.\n\nDirector and finance set decision criteria. The product manager defines the outcome; engineers record usage; QA qualifies successes. Revisit definitions when the service or user population changes.",
+    "inputs": [
+      "Attributable costs in one window",
+      "Verified successes and allocation policy"
+    ],
+    "outputs": [
+      "Cost per useful outcome",
+      "Decision owner and comparable alternatives"
+    ],
+    "failures": [
+      "Retries or human work disappear from the cost boundary.",
+      "Easy cases inflate the success denominator."
+    ],
+    "requirements": ["operational-health", "statistical-comparison"],
+    "related": [
+      {
+        "id": "x-cost-quality",
+        "relation": "compared_with"
+      },
+      {
+        "id": "a-user-slo",
+        "relation": "constrained_by"
+      },
+      {
+        "id": "x-construct-validity",
+        "relation": "defines_success_with"
+      },
+      {
+        "id": "a-tracing",
+        "relation": "informed_by"
+      }
+    ],
+    "sources": [
+      {
+        "title": "FinOps Framework: Unit Economics",
+        "url": "https://www.finops.org/framework/capabilities/unit-economics/"
+      }
+    ],
+    "tags": [
+      "cross-role",
+      "unit economics",
+      "director",
+      "finance",
+      "product manager",
+      "QA",
+      "engineer"
+    ],
+    "formula": "cost per useful outcome = total attributable cost / verified successful outcomes, for a shared scope and window; undefined when verified successes = 0."
   }
 ]
