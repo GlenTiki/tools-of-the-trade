@@ -83,11 +83,30 @@ describe("local formal-spec converter", () => {
       extractProject('{"is_error":true,"result":"failed"}'),
     ).toThrow();
     expect(() => extractProject("x".repeat(1_048_577))).toThrow();
-    const project = createProject();
+    const project = createProject(true);
     project.edges[0].source = "missing";
     expect(() =>
       extractProject(JSON.stringify({ structured_output: project })),
     ).toThrow(/missing/i);
     expect(() => extractProject('{"result":"not project JSON"}')).toThrow();
   });
+});
+
+it("converts an advisory brief without instructing the runner to invent software", async () => {
+  const draft = createProject();
+  draft.title = "Arts service assessment";
+  const result = await convertSpecification(
+    "Interview staff and deliver an options memo. No software implementation is in scope.",
+    async (prompt) => {
+      expect(prompt).toContain(
+        "Keep nodes and edges empty unless the submitted scope requires software",
+      );
+      expect(prompt).not.toContain(
+        "Use one UI and one application service by default",
+      );
+      return JSON.stringify({ structured_output: draft });
+    },
+  );
+  expect(result.nodes).toEqual([]);
+  expect(result.edges).toEqual([]);
 });

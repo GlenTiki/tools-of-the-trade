@@ -6,7 +6,7 @@ import { createProject, type Component, type Connection } from "../domain";
 import { visibleConnections } from "./architecture-view";
 
 function component(id: string, parentId: string | null): Component {
-  return { ...createProject().nodes[0], id, parentId };
+  return { ...createProject(true).nodes[0], id, parentId };
 }
 
 const nodes = [

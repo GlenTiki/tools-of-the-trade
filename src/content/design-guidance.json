@@ -25,17 +25,17 @@
     },
     {
       "id": "pm",
-      "title": "Product and delivery manager",
-      "summary": "Connect the user outcome to a deliverable that the team can review.",
-      "contribution": "Define the first useful scope, dependencies and decisions that need an owner.",
-      "artifact": "Delivery plan with acceptance conditions and named handoffs.",
+      "title": "Project manager / delivery lead",
+      "summary": "Connect client outcomes, commitments and delivery decisions.",
+      "contribution": "Hold scope, phases, client responsibilities, commercial changes and acceptance together. Work with the technical lead on design, evidence and operating consequences.",
+      "artifact": "Engagement plan with deliverables, milestones, dependencies, decision owners and commercial boundaries.",
       "questions": [
-        "Which user problem will the first release address?",
-        "What will this release deliberately leave unresolved?"
+        "What has the client agreed to receive, and what remains a proposal?",
+        "Which client dependency or decision controls the next useful milestone?"
       ],
       "reviewQuestions": [
-        "Does every release condition have an evidence owner?",
-        "Can the team complete the human review work this design creates?"
+        "Are delivery assumptions and changes visible to the client acceptor?",
+        "Can the team and client sustain the proposed operating responsibilities?"
       ],
       "steps": [
         "outcome",
@@ -119,17 +119,17 @@
     },
     {
       "id": "engineer",
-      "title": "Engineer",
-      "summary": "Turn rules into explicit component boundaries and executable checks.",
-      "contribution": "Define contracts, state changes and data dependencies before choosing additional infrastructure.",
-      "artifact": "Architecture and implementation brief linked to rules and tests.",
+      "title": "Technical lead / engineer",
+      "summary": "Connect client needs to a defensible approach and its operating consequences.",
+      "contribution": "Compare options, expose technical and delivery risks, and define evidence. Partner with the PM on scope, capacity, commercial implications and client decisions; software is one possible outcome.",
+      "artifact": "Options and design record with acceptance evidence, implementation boundaries and operating ownership.",
       "questions": [
-        "Which component enforces each rule?",
-        "What happens if this operation succeeds but its response is lost?"
+        "Could advice, a process change or an existing system meet the need?",
+        "What technical, human or operating dependency could invalidate this plan?"
       ],
       "reviewQuestions": [
-        "Does authorization occur at the execution boundary?",
-        "Can the proposed tests fail when the rule is violated?"
+        "Do the acceptance evidence and client constraints support the recommendation?",
+        "Are failure handling, support and commercial boundaries explicit?"
       ],
       "steps": [
         "outcome",
@@ -262,62 +262,437 @@
   "tutorial": [
     {
       "id": "outcome",
-      "title": "Choose a useful outcome",
-      "lesson": "Begin with a user task and a consequence. State the boundary before choosing a model. All support-assistant examples in this guide are fictional.",
-      "prompt": "What should the user be able to complete?",
-      "example": "A customer identifies the correct reset procedure for an Acme Home Hub without advice intended for the Business Hub.",
-      "doneWhen": "A named owner can explain the intended outcome and the first release boundary. Unknown targets remain marked as unknown."
+      "title": "Frame the engagement",
+      "lesson": "Agree the client mandate and the user or business change worth pursuing. Start with the boundary, not a tool.",
+      "prompt": "What result would make this engagement worthwhile?",
+      "example": "A community organisation wants service requests to reach an accountable person. The first phase delivers a service map and options memo, not software.",
+      "doneWhen": "A client acceptor, deliverable, scope boundary and baseline or explicit unknown are recorded."
     },
     {
       "id": "needs",
-      "title": "Capture the needs and exceptions",
-      "lesson": "Describe the people, context and failure consequences. Include users who need an alternative channel or an accessible interaction.",
-      "prompt": "Which need must the service satisfy first?",
-      "example": "A customer must receive instructions for their exact product version. An unknown model triggers a clarification question.",
-      "doneWhen": "Each need has an actor, an observable result and an example of a wrong result."
+      "title": "Understand users and the work",
+      "lesson": "Capture the people, tasks, dependencies and exceptions that shape the engagement.",
+      "prompt": "Which task or decision needs to improve?",
+      "example": "A staff member needs to identify who can resolve an unusual request. Interviews and a walkthrough will test the proposed ownership process.",
+      "doneWhen": "Each priority need has an owner, an observable result and an acceptance example."
     },
     {
       "id": "rules",
-      "title": "Agree rules and source authority",
-      "lesson": "Record what must happen, the source that authorizes it and who resolves conflicts. A document being newer does not automatically make it authoritative.",
-      "prompt": "Which rule controls this outcome?",
-      "example": "For Home products, use the current approved Home manual. A superseding safety bulletin overrides the affected procedure. Unresolved source conflicts go to product support.",
-      "doneWhen": "Rules have source references, division scope and expected exception outcomes. Unconfirmed interpretations remain open decisions."
+      "title": "Agree constraints and decisions",
+      "lesson": "Make client policy, source authority, risks and decision rights explicit. Record unknowns for review.",
+      "prompt": "Which constraint or decision controls the proposed change?",
+      "example": "Only the service owner can reassign an urgent request. The current operating procedure and its owner establish the rule; conflicting advice stays unresolved.",
+      "doneWhen": "Rules and decisions have owners, sources and exception outcomes. Sector-specific routing is optional."
     },
     {
       "id": "architecture",
-      "title": "Connect the rules to components",
-      "lesson": "Start with the smallest design that can enforce the rules. Add storage, queues or separate services when a stated requirement needs them.",
-      "prompt": "Where will this rule be enforced?",
-      "example": "One application service validates the product, filters authorized documents, retrieves evidence and drafts the reply. Account changes use a separately authorized tool.",
-      "doneWhen": "Each selected component has a purpose, a contract and links to the rules it implements. The diagram remains a proposed design until reviewed."
+      "title": "Design an appropriate approach",
+      "lesson": "Compare options and record boundaries. Use the software canvas only when software design is part of the engagement.",
+      "prompt": "What is the smallest approach that meets the need?",
+      "example": "The team compares a clearer ownership guide with changes to an existing form. Advisory work can hand over that comparison without inventing an application.",
+      "doneWhen": "The chosen approach has a reason and reviewable assumptions. Software components are optional and are proposals, not implemented assets."
     },
     {
       "id": "evaluation",
-      "title": "Define the evidence",
-      "lesson": "Use reviewed examples with explicit measures and decision criteria. Separate development examples from the held-out cases used for a release comparison.",
-      "prompt": "What observation would make us reject this design?",
-      "example": "A test asks for Home Hub instructions while the index contains a similar Business Hub procedure. Any cross-division source in the answer fails this case.",
-      "doneWhen": "Cases cover ordinary tasks, risk slices and failures. Measures, proposed thresholds, dataset roles and evidence owners are explicit."
+      "title": "Plan acceptance evidence",
+      "lesson": "Choose evidence that could show the recommendation or deliverable is wrong. Scale it to the task and consequence.",
+      "prompt": "What would the client need to see before accepting this work?",
+      "example": "Staff walk through normal and exceptional requests; the service owner reviews whether each case reaches an accountable person. No model dataset is needed.",
+      "doneWhen": "Acceptance cases, evidence owners and rejection conditions are explicit. Use specialist evaluation only when it applies."
     },
     {
       "id": "delivery",
-      "title": "Prepare release and operation",
-      "lesson": "Record the release evidence, the person who decides and the recovery path. Completed fields do not establish readiness.",
-      "prompt": "What evidence must the release owner review?",
-      "example": "The release owner reviews source-filter tests, held-out answer results, capacity checks and a rollback rehearsal before deciding whether to enable a limited pilot.",
-      "doneWhen": "The release decision, remaining unknowns, cost assumptions and operating ownership are recorded. Approval is explicit and tied to a version."
+      "title": "Plan delivery and client decisions",
+      "lesson": "Agree phases, responsibilities, capacity, commercial boundaries, adoption and operating ownership. Revisit the plan as evidence changes.",
+      "prompt": "What must be delivered and decided before the next phase?",
+      "example": "The options memo needs client feedback before a pilot can be proposed. The PM records access dependencies and unagreed dates; the technical lead explains support implications.",
+      "doneWhen": "Milestone outputs, dependency owners, change decisions and handover conditions are recorded. A later phase is not silently committed."
     },
     {
       "id": "handoff",
-      "title": "Hand off a reviewable specification",
-      "lesson": "Export the agreed scope with traceable rules, acceptance cases and unresolved questions. An agent may propose an implementation; it cannot approve its own design.",
-      "prompt": "What bounded task should the next person or agent perform?",
-      "example": "Implement the division filter and its tests. Keep the source-conflict policy unresolved and do not deploy the assistant.",
-      "doneWhen": "The recipient can identify the project revision, authorized task, acceptance evidence and decisions they must return to a person."
+      "title": "Hand over and review impact",
+      "lesson": "Share the agreed deliverables, evidence and remaining decisions with the people responsible for what follows.",
+      "prompt": "What can the recipient act on, and what still needs a decision?",
+      "example": "The client receives the service map, options memo and decision record. Operations owns the next review; implementation needs a separate scope decision.",
+      "doneWhen": "The recipient can identify the deliverable version, acceptance evidence, limitations and next owner. Completion of fields is not verified approval."
     }
   ],
   "checkpoints": [
+    {
+      "id": "engagement-mandate",
+      "title": "Engagement mandate and scope",
+      "lifecycle": "design",
+      "group": "core",
+      "purpose": "Agree the client problem, intended impact and boundary before committing the team.",
+      "applicability": "Start here for a new engagement or a material change in direction.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "impact",
+          "label": "What user and business result does the client need?",
+          "hint": "Connect an observable user benefit to a business consequence. Record unknown baselines.",
+          "example": "Staff can find the owner of a service request; fewer requests wait without a named responder."
+        },
+        {
+          "id": "deliverables",
+          "label": "Which deliverables will the client receive?",
+          "hint": "Name a reviewable output, not just an activity. Discovery may end with an options memo.",
+          "example": "Interview findings, service map and an options memo; no software build in this phase."
+        },
+        {
+          "id": "exclusions",
+          "label": "What is outside the agreed scope?",
+          "hint": "State work that would need a separate decision.",
+          "example": "No system procurement, deployment or ongoing support."
+        },
+        {
+          "id": "sponsor",
+          "label": "Who can accept the engagement mandate for the client?",
+          "hint": "Distinguish the client decision owner from the supplier delivery lead.",
+          "example": "Client service director; supplier project manager prepares the mandate."
+        },
+        {
+          "id": "boundary",
+          "label": "What time and spending boundary has been agreed?",
+          "hint": "Record supplied constraints and their source; leave unagreed dates or fees explicit.",
+          "example": "Fixed discovery fee in the signed brief; completion date awaits interview access."
+        }
+      ],
+      "outputs": [
+        "Engagement brief with outcomes, deliverables and exclusions",
+        "Named client acceptor and agreed constraints"
+      ]
+    },
+    {
+      "id": "engagement-working",
+      "title": "Client responsibilities and working agreement",
+      "lifecycle": "design",
+      "group": "core",
+      "purpose": "Make client dependencies, team responsibilities and decisions visible in a small team.",
+      "applicability": "Use at mobilisation and whenever responsibilities or decision access change.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "responsibilities",
+          "label": "Who owns each client and supplier responsibility?",
+          "hint": "One person can hold several roles; distinguish accountability from participation.",
+          "example": "Client sponsor accepts scope; client coordinator provides access; supplier PM leads delivery; technical lead assesses options."
+        },
+        {
+          "id": "inputs",
+          "label": "Which client inputs must be available?",
+          "hint": "Name the input, its owner and the consequence of delay.",
+          "example": "Client coordinator arranges staff interviews and supplies the current request log; absent access delays findings."
+        },
+        {
+          "id": "cadence",
+          "label": "How will the client and team review progress?",
+          "hint": "Agree a practical channel, cadence and written decision record.",
+          "example": "Weekly review of findings and blockers, with a shared decision log."
+        },
+        {
+          "id": "escalation",
+          "label": "What happens when a decision or dependency is late?",
+          "hint": "Identify who resolves it and how the delivery impact becomes visible.",
+          "example": "PM records the impact and asks the client sponsor to choose a reduced scope or revised milestone."
+        }
+      ],
+      "outputs": [
+        "Responsibility and dependency agreement",
+        "Review cadence, decision log and escalation path"
+      ]
+    },
+    {
+      "id": "engagement-governance",
+      "title": "Governance, risks and boundaries",
+      "lifecycle": "design",
+      "group": "core",
+      "purpose": "Record consequential risks and the authority needed to manage them.",
+      "applicability": "Use for every engagement; scale the controls to actual exposure.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "risk",
+          "label": "Which risk could most undermine the agreed outcome?",
+          "hint": "Describe a cause, consequence and accountable owner.",
+          "example": "An unrepresentative interview sample could miss access barriers; client service owner checks coverage."
+        },
+        {
+          "id": "data",
+          "label": "What information may the team access and share?",
+          "hint": "Record agreed permissions, handling and retention; do not paste restricted content here.",
+          "example": "Use fictional examples in workshops; keep client records in the approved client repository."
+        },
+        {
+          "id": "authority",
+          "label": "Which decisions require explicit client approval?",
+          "hint": "Name the decision authority and evidence they need.",
+          "example": "Sponsor approves scope, budget and release decisions; technical lead supplies impact evidence."
+        },
+        {
+          "id": "response",
+          "label": "What will trigger review or containment?",
+          "hint": "State a signal and an action, not a risk score without a response.",
+          "example": "If access permissions cannot be confirmed, stop that data activity and ask its owner."
+        }
+      ],
+      "outputs": [
+        "Risk and boundary record",
+        "Decision authority and response triggers"
+      ]
+    },
+    {
+      "id": "engagement-roadmap",
+      "title": "Phases, milestones and capacity",
+      "lifecycle": "implementation",
+      "group": "core",
+      "purpose": "Sequence reviewable deliverables around dependencies and available people.",
+      "applicability": "Use to plan the next bounded phase; revisit when evidence or capacity changes.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "phases",
+          "label": "Which phases and deliverables are needed?",
+          "hint": "Discovery-only work can stop at an accepted recommendation; a build is not mandatory.",
+          "example": "Discovery findings → options review → client decision; implementation depends on that decision."
+        },
+        {
+          "id": "milestone",
+          "label": "What marks the next milestone?",
+          "hint": "Record its output, acceptance condition and any client-supplied target date.",
+          "example": "Options memo reviewed by sponsor; target remains unagreed until interview availability is confirmed."
+        },
+        {
+          "id": "dependencies",
+          "label": "Which dependency controls the next milestone?",
+          "hint": "Name its owner and the plan if it is unavailable.",
+          "example": "Client data owner must provide an approved sample before reconciliation design; otherwise assess process evidence only."
+        },
+        {
+          "id": "capacity",
+          "label": "What capacity and uncertainty shape the plan?",
+          "hint": "Use stated availability and justified ranges; do not manufacture an estimate.",
+          "example": "One PM and one technical lead share delivery; specialist security review availability is unconfirmed."
+        },
+        {
+          "id": "sequence",
+          "label": "Which decision would change the sequence?",
+          "hint": "Separate committed work from conditional later options.",
+          "example": "Sponsor may fund a pilot after the options review; that phase is not yet committed."
+        }
+      ],
+      "outputs": [
+        "Phased roadmap with milestone evidence",
+        "Dependency owners, capacity assumptions and conditional work"
+      ]
+    },
+    {
+      "id": "engagement-design",
+      "title": "Design choices and evidence plan",
+      "lifecycle": "implementation",
+      "group": "core",
+      "purpose": "Connect the proposed approach to user needs, constraints and evidence that could reject it.",
+      "applicability": "Use for advice, process change, migration or software design.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "options",
+          "label": "Which options deserve comparison?",
+          "hint": "Include a smaller change or no-build option where credible.",
+          "example": "Clarify request ownership, improve an existing form, or commission a new portal."
+        },
+        {
+          "id": "tradeoff",
+          "label": "What tradeoff determines the recommendation?",
+          "hint": "Compare impact, accessibility, delivery effort, operating burden and client constraints.",
+          "example": "Improve the existing form if it meets staff access needs without a new support burden."
+        },
+        {
+          "id": "evidence",
+          "label": "What evidence will test the recommendation?",
+          "hint": "Choose evidence suited to the engagement; interviews, reconciliations and walkthroughs need no model dataset.",
+          "example": "Staff walkthroughs of ordinary and exceptional requests, plus a review of the options memo."
+        },
+        {
+          "id": "acceptance",
+          "label": "What result would make the client reject the proposal?",
+          "hint": "Name the acceptance owner and observable rejection condition.",
+          "example": "Service owner rejects an option that leaves urgent requests without an accountable responder."
+        },
+        {
+          "id": "review",
+          "label": "Who will review the design and its limitations?",
+          "hint": "Use targeted expertise; record unresolved concerns rather than implying approval.",
+          "example": "PM and technical lead review with client operations; accessibility specialist reviews the proposed form."
+        }
+      ],
+      "outputs": [
+        "Options and tradeoff record",
+        "Acceptance evidence plan with reviewers and unresolved concerns"
+      ]
+    },
+    {
+      "id": "engagement-change",
+      "title": "Scope, change and commercial decisions",
+      "lifecycle": "implementation",
+      "group": "core",
+      "purpose": "Expose the effect of a change before it becomes an unpriced commitment.",
+      "applicability": "Use when new work, assumptions or constraints change an agreed baseline.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "request",
+          "label": "What change is being requested?",
+          "hint": "Identify the source and reason; separate a request from an approved commitment.",
+          "example": "Client asks to add another business process to the assessment."
+        },
+        {
+          "id": "impact",
+          "label": "What changes in scope, cost, timing or risk?",
+          "hint": "Record the assessed impact and uncertainty before agreement.",
+          "example": "Additional interviews and analysis are needed; supplier lead will assess capacity before proposing terms."
+        },
+        {
+          "id": "choice",
+          "label": "What decision is required from the client?",
+          "hint": "Offer concrete options and name the authorised decision owner.",
+          "example": "Sponsor chooses to exchange an existing deliverable, revise the budget or defer the request."
+        },
+        {
+          "id": "record",
+          "label": "Where is the agreed change recorded?",
+          "hint": "Record agreement by authorised client and supplier owners for scope, fee or timing changes, or say that it is still pending.",
+          "example": "Change proposal awaits sponsor review; original scope remains the delivery baseline."
+        }
+      ],
+      "outputs": [
+        "Change and impact record",
+        "Client decision and revised baseline, or explicit pending status"
+      ]
+    },
+    {
+      "id": "engagement-handover",
+      "title": "Acceptance, adoption and handover",
+      "lifecycle": "release",
+      "group": "core",
+      "purpose": "Make the client acceptance decision and the next owner explicit.",
+      "applicability": "Use for a report, process change, migration, pilot or live service.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "deliverable",
+          "label": "Which deliverable and version are under review?",
+          "hint": "Identify the exact report, plan or system version.",
+          "example": "Service assessment and options memo, revision 3."
+        },
+        {
+          "id": "evidence",
+          "label": "What evidence supports client acceptance?",
+          "hint": "Link the agreed criteria to observed results and known limitations.",
+          "example": "Sponsor-reviewed findings cover the agreed teams; the inaccessible archive remains an explicit limitation."
+        },
+        {
+          "id": "decision",
+          "label": "What has the client acceptor decided?",
+          "hint": "Record the decision and its evidence; form status does not authenticate approval.",
+          "example": "Sponsor review is scheduled; acceptance is still pending."
+        },
+        {
+          "id": "adoption",
+          "label": "What must people learn or change to use the result?",
+          "hint": "Name communication, training and accessible support needs.",
+          "example": "Team leads need an ownership walkthrough and a short guide for exceptional requests."
+        },
+        {
+          "id": "handover",
+          "label": "Who owns the work after handover?",
+          "hint": "For advice, name the recommendation owner. For live change, record support owners, go/no-go evidence and rollback conditions and authority.",
+          "example": "Client operations owner tracks recommendations. No live service or support obligation is created by this advisory phase."
+        }
+      ],
+      "outputs": [
+        "Versioned acceptance and handover record",
+        "Adoption actions, remaining limitations and next owner"
+      ]
+    },
+    {
+      "id": "engagement-operation",
+      "title": "Operation, monitoring and support",
+      "lifecycle": "operation",
+      "group": "core",
+      "purpose": "Agree who observes the service or changed process and responds when it fails.",
+      "applicability": "Use when the engagement leaves an ongoing process or service; otherwise record why it does not apply.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "ownership",
+          "label": "Who owns ongoing operation and support?",
+          "hint": "Distinguish client ownership, supplier commitments and escalation.",
+          "example": "Client service owner owns the process; supplier support ends after the agreed handover."
+        },
+        {
+          "id": "signals",
+          "label": "Which signals will show service health and user impact?",
+          "hint": "Use actionable measures; availability alone does not establish usefulness.",
+          "example": "Unassigned requests, rework, completion time and staff-reported access problems."
+        },
+        {
+          "id": "response",
+          "label": "What response follows an unacceptable signal?",
+          "hint": "Name a threshold or agreed condition, responder and recovery action.",
+          "example": "Any urgent request without an owner triggers review by the duty lead; numerical baselines are still being collected."
+        },
+        {
+          "id": "transition",
+          "label": "What ends transition support or starts a further engagement?",
+          "hint": "Record explicit exit evidence and commercial boundaries.",
+          "example": "Operations accepts the guide and escalation path; new feature requests require a separate scope decision."
+        }
+      ],
+      "outputs": [
+        "Operating responsibilities and signal-to-action plan",
+        "Support boundary and transition exit criteria"
+      ]
+    },
+    {
+      "id": "engagement-benefits",
+      "title": "Benefits, learning and closure",
+      "lifecycle": "operation",
+      "group": "core",
+      "purpose": "Compare actual outcomes with the mandate and agree what should happen next.",
+      "applicability": "Use at phase closure and at an agreed post-handover review.",
+      "roles": ["pm", "engineer"],
+      "questions": [
+        {
+          "id": "impact",
+          "label": "What changed for users and the client?",
+          "hint": "Compare observed results with the baseline; separate evidence from attribution claims.",
+          "example": "Staff can name request owners in walkthroughs; sustained changes in response time have not yet been measured."
+        },
+        {
+          "id": "review",
+          "label": "When and by whom will remaining outcomes be reviewed?",
+          "hint": "Use an explicitly agreed date or trigger; do not infer one.",
+          "example": "Client service owner reviews the first complete reporting period after the process change."
+        },
+        {
+          "id": "learning",
+          "label": "Which assumption or practice should change?",
+          "hint": "Capture a specific lesson and owner, not a generic retrospective score.",
+          "example": "Include part-time staff earlier; supplier PM updates the discovery plan."
+        },
+        {
+          "id": "closure",
+          "label": "What is closed, handed over or proposed next?",
+          "hint": "Distinguish accepted closure from an unfunded next-phase proposal.",
+          "example": "Assessment deliverables are ready for client acceptance; implementation remains an optional proposal."
+        }
+      ],
+      "outputs": [
+        "Benefits and limitations review",
+        "Closure record, lessons and explicitly conditional next steps"
+      ]
+    },
     {
       "id": "outcome-scope",
       "title": "Outcome and scope",
@@ -360,7 +735,9 @@
         "Outcome brief",
         "Scope exclusions",
         "Decision owner and open assumptions"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when a software service needs its own scope decision."
     },
     {
       "id": "source-authority",
@@ -404,7 +781,9 @@
         "Source register",
         "Precedence rule",
         "Conflict resolution owner"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when documents or policies determine system behaviour."
     },
     {
       "id": "division-routing",
@@ -448,7 +827,9 @@
         "Routing table",
         "Clarification example",
         "Fallback queue owner"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when products or divisions require different evidence or handling."
     },
     {
       "id": "data-boundary",
@@ -492,7 +873,9 @@
         "Access rules",
         "Freshness and revocation contract",
         "Retention decision"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when a service reads, retains or removes source data."
     },
     {
       "id": "rule-exceptions",
@@ -536,7 +919,9 @@
         "Rule with examples",
         "Exception outcomes",
         "Rule change authority"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when a system must apply rules with exceptions."
     },
     {
       "id": "action-approval",
@@ -580,7 +965,9 @@
         "Action contract",
         "Approval boundary",
         "Duplicate and cancellation cases"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when software can change external state or make commitments."
     },
     {
       "id": "component-contracts",
@@ -624,7 +1011,9 @@
         "Component contracts",
         "Need and rule links",
         "Architecture decisions with assumptions"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when the engagement includes software implementation."
     },
     {
       "id": "evaluation-design",
@@ -674,7 +1063,9 @@
         "Versioned evaluation cases",
         "Metrics and risk slices",
         "Threshold decisions and evaluator checks"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when automated decisions need representative cases and measured quality."
     },
     {
       "id": "cost-outcomes",
@@ -724,7 +1115,9 @@
         "Cost assumptions",
         "Success denominator",
         "Sensitivity comparison and budget owner"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when unit cost and successful service outcomes can be defined."
     },
     {
       "id": "release-evidence",
@@ -774,7 +1167,9 @@
         "Revision-bound release record",
         "Open decisions",
         "Pilot and rollback conditions"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when a software release needs a revision-bound decision."
     },
     {
       "id": "incident-response",
@@ -818,7 +1213,9 @@
         "Incident runbook",
         "Evidence boundary",
         "Restoration authority"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when a live service needs incident containment and recovery."
     },
     {
       "id": "production-learning",
@@ -868,7 +1265,9 @@
         "Feedback sample record",
         "Change hypothesis",
         "Versioned policy decision and regression cases"
-      ]
+      ],
+      "group": "specialist",
+      "applicability": "Use when production cases inform changes to rules or automation."
     }
   ],
   "collaborations": [
@@ -952,9 +1351,9 @@
     },
     {
       "roles": ["pm", "engineer"],
-      "title": "Split a reviewable implementation",
-      "question": "What is the smallest implementation that proves the selected need and rule together?",
-      "artifact": "Bounded engineering task with acceptance evidence and dependencies."
+      "title": "One engagement plan, shared delivery judgement",
+      "question": "Do the client mandate, technical approach, evidence, capacity, commercial boundary and operating responsibilities support the same next milestone?",
+      "artifact": "Joint phase plan with options, dependencies, acceptance evidence and client decisions."
     },
     {
       "roles": ["pm", "junior"],

@@ -147,8 +147,10 @@ export function createProject(example = false): Project {
     assumptions: [],
     tutorialStep: 0,
   };
-  if (example) fillExample(project);
-  Object.assign(project, deriveArchitecture(project));
-  project.checks = deriveChecks(project);
+  if (example) {
+    fillExample(project);
+    Object.assign(project, deriveArchitecture(project));
+    project.checks = deriveChecks(project);
+  }
   return project;
 }

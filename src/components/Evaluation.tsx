@@ -33,20 +33,20 @@ function CheckEditor({
           multiline
           value={check.method}
           onChange={(v) => set("method", v)}
-          hint="For example: deterministic assertion, blind expert comparison, or a calibrated judge."
+          hint="For example: client walkthrough, options review, reconciliation or a software test."
         />
         <Field
-          label="Dataset and test slices"
+          label="Test cases or review material"
           multiline
           value={check.dataset}
           onChange={(v) => set("dataset", v)}
-          hint="Name the dataset version, origin, permission and important groups. Keep a held-out set."
+          hint="Identify the reviewed material, its version and relevant groups. A model evaluation may also need a held-out dataset."
         />
         <Field
-          label="Metric and denominator"
+          label="Measure or review criterion"
           value={check.metric}
           onChange={(v) => set("metric", v)}
-          placeholder="Correct routes / all eligible routing cases"
+          placeholder="Options address each agreed constraint; record exceptions"
         />
         <Field
           label="Expected result or acceptance threshold"
@@ -221,13 +221,14 @@ export default function Evaluation({ project, update }: EditorProps) {
           onClick={() => setShowDataset(!showDataset)}
           aria-expanded={showDataset}
         >
-          How to build a golden dataset
+          Optional: golden datasets for model evaluation
         </button>
       </div>
       {showDataset && <DatasetGuide />}
       <div className="notice">
         <strong>Plan first. Measure next.</strong> Suggested checks are drafts.
-        Agree the expected result, owner and dataset before marking evidence.
+        Agree the expected result, owner and review material before marking
+        evidence.
       </div>
       <Panel
         title={`${project.checks.length} checks in this plan`}

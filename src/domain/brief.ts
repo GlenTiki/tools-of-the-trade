@@ -1,4 +1,5 @@
-import type { Decision, Project } from "./schema";
+import type { Decision, Project, Source } from "./schema";
+import guidance from "../content/design-guidance.json" with { type: "json" };
 import { projectGaps } from "./gaps";
 
 const value = (text: string): string => text.trim() || "[unresolved]";
@@ -38,11 +39,24 @@ function checks(project: Project): string {
     )
     .join("\n\n");
 }
+function sourceText(source: Source, routing: boolean): string {
+  const scope = ["division", "product"] as const;
+  const fields = scope
+    .filter((key) => routing || source[key].trim())
+    .map((key) => `${key} ${value(source[key])}`);
+  return `${source.id}: ${value(source.name)}; ${[...fields, `authority ${value(source.authority)}`, `updates ${value(source.updateCadence)}`, `allowed use ${value(source.allowedUse)}`, `owner ${value(source.owner)}`].join("; ")}.`;
+}
 function decisionText(decision: Decision): string {
+  const template = guidance.checkpoints.find(
+    (item) => item.id === decision.templateId,
+  );
   const answers = Object.entries(decision.answers ?? {})
-    .map(([question, answer]) => `${question}: ${value(answer)}`)
-    .join("; ");
-  return `${decision.title} (${decision.lifecycle}; ${decision.status}); owner ${value(decision.owner)}; notes ${value(decision.notes)}; evidence ${value(decision.evidence)}. Template: ${decision.templateId ?? "[none]"}. Answers: ${answers || "[none recorded]"}.`;
+    .map(
+      ([question, answer]) =>
+        `${template?.questions.find((item) => item.id === question)?.label ?? question}: ${value(answer)}`,
+    )
+    .join("\n\n");
+  return `### ${value(decision.title)}\n\nLifecycle: ${decision.lifecycle}; status: ${decision.status}; owner: ${value(decision.owner)}.\n\nDecision: ${value(decision.notes)}\n\nEvidence: ${value(decision.evidence)}\n\nTemplate: ${decision.templateId ?? "[none]"}\n\n${answers || "[none recorded]"}`;
 }
 export function implementationBrief(project: Project): string {
   const sections = [
@@ -51,13 +65,13 @@ export function implementationBrief(project: Project): string {
     `## Outcome\n\nObjective: ${value(project.objective)}\n\nAudience: ${value(project.audience)}\n\nBaseline: ${value(project.baseline)}\n\nSuccess measure: ${value(project.successMeasure)}\n\nOwner: ${value(project.outcomeOwner)}\n\nRoles: ${project.roles.join(", ") || "[unassigned]"}.`,
     `## User needs\n\n${needs(project) || "[none recorded]"}`,
     `## Business rules\n\n${rules(project) || "[none recorded]"}`,
-    `## Source provenance\n\n${bullets(project.sources.map((source) => `${source.id}: ${value(source.name)}; division ${value(source.division)}; product ${value(source.product)}; authority ${value(source.authority)}; updates ${value(source.updateCadence)}; allowed use ${value(source.allowedUse)}; owner ${value(source.owner)}.`))}`,
-    `## Architecture\n\nParent relationships describe internals, not additional services.\n\n${architecture(project)}\n\nConnections:\n${bullets(project.edges.map((edge) => `${edge.source} -> ${edge.target} (${edge.kind}): ${value(edge.label)}`))}`,
+    `## Source provenance\n\n${bullets(project.sources.map((source) => sourceText(source, project.choices.divisionRouting)))}`,
+    `## Architecture\n\nParent relationships describe internals, not additional services.\n\n${architecture(project) || "No software components recorded; software design has not been assessed."}\n\nConnections:\n${bullets(project.edges.map((edge) => `${edge.source} -> ${edge.target} (${edge.kind}): ${value(edge.label)}`))}`,
     `## Evaluation checks\n\n${checks(project) || "[none recorded]"}`,
-    `## Decisions\n\n${bullets(project.decisions.map(decisionText))}`,
+    `## Decisions\n\n${project.decisions.map(decisionText).join("\n\n") || "[none recorded]"}`,
     `## Assumptions\n\n${bullets(project.assumptions)}`,
     `## Unresolved gaps\n\n${bullets(projectGaps(project).map((gap) => `${gap.title}: ${gap.detail}`))}`,
-    "## Delivery boundary\n\nImplement only the agreed scope. Begin with the linked acceptance and failure cases. Record evidence and remaining gaps before a person decides on release. Do not interpret a populated template as completed testing.",
+    "## Delivery boundary\n\nDeliver only the agreed scope: advice, a decision, a process change or software as appropriate. Record acceptance evidence, limitations and the next owner. No recorded software components means software design has not been assessed, not that an architecture is complete. A populated template does not prove testing or client approval.",
   ];
   return `${sections.join("\n\n")}\n`;
 }
