@@ -4,7 +4,9 @@ import { createProject, parseProject } from "../../src/domain";
 
 async function example(page: Page) {
   await page.goto("./");
-  await page.getByRole("button", { name: "Explore a worked example" }).click();
+  await page
+    .getByRole("button", { name: "Explore a specialist AI example" })
+    .click();
   await page.getByRole("button", { name: "Replace current project" }).click();
   await expect(page.getByLabel("Project name")).toHaveValue(
     "Fictional product support assistant",
@@ -26,7 +28,7 @@ test("a director can start a guided plan, review collaborators and keep it after
   await page.getByLabel("I am working with…").selectOption("finance");
   await expect(page.locator(".collaboration")).toContainText("cost");
   await page
-    .getByRole("button", { name: "Next: Capture the needs and exceptions" })
+    .getByRole("button", { name: "Next: Understand users and the work" })
     .click();
   await page.getByRole("button", { name: "Add a user need" }).click();
   await page.getByLabel("Who needs this?").fill("Support adviser");
@@ -93,12 +95,13 @@ test("checkpoints and evidence edits persist as portable project data", async ({
     .getByRole("button", { name: "Use this checkpoint" })
     .first()
     .click();
-  await page.getByLabel("Accountable owner").fill("Product owner");
+  await page.getByLabel("Accountable owner").last().fill("Product owner");
   await page
     .getByLabel("Decision and unresolved questions")
+    .last()
     .fill("Needs a source-owner review.");
   await page
-    .getByLabel("Which user outcome will this version improve?")
+    .getByLabel("What user and business result does the client need?")
     .fill("Correct product instructions.");
   await page.getByRole("link", { name: "Evaluation", exact: true }).click();
   await page.locator("details.record summary").first().click();
@@ -117,7 +120,7 @@ test("checkpoints and evidence edits persist as portable project data", async ({
   ).toHaveValue("QA lead");
   await page.getByRole("link", { name: "Delivery", exact: true }).click();
   await expect(
-    page.getByLabel("Which user outcome will this version improve?"),
+    page.getByLabel("What user and business result does the client need?"),
   ).toHaveValue("Correct product instructions.");
 });
 

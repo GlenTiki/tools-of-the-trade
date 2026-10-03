@@ -34,6 +34,10 @@ function RoleGuide({
         <Users size={18} aria-hidden />
         Your role & your collaborators
       </summary>
+      <p className="muted">
+        Choose your current responsibility. The same person may act as PM,
+        technical lead and reviewer at different points.
+      </p>
       <div className="form-grid">
         <Select
           label="I am contributing as…"
@@ -117,7 +121,7 @@ export default function Guide({
 }: EditorProps & { onExample: () => void }) {
   const role =
     guidance.profiles.find((profile) => profile.id === project.roles[0])?.id ??
-    "director";
+    "pm";
   const current = Math.min(project.tutorialStep, guidance.tutorial.length - 1);
   const step = guidance.tutorial[current];
   function go(index: number) {
@@ -130,10 +134,12 @@ export default function Guide({
         <p className="eyebrow">
           <Compass size={15} aria-hidden /> Your guided plan
         </p>
-        <h2>From an idea to evidence.</h2>
+        <h2>From client mandate to useful outcomes.</h2>
         <p className="muted">
-          Seven conversations that connect design, tests and delivery.
+          Seven connected conversations about the engagement. Revisit or skip
+          stages to suit the work; advisory delivery need not include software.
         </p>
+        <a href="#delivery">Open engagement checkpoints</a>
         <ol className="step-list">
           {guidance.tutorial.map((item, i) => (
             <li key={item.id}>
@@ -148,17 +154,17 @@ export default function Guide({
           ))}
         </ol>
         <button className="example-button" onClick={onExample}>
-          Explore a worked example
+          Explore a specialist AI example
         </button>
         <p className="small muted">
-          A fictional support assistant, with open questions deliberately left
-          visible.
+          Optional: a fictional AI support assistant. Its routing and model
+          choices do not apply to every engagement.
         </p>
       </aside>
       <div className="guide-body">
         <div className="page-heading">
           <div>
-            <p className="eyebrow">Step {current + 1} of 7 · Learn by doing</p>
+            <p className="eyebrow">Step {current + 1} of 7 · Engagement plan</p>
             <h1>{step.title}</h1>
             <p>{step.lesson}</p>
           </div>

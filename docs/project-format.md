@@ -15,6 +15,8 @@ The maximum file size is 1 MiB. Individual prose fields allow 20,000 characters,
 | Check     | Method, dataset, metric, expectation, owner and evidence          | Need, rule and component IDs                                    |
 | Decision  | Lifecycle, owner, state, evidence and template answers            | `templateId` selects the structured checkpoint                  |
 
+New blank projects start with empty nodes, edges and checks. The seven tutorial positions, four lifecycle values and schema version remain unchanged. Existing project files are not migrated. Check fields named `dataset` and `metric` may describe ordinary review material and criteria; they do not require model evaluation.
+
 Containment is different from deployment. Retrieval, model calls and routing can be internal parts of one service. The starter adds storage or asynchronous workers only when the selected requirements call for them. Suggestions preserve existing edited components and checks. Removing a capability choice does not silently delete design work.
 
 ## Library example

@@ -8,11 +8,11 @@ Teach people to connect user needs to business rules, system components, evaluat
 
 ## First complete experience
 
-A guided tutorial uses a fictional product-support assistant. A blank project follows the same steps: outcome, needs, rules and sources, architecture, evaluation, delivery and agent handoff. Role selection explains what to contribute and what a chosen collaborator should challenge. The field guide, journeys, platform views and calculators remain available in React.
+The guided tutorial follows an ordinary client-service improvement engagement. A fictional AI product-support project remains an optional specialist example. A blank project follows outcome, needs, constraints, optional software design, acceptance evidence, delivery and handoff. Role selection explains what to contribute and what a chosen collaborator should challenge. The field guide, journeys, platform views and calculators remain available in React.
 
-The visual editor uses React Flow. Engineers can add, connect and reposition components, inspect data structures and internal processes, and link needs and rules. A deterministic starting architecture uses one service and adds persistence or asynchronous workers only when selected requirements justify them. It is editable and never a claim that an architecture has been validated.
+The visual editor uses React Flow. Engineers can add, connect and reposition components, inspect data structures and internal processes, and link needs and rules. New projects have no software components or generated checks. Explicit architecture suggestions use one service and add persistence or asynchronous workers only when selected requirements justify them. It is editable and never a claim that an architecture has been validated.
 
-Templates capture source authority, division/product routing, exceptions, human approval, quality acceptance, release decisions, incidents and financial assumptions. Unknowns remain visible. Checks trace to needs, rules and components. Evidence status records a person's assessment; form completion is not production readiness.
+Nine core templates capture mandate, client responsibilities, governance, phases, design/evidence, commercial change, acceptance/adoption, operation and benefits/closure. Specialist templates retain source authority, division/product routing, exceptions, human approval, quality evaluation and software operation. Unknowns remain visible. Checks trace to needs, rules and components. Evidence status records a person's assessment; form completion is not production readiness.
 
 ## Portable model and agent boundary
 

@@ -10,10 +10,14 @@ import {
 } from "./index";
 
 const encode = (project: unknown) => JSON.stringify(project);
+function softwareProject() {
+  const project = createProject();
+  return { ...project, ...deriveArchitecture(project) };
+}
 
 describe("portable project", () => {
   it("roundtrips edits, positions, absent draft values and UTC second timestamps", () => {
-    const project = createProject();
+    const project = softwareProject();
     project.nodes[0].position = { x: 12.5, y: -87 };
     project.objective = "";
     project.nodes[0].fields = [
@@ -37,13 +41,13 @@ describe("portable project", () => {
     ).toThrow();
   });
   it("rejects duplicate IDs, dangling references and parent cycles", () => {
-    const duplicate = createProject();
+    const duplicate = softwareProject();
     duplicate.nodes.push({ ...duplicate.nodes[0] });
     expect(() => parseProject(encode(duplicate))).toThrow(/duplicate/i);
-    const dangling = createProject();
+    const dangling = softwareProject();
     dangling.edges[0].target = "missing";
     expect(() => parseProject(encode(dangling))).toThrow(/missing/i);
-    const cycle = createProject();
+    const cycle = softwareProject();
     cycle.nodes[0].parentId = cycle.nodes[1].id;
     cycle.nodes[1].parentId = cycle.nodes[0].id;
     expect(() => parseProject(encode(cycle))).toThrow(/cycle/i);
@@ -77,8 +81,8 @@ describe("portable project", () => {
 });
 
 describe("starter architecture", () => {
-  it("begins with one UI and one service, without guessed persistence", () => {
-    const project = createProject();
+  it("explicitly derives one UI and one service, without guessed persistence", () => {
+    const project = softwareProject();
     expect(project.nodes.map((node) => node.kind)).toEqual(["ui", "service"]);
     expect(deriveArchitecture(project)).toEqual({
       nodes: project.nodes,
@@ -109,7 +113,7 @@ describe("starter architecture", () => {
     expect(deriveArchitecture(project)).toEqual({ nodes, edges });
   });
   it("preserves custom work when explicitly merging a new starter", () => {
-    const project = createProject();
+    const project = softwareProject();
     project.nodes[0].position.x = 999;
     project.nodes[0].label = "My edited interface";
     const custom = {
@@ -139,7 +143,7 @@ describe("starter architecture", () => {
 
 describe("evidence and handoff", () => {
   it("keeps unknowns unresolved and does not fabricate evidence", () => {
-    const project = createProject();
+    const project = softwareProject();
     const checks = deriveChecks(project);
     expect(checks.length).toBeGreaterThan(0);
     expect(

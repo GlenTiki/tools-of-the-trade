@@ -18,13 +18,13 @@ export function OutcomeForm({ project, update }: EditorProps) {
           label="Project name"
           value={project.title}
           onChange={(v) => set("title", v)}
-          placeholder="Product support assistant"
+          placeholder="Client service improvement"
         />
         <Field
           label="Who is this for?"
           value={project.audience}
           onChange={(v) => set("audience", v)}
-          placeholder="Support advisers who compare product documents"
+          placeholder="Staff and clients who need a clear service response"
         />
       </div>
       <Field
@@ -32,7 +32,7 @@ export function OutcomeForm({ project, update }: EditorProps) {
         multiline
         value={project.objective}
         onChange={(v) => set("objective", v)}
-        placeholder="Help advisers find a current, relevant answer they can verify."
+        placeholder="Help staff route requests to an accountable owner and reduce avoidable rework."
       />
       <div className="form-grid">
         <Field
@@ -84,13 +84,13 @@ function NeedCard({
           label="Who needs this?"
           value={need.actor}
           onChange={(v) => set("actor", v)}
-          placeholder="Support adviser"
+          placeholder="Service coordinator"
         />
         <Field
           label="What do they need to do?"
           value={need.task}
           onChange={(v) => set("task", v)}
-          placeholder="Compare the current terms for a product"
+          placeholder="Find the person responsible for an unusual request"
         />
       </div>
       <Field
@@ -177,7 +177,7 @@ function RuleCard({
         label="Rule name"
         value={rule.name}
         onChange={(v) => set("name", v)}
-        placeholder="Use the current document for the correct division"
+        placeholder="Confirm ownership before making a commitment"
       />
       <div className="form-grid">
         <Field
@@ -265,12 +265,12 @@ function SourceCard({
           onChange={(v) => set("name", v)}
         />
         <Field
-          label="Division"
+          label="Division (optional unless routing applies)"
           value={source.division}
           onChange={(v) => set("division", v)}
         />
         <Field
-          label="Product or scope"
+          label="Product or scope (optional unless routing applies)"
           value={source.product}
           onChange={(v) => set("product", v)}
         />

@@ -156,7 +156,7 @@ describe("project file migration", () => {
   });
   it("bounds UTF-8 bytes before parsing and retains modern graph validation", () => {
     expect(() => importProjectFile("é".repeat(600_000))).toThrow(/1 MiB/);
-    const project = createProject();
+    const project = createProject(true);
     project.edges[0].source = "missing";
     expect(() => importProjectFile(JSON.stringify(project))).toThrow(/missing/);
   });

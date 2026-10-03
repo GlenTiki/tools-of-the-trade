@@ -29,9 +29,9 @@ type Point = { x: number; y: number };
 function ArchitectureChoices({ project, update }: Props) {
   const choices: [keyof Project["choices"], string][] = [
     ["persistence", "Persistence"],
-    ["documents", "Document evidence"],
+    ["documents", "AI answers from document evidence"],
     ["divisionRouting", "Division and product routing"],
-    ["longRunning", "Long-running work"],
+    ["longRunning", "Background software jobs"],
     ["humanApproval", "Human approval"],
   ];
   return (

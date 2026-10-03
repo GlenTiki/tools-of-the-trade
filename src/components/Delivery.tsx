@@ -6,10 +6,10 @@ import { Empty, Field, Panel, Select } from "./Controls";
 import type { EditorProps } from "./ProjectForms";
 
 const lifecycleOptions = [
-  { value: "design", label: "Design" },
-  { value: "implementation", label: "Implementation" },
-  { value: "release", label: "Release" },
-  { value: "operation", label: "Operation" },
+  { value: "design", label: "Discover and design" },
+  { value: "implementation", label: "Plan and deliver" },
+  { value: "release", label: "Accept and hand over" },
+  { value: "operation", label: "Operate and review" },
 ];
 
 function DecisionEditor({
@@ -23,6 +23,9 @@ function DecisionEditor({
 }) {
   const template = guidance.checkpoints.find(
     (t) => t.id === decision.templateId,
+  );
+  const unmatched = Object.entries(decision.answers ?? {}).filter(
+    ([id]) => !template?.questions.some((question) => question.id === id),
   );
   const set = (key: keyof Decision, value: string) =>
     change({ ...decision, [key]: value });
@@ -80,6 +83,21 @@ function DecisionEditor({
           }
         />
       ))}
+      {unmatched.map(([id, answer]) => (
+        <Field
+          key={id}
+          label={`Saved answer: ${id}`}
+          value={answer}
+          multiline
+          hint="This retained field is not in the current template. Its original meaning is unchanged."
+          onChange={(value) =>
+            change({
+              ...decision,
+              answers: { ...decision.answers, [id]: value },
+            })
+          }
+        />
+      ))}
       <Field
         label="Decision and unresolved questions"
         multiline
@@ -105,12 +123,13 @@ function DecisionEditor({
 
 export default function Delivery({ project, update }: EditorProps) {
   const [lifecycle, setLifecycle] = useState("design");
+  const [topics, setTopics] = useState("core");
   function add(templateId?: string) {
     const template = guidance.checkpoints.find((t) => t.id === templateId);
     const decision: Decision = {
       id: newId("decision"),
       title: template?.title ?? "",
-      lifecycle: lifecycle as Decision["lifecycle"],
+      lifecycle: (template?.lifecycle ?? lifecycle) as Decision["lifecycle"],
       owner: "",
       status: "open",
       notes: "",
@@ -124,10 +143,12 @@ export default function Delivery({ project, update }: EditorProps) {
       <div className="page-heading">
         <div>
           <p className="eyebrow">Delivery & operations</p>
-          <h1>Keep the important conversations in the work.</h1>
+          <h1>Plan the engagement and its next decision.</h1>
           <p>
-            Use a template with the people who know the task. Capture their
-            judgment before it becomes an assumption in code.
+            Start with the client mandate, phases and responsibilities. Select
+            specialist topics only when they apply. One person can hold several
+            responsibilities. Record why a checkpoint is not applicable instead
+            of inventing work.
           </p>
         </div>
       </div>
@@ -142,9 +163,18 @@ export default function Delivery({ project, update }: EditorProps) {
           </button>
         ))}
       </div>
+      <Select
+        label="Checkpoint topics"
+        value={topics}
+        onChange={setTopics}
+        options={[
+          { value: "core", label: "Core engagement checkpoints" },
+          { value: "specialist", label: "Optional specialist topics" },
+        ]}
+      />
       <div className="template-grid">
         {guidance.checkpoints
-          .filter((t) => t.lifecycle === lifecycle)
+          .filter((t) => t.lifecycle === lifecycle && t.group === topics)
           .map((template) => (
             <article className="template-card" key={template.id}>
               <span className="eyebrow">
@@ -156,6 +186,7 @@ export default function Delivery({ project, update }: EditorProps) {
               </span>
               <h2>{template.title}</h2>
               <p>{template.purpose}</p>
+              <p className="small muted">{template.applicability}</p>
               <button onClick={() => add(template.id)}>
                 Use this checkpoint
               </button>
@@ -167,44 +198,44 @@ export default function Delivery({ project, update }: EditorProps) {
         aside={<button onClick={() => add()}>Add a decision</button>}
       >
         <p className="muted">
-          These records live in your project file. An accepted status is a
-          record of your decision, not an identity-verified approval.
+          All saved records remain below, across phases and topics. These
+          records live in your project file. An accepted status is a record of
+          your decision, not an identity-verified approval.
         </p>
         {project.decisions.length === 0 && (
           <Empty>
-            Choose a checkpoint above to start a structured conversation.
+            Choose a relevant checkpoint above or add your own decision.
           </Empty>
         )}
-        {project.decisions
-          .filter((d) => d.lifecycle === lifecycle)
-          .map((decision) => (
-            <DecisionEditor
-              key={decision.id}
-              decision={decision}
-              change={(next) =>
-                update({
-                  ...project,
-                  decisions: project.decisions.map((d) =>
-                    d.id === next.id ? next : d,
-                  ),
-                })
-              }
-              remove={() =>
-                update({
-                  ...project,
-                  decisions: project.decisions.filter(
-                    (d) => d.id !== decision.id,
-                  ),
-                })
-              }
-            />
-          ))}
+        {project.decisions.map((decision) => (
+          <DecisionEditor
+            key={decision.id}
+            decision={decision}
+            change={(next) =>
+              update({
+                ...project,
+                decisions: project.decisions.map((d) =>
+                  d.id === next.id ? next : d,
+                ),
+              })
+            }
+            remove={() =>
+              update({
+                ...project,
+                decisions: project.decisions.filter(
+                  (d) => d.id !== decision.id,
+                ),
+              })
+            }
+          />
+        ))}
       </Panel>
       <Panel title="Close the feedback loop">
         <p>
-          When a production case fails, record the observed result, identify the
-          affected rule and add a regression case. Revisit the outcome if the
-          task itself has changed.
+          Compare the observed result with the client mandate. Record
+          limitations, lessons and the next owner. Advice can close with an
+          accepted deliverable; a live service also needs monitoring and
+          response ownership.
         </p>
         <p className="muted">
           This workspace records your plan and evidence links. Connect your

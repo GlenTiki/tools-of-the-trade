@@ -14,15 +14,15 @@ export default function Handoff({ project, update }: EditorProps) {
     owner: rule.owner,
     reviewStatus: rule.status,
     purpose:
-      "Candidate acceptance cases; review before use as a golden dataset.",
+      "Candidate acceptance cases; review against the agreed deliverable and its risks.",
   }));
   return (
     <div className="stack">
       <Panel title="A specification someone can act on">
         <p>
-          Export the map, the rules and the evidence plan together. Ask the next
-          person or coding agent to implement a bounded part and return tests
-          for review.
+          Export the engagement decisions, deliverables and evidence together.
+          Ask the next person to assess, decide or deliver the agreed scope. Use
+          a coding agent only for an explicitly authorised software task.
         </p>
         <div className="button-row">
           <button
@@ -56,7 +56,7 @@ export default function Handoff({ project, update }: EditorProps) {
           <button onClick={() => window.print()}>Print this plan</button>
         </div>
         <Field
-          label="Assumptions to carry into implementation"
+          label="Assumptions to carry into the next phase"
           multiline
           value={project.assumptions.join("\n")}
           onChange={(value) =>
@@ -68,7 +68,9 @@ export default function Handoff({ project, update }: EditorProps) {
       <Panel title={`${gaps.length} open design or evidence questions`}>
         <p className="muted">
           This is a list of missing information, not a readiness score. A human
-          still decides whether the evidence supports the intended use.
+          still decides whether the evidence supports the intended use. An empty
+          software graph means software design is not assessed; it does not
+          establish architectural completeness.
         </p>
         <ul className="gap-list">
           {gaps.map((gap) => (

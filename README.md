@@ -1,20 +1,22 @@
 # Tools of the Trade
 
-An educational workspace for intelligence engineering. Explore the tools, map a system, capture business rules, define an evaluation plan and record delivery decisions.
+A planning and learning workspace for specialist professional-services teams. Connect a client mandate to deliverables, design choices, evidence, commercial decisions and operating responsibilities. Explore software and AI topics when they apply.
 
 **[Open the app](https://glentiki.github.io/tools-of-the-trade/)** · [Tool selection](docs/tool-selection.md) · [Project format](docs/project-format.md)
 
 ## Start with a real task
 
 1. Open **Guided plan** and describe the user outcome.
-2. Choose **Explore a worked example** to see a fictional product-support project.
+2. Open **engagement checkpoints** to record client responsibilities, phases and acceptance. The fictional AI support example is optional.
 3. Capture the needs, source authority, business rules and exceptions.
-4. Open **Architecture** to connect components and inspect their data fields and process steps.
-5. Open **Evaluation** to define checks, datasets, measures, owners and expected results.
+4. Use **Architecture** when software is in scope. New projects start without invented components; adding suggestions is explicit.
+5. Use **Evaluation** for acceptance cases, review material, criteria and owners. Advisory work can use an options memo and client review; it does not need a model dataset.
 6. Use **Delivery** checkpoints with the people who know the work.
 7. Export the project and implementation brief from the final guided step.
 
-The role guide covers directors, product and delivery managers, business analysts, domain experts, designers, engineers, junior engineers, QA, DevOps, SRE and finance. Every pair has a collaboration question and a shared output.
+The role guide covers directors, project managers and delivery leads, business analysts, domain experts, designers, technical leads and engineers, junior engineers, QA, DevOps, SRE and finance. Every pair has a collaboration question and a shared output. These are responsibilities; a small team can hold several. Stages may be revisited or skipped to match the engagement.
+
+The nine core engagement checkpoints cover mandate, client working agreements, governance, phases, design/evidence, commercial change, acceptance/adoption, operation and benefits/closure. Twelve specialist templates remain available. Saved decisions stay visible across topic and phase selection. See [engagement scope](docs/engagement-planning.md).
 
 The field guide includes connected topics, four learning journeys, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
 
@@ -70,7 +72,7 @@ Sharing a JSON file is a handoff, not simultaneous editing. The app records evid
 
 ## Reuse and hosting
 
-The UI is React. `src/domain/index.ts` exports the typed project schema, graph validation, architecture suggestions, evaluation checks, gap analysis and implementation brief. It has no browser dependency. Copy or import those modules into another TypeScript project with Zod installed. The local Claude converter is a separate Node.js module and never enters the browser bundle.
+The UI is React. `src/domain/index.ts` exports the typed project schema, graph validation, architecture suggestions, evaluation checks, gap analysis and implementation brief. It has no browser dependency. Copy or import those modules and the companion `src/content/design-guidance.json` into another TypeScript project with Zod installed. The guidance supplies the question labels in readable brief exports. The local Claude converter is a separate Node.js module and never enters the browser bundle.
 
 `npm run build` creates `dist/`. Its relative asset paths and hash navigation work on GitHub Pages, another static host, or a local HTTP server. Direct `file://` use is not supported by JavaScript module loading; serve the folder over HTTP. Set the repository's Pages source to **GitHub Actions** and push `main` to deploy.
 

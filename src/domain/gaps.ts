@@ -49,7 +49,10 @@ function needGaps(project: Project): Gap[] {
           "needs",
         ),
       );
-    if (!project.nodes.some((node) => node.needIds.includes(need.id)))
+    if (
+      project.nodes.length &&
+      !project.nodes.some((node) => node.needIds.includes(need.id))
+    )
       gaps.push(
         gap(
           `need-${need.id}-component`,
@@ -102,6 +105,7 @@ function ruleGaps(project: Project): Gap[] {
         ),
       );
     if (
+      project.nodes.length > 0 &&
       !project.nodes.some(
         (node) =>
           node.ruleIds.includes(rule.id) ||
@@ -142,8 +146,7 @@ function sourceGaps(project: Project): Gap[] {
   for (const source of project.sources) {
     const absent = [
       "name",
-      "division",
-      "product",
+      ...(project.choices.divisionRouting ? ["division", "product"] : []),
       "authority",
       "updateCadence",
       "allowedUse",

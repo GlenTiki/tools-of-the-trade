@@ -66,6 +66,8 @@ const schema = z
             "operation",
           ]),
           purpose: text,
+          group: z.enum(["core", "specialist"]),
+          applicability: text,
           roles: texts,
           questions: z
             .array(
@@ -127,8 +129,12 @@ describe("public design guidance", () => {
   });
 
   it("provides named checkpoint fields across the delivery lifecycle", () => {
-    expect(guidance.checkpoints.length).toBeGreaterThanOrEqual(10);
-    expect(guidance.checkpoints.length).toBeLessThanOrEqual(12);
+    expect(
+      guidance.checkpoints.filter((item) => item.group === "core"),
+    ).toHaveLength(9);
+    expect(
+      guidance.checkpoints.filter((item) => item.group === "specialist"),
+    ).toHaveLength(12);
     expectUnique(guidance.checkpoints.map((checkpoint) => checkpoint.id));
     expect(
       new Set(guidance.checkpoints.map((checkpoint) => checkpoint.lifecycle)),
