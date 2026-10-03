@@ -19,6 +19,7 @@ import { removeComponent } from "../workspace/editing";
 import { newId } from "../workspace/files";
 import { Empty, Field, Panel, Select } from "./Controls";
 import ComponentInspector from "./ComponentInspector";
+import { visibleConnections } from "./architecture-view";
 import "@xyflow/react/dist/style.css";
 import "./Architecture.css";
 
@@ -103,15 +104,15 @@ function canvasNodes(
 }
 
 function canvasEdges(project: Project, visible: Set<string>) {
-  return project.edges
-    .filter((edge) => visible.has(edge.source) && visible.has(edge.target))
-    .map((edge) => ({
+  return visibleConnections(project.nodes, project.edges, visible).map(
+    (edge) => ({
       ...edge,
       type: "default",
       label: edge.label || edge.kind,
       markerEnd: { type: MarkerType.ArrowClosed },
       animated: false,
-    }));
+    }),
+  );
 }
 
 function changedPositions(
@@ -402,11 +403,11 @@ function ArchitectureHeading({
   return (
     <div className="architecture-heading">
       <div>
-        <h2>
+        <h1>
           {parent
             ? `Inside ${parent.label || "unnamed component"}`
             : "System architecture"}
-        </h2>
+        </h1>
         <p>
           Explore one level at a time. Select a component to inspect its
           contracts.
