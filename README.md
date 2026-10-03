@@ -16,7 +16,7 @@ An educational workspace for intelligence engineering. Explore the tools, map a 
 
 The role guide covers directors, product and delivery managers, business analysts, domain experts, designers, engineers, junior engineers, QA, DevOps, SRE and finance. Every pair has a collaboration question and a shared output.
 
-The field guide includes 111 topics, four learning journeys, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
+The field guide includes connected topics, four learning journeys, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
 
 ## Run locally
 
