@@ -12,7 +12,7 @@ function fillExample(project: Project): void {
     "Staff search separate product handbooks and ask a product specialist when evidence is unclear.";
   project.successMeasure =
     "Correct division and product evidence, source-backed answers, and escalation when the approved documents do not settle the request. Agree numerical thresholds before release.";
-  project.roles = ["Product owner", "Domain expert", "Engineer", "QA"];
+  project.roles = ["pm", "domain", "engineer", "qa"];
   project.choices = {
     persistence: false,
     documents: true,

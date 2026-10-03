@@ -38,7 +38,7 @@ export function conversionArguments(): string[] {
     "--output-format",
     "json",
     "--json-schema",
-    JSON.stringify(z.toJSONSchema(projectSchema)),
+    JSON.stringify(z.toJSONSchema(projectSchema, { target: "draft-07" })),
   ];
 }
 function parseEnvelope(output: string): Record<string, unknown> {
