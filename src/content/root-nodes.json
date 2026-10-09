@@ -4,11 +4,13 @@
     "title": "Intelligence engineering",
     "parent": null,
     "type": "concept",
-    "summary": "Build useful intelligence. Know what makes it work.",
-    "detail": "Follow the request from a web API through data, retrieval, generation and tools. Each boundary needs an explicit contract and evidence that the system behaves as intended. Select components to create a working evaluation plan.",
+    "summary": "Plan an AI system around a useful task, then decide how to show that it works.",
+    "detail": "Start with a task someone needs to complete, such as finding the policy for a customer’s product. Follow their request through the application’s API, the interface used by other software. Retrieval finds relevant source passages; generation produces an answer; tools let the application perform other operations.\n\nEach handoff needs a contract: what it accepts, what it returns and what happens when it fails. Select the parts your task needs, then build an evaluation plan: the cases and checks that would show the design works. Ask what a wrong answer or failed action would cost the user.",
     "inputs": ["A user need", "A consequence of failure"],
     "outputs": ["A system design", "An evidence plan"],
-    "failures": ["A polished demo without representative evidence"],
+    "failures": [
+      "A polished demonstration has no evidence from the tasks real users need."
+    ],
     "requirements": [],
     "related": [],
     "sources": [],
@@ -19,17 +21,20 @@
     "title": "API & gateway",
     "parent": "home",
     "type": "component",
-    "summary": "Start at the interface your application exposes.",
-    "detail": "A gateway routes and governs calls. The application still owns task semantics, authorization, deadlines and the response contract. Keep model inference APIs, agent-facing tool gateways and application APIs distinct.",
-    "inputs": ["Authenticated request", "Tenant and task context"],
+    "summary": "Define how other software asks your application to do a task.",
+    "detail": "An application programming interface (API) specifies how software sends a request and receives a result. A gateway receives calls and routes them to a service; it may also enforce shared limits. The application must still decide what the request means, who may perform it, how long it can run and what result to return.\n\nAn application API serves the user’s task. A model API asks a model to generate output. A tool gateway exposes operations an agent may request. Identify which interface you are designing before choosing its checks.",
+    "inputs": [
+      "Request with a verified caller identity",
+      "The caller’s organisation or account, and the requested task"
+    ],
     "outputs": [
-      "Validated response or explicit error",
-      "Request-level telemetry"
+      "Checked response or explicit error",
+      "Measurements and events tied to the request"
     ],
     "failures": [
-      "Cross-tenant access",
-      "An invalid answer with HTTP 200",
-      "Retries that duplicate side effects"
+      "One organisation or account can read another’s restricted data.",
+      "An incorrect answer is treated as valid because the web response reports success.",
+      "Repeated attempts create duplicate changes or messages."
     ],
     "requirements": ["api-contract", "operational-health"],
     "related": [
@@ -60,13 +65,19 @@
     "parent": "api",
     "type": "method",
     "summary": "Decide what a successful response actually means.",
-    "detail": "Validate inputs, return stable error types and test authorization independently of model behavior. A valid JSON response establishes shape. It does not establish factual correctness.",
-    "inputs": ["Request schema", "Authorization policy"],
-    "outputs": ["Typed response", "Documented error behavior"],
+    "detail": "A request and response contract tells callers which fields to send and what each possible result means. Validate inputs by checking their required fields, types and allowed values. Return consistent error categories so the caller can respond. Test permission checks separately from the model.\n\nJSON is a structured text format for values such as strings, lists and objects. A response can match its JSON schema, the rules for those fields, while containing a false answer. Test both the structure and the task result.",
+    "inputs": [
+      "Rules for request fields and values",
+      "Rules for who may perform the action"
+    ],
+    "outputs": [
+      "Response with defined fields and value types",
+      "Defined errors and what the caller should do"
+    ],
     "failures": [
-      "Missing values coerced into empty strings",
-      "Unbounded requests",
-      "Model text treated as trusted code"
+      "A missing value becomes an empty string, hiding the difference between absent and blank.",
+      "A request has no limit on size, work or duration.",
+      "Generated text is executed as though it were trusted program code."
     ],
     "requirements": ["api-contract"],
     "related": [
@@ -88,13 +99,19 @@
     "parent": "api",
     "type": "component",
     "summary": "Choose where a request runs and what it may consume.",
-    "detail": "Record provider, model, prompt and retrieval versions for each evaluated configuration. Test fallback routes on the same tasks. A fallback may differ in tool support, safety behavior, quality and data location.",
-    "inputs": ["Provider policy", "Latency and token budgets"],
-    "outputs": ["Chosen deployment", "Explicit fallback or error"],
+    "detail": "Routing selects the model deployment that will handle a request. A provider operates a model service; a deployment is the configured place where your requests run. Set limits on response time and tokens, the pieces of text a model processes and generates.\n\nRecord the provider, model revision, prompt instructions and retrieval settings for each comparison. A fallback is an alternative used when the first route fails. Test it on the same tasks: it may support different tools, produce different answers or send data to a different location. Ask which alternatives are permitted before enabling them.",
+    "inputs": [
+      "Permitted providers and data locations",
+      "Limits on response time and input/output tokens"
+    ],
+    "outputs": [
+      "Selected model deployment",
+      "Defined alternative route or explicit error"
+    ],
     "failures": [
-      "Silent model changes",
-      "Provider retry storms",
-      "Data sent to an unapproved region"
+      "The selected model changes without a recorded revision.",
+      "Repeated retries across services multiply the incoming load.",
+      "Data reaches a region that the project has not permitted."
     ],
     "requirements": ["api-contract", "operational-health"],
     "related": [

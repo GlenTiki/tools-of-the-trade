@@ -49,7 +49,7 @@ function documents(project: Project): Architecture {
     "service",
   );
   retrieval.description =
-    "Retrieve only permitted evidence and retain source identifiers.";
+    "Find passages the user is allowed to read. Keep the source ID with each passage so a reviewer can find the original.";
   const model = component(
     "model",
     "model",
@@ -60,7 +60,7 @@ function documents(project: Project): Architecture {
     "service",
   );
   model.description =
-    "Generate from supplied evidence. Report missing support explicitly.";
+    "Draft an answer using the supplied passages. Say when the passages do not support an answer.";
   const sources = project.sources.map((source, index) => {
     const node = component(
       `source-${source.id}`,
@@ -97,7 +97,7 @@ function routing(project: Project): Architecture {
   );
   router.ruleIds = project.rules.map((rule) => rule.id);
   router.description =
-    "Resolve division and product before retrieval. This is internal logic within the service, not an additional service.";
+    "Choose the correct business division and product before searching their documents. This decision happens inside the application service.";
   router.steps = project.rules.map((rule) => ({
     id: `step-${rule.id}`,
     name: rule.name || "Unnamed routing rule",
@@ -124,7 +124,7 @@ function storage(project: Project): Architecture {
     project,
   );
   node.description =
-    "Store only the agreed data, with explicit retention and access rules.";
+    "Store only the agreed data. Specify who may read or change it, how long to keep it and when to delete it.";
   return {
     nodes: [node],
     edges: [edge("service", node.id, "Read and write agreed data", "data")],
@@ -170,7 +170,7 @@ export function deriveArchitecture(project: Project): Architecture {
     project,
   );
   service.description =
-    "Own the request contract, authorization, business rules and response.";
+    "Define which requests are valid, check what the user may do, apply the business rules and return the result.";
   service.ruleIds = project.rules.map((rule) => rule.id);
   const parts = [
     documents(project),

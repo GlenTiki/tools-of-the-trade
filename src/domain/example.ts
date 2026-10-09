@@ -3,13 +3,13 @@ import type { Project } from "./schema";
 export function fillExample(project: Project): void {
   project.title = "Fictional product support assistant";
   project.objective =
-    "Help support advisers resolve routine policy questions for the correct division and product, with inspectable evidence and a clear referral when policy is uncertain.";
+    "Help support advisers answer routine questions for the correct division and product using passages they can inspect. Refer uncertain questions to a product specialist instead of guessing.";
   project.audience =
     "Retail and Business support advisers in a fictional organisation; product specialists review unresolved cases.";
   project.baseline =
     "In the fictional ten-case workshop, advisers resolve eight cases correctly with the handbooks. The proposed assistant resolves six. These invented counts illustrate the comparison; no real evaluation has run.";
   project.successMeasure =
-    "Count correctly resolved adviser tasks, not just answers produced. In the ten-case fixture, six correct assistant outcomes do not beat eight manual outcomes. For G-12, referral without approval is correct; a fluent promise of another pause is a failure.";
+    "Count correctly resolved adviser tasks, not just replies. In this invented ten-case comparison, six correct assistant outcomes do not beat eight manual outcomes. G-12 is the example of a second pause requested four months after the first: asking a specialist is correct; promising approval is a failure.";
   project.outcomeOwner =
     "Support operations lead (role placeholder; name unassigned)";
   project.roles = ["pm", "domain", "engineer", "qa", "sre"];
@@ -26,7 +26,7 @@ export function fillExample(project: Project): void {
     "Maya and Leila are fictional characters in case G-12. They do not represent assigned owners in your project.",
     "The assistant prepares an internal draft. It cannot send customer messages, change accounts or grant a policy exception.",
     "The design stores no conversation history. The existing review workflow would own any referral record; confirm that boundary before implementation.",
-    "Handbook revisions, permissions and source authority require real policy-owner confirmation before any non-synthetic use.",
+    "Before using real questions or documents, a real policy owner must confirm the handbook versions, access permissions and which sources may establish policy.",
   ];
   project.needs = [
     {
@@ -52,7 +52,7 @@ export function fillExample(project: Project): void {
     {
       id: "need-access",
       actor: "Division support lead",
-      task: "Keep evidence within the adviser's permitted scope",
+      task: "Keep handbook access within the adviser's permitted division and product",
       outcome:
         "Prevent an adviser from reading another division's restricted policy through a crafted request.",
       acceptance:
@@ -64,7 +64,7 @@ export function fillExample(project: Project): void {
       actor: "Support adviser",
       task: "Ask a policy question without customer identifiers",
       outcome:
-        "Use synthetic or general policy facts rather than account numbers, contact details or copied customer messages.",
+        "Use invented test details or general policy facts rather than account numbers, contact details or copied customer messages.",
       acceptance:
         "Request q-18 says: Can ACCT-4821 take a pause? Ask the adviser to remove the invented account number before model use. The trace records q-18 and identifier_blocked; it must not contain ACCT-4821.",
       owner: "Privacy lead (role placeholder)",
@@ -76,7 +76,7 @@ export function fillExample(project: Project): void {
       outcome:
         "Reproduce the evidence selection and spot a superseded or unconfirmed handbook.",
       acceptance:
-        "The fixture manifest marks RE-7 applicable and RE-8 draft. A result based on RE-8 must stay unresolved. A result based on RE-7 records source-retail-everyday and revision RE-7 so QA can repeat the check.",
+        "The test configuration record marks handbook RE-7 as applicable and RE-8 as a draft. An answer based on RE-8 must stay unresolved. An answer based on RE-7 records source-retail-everyday and revision RE-7 so quality assurance (QA) can repeat the check.",
       owner: "Product policy lead (role placeholder)",
     },
   ];
@@ -85,7 +85,7 @@ export function fillExample(project: Project): void {
       id: "rule-scope",
       name: "Match division and product",
       when: "A policy question enters the service.",
-      then: "Use sources for the explicitly selected division and product, within the adviser's permitted scope.",
+      then: "Use sources for the explicitly selected division and product only when the adviser has permission to read them.",
       exceptions:
         "If either value is absent or ambiguous, ask for clarification before retrieval.",
       source:
@@ -101,7 +101,7 @@ export function fillExample(project: Project): void {
       id: "rule-review",
       name: "Review unsupported commitments",
       when: "Sources conflict, omit the answer or require an exception.",
-      then: "For G-12, return API outcome unresolved with dataset label referral-required: the previous pause was four months ago. Keep referral separate from any approval or customer commitment.",
+      then: "For G-12, the service returns outcome unresolved and the test case uses label referral-required because the previous pause was four months ago. These mean the question needs human review; neither is an approval or a promise to the customer.",
       exceptions:
         "A reviewer may resolve the question in the existing workflow; the assistant never grants an exception itself.",
       source:
@@ -119,9 +119,9 @@ export function fillExample(project: Project): void {
       when: "A request selects a division and product.",
       then: "Check the authenticated adviser's current permissions before retrieval; never trust a client-supplied access claim.",
       exceptions:
-        "Missing identity or unavailable permission evidence produces denied; no fallback opens a broader scope.",
+        "If identity or permission cannot be checked, return denied. Do not try a different route that grants access to more documents.",
       source:
-        "Fictional access control proposal; the access owner must confirm enforcement and revocation.",
+        "Fictional access-control proposal; the access owner must confirm how permission is checked and how removed permissions take effect.",
       owner: "Access control lead (role placeholder)",
       status: "unconfirmed",
       examplePass:
@@ -133,7 +133,7 @@ export function fillExample(project: Project): void {
       id: "rule-authority",
       name: "Use the confirmed policy revision",
       when: "Retrieval selects candidate passages.",
-      then: "Keep only sources with confirmed authority and the applicable revision; retain source and revision IDs in every citation.",
+      then: "Use only sources the policy owner has confirmed are authoritative for this question and version. Keep the source and version identifiers in every citation so a reviewer can find the same text.",
       exceptions:
         "Unknown authority, conflicting revisions or no applicable revision returns unresolved for specialist review.",
       source:
@@ -141,7 +141,7 @@ export function fillExample(project: Project): void {
       owner: "Product policy lead (role placeholder)",
       status: "unconfirmed",
       examplePass:
-        "A synthetic approved-revision fixture supplies a citation with its source and revision IDs.",
+        "In an invented test, a source marked approved-for-test returns a citation naming both the handbook and its version. This test label is not real policy approval.",
       exampleFail:
         "A superseded draft outranks the applicable policy and is presented without its revision.",
     },
@@ -149,17 +149,17 @@ export function fillExample(project: Project): void {
       id: "rule-privacy",
       name: "Exclude customer identifiers from model requests",
       when: "An adviser submits free text or prepares a referral.",
-      then: "Require a general policy question; block detected customer identifiers before model use and exclude raw questions from traces.",
+      then: "Require a general policy question. Block detected customer identifiers before sending text to the model, and keep the original question out of processing logs called traces.",
       exceptions:
         "If the text cannot be safely generalised, the adviser uses the existing authorised human workflow outside this assistant.",
       source:
-        "Fictional data-minimisation proposal; the privacy lead must agree detectors, residual risk and retention.",
+        "Fictional proposal to use less personal data. The privacy lead must agree how identifiers are detected, what the detector can miss and how long any records are kept.",
       owner: "Privacy lead (role placeholder)",
       status: "unconfirmed",
       examplePass:
-        "A synthetic account number triggers a request to remove it before the model boundary.",
+        "An invented account number triggers a request to remove it before the question reaches the model.",
       exampleFail:
-        "The UI masks an identifier but the original text still reaches the model or a trace.",
+        "The user interface hides an identifier on screen, but the original text still reaches the model or a processing log.",
     },
   ];
   project.sources = [
@@ -184,12 +184,12 @@ export function fillExample(project: Project): void {
     product,
     authority:
       id === "source-retail-everyday"
-        ? 'Fictional fixture RE-7: "One pause per 12 months; maximum 30 days; an adviser must confirm eligibility." The sample manifest marks RE-7 applicable and RE-8 draft. Real source authority remains unconfirmed.'
+        ? 'Fictional test handbook RE-7: "One pause per 12 months; maximum 30 days; an adviser must confirm eligibility." The test configuration record marks RE-7 applicable and RE-8 draft. A real policy owner has not confirmed either as an authoritative source.'
         : `Fictional ${division} policy-owner publication. Authority and effective revision are unconfirmed; a matching title alone grants neither.`,
     updateCadence:
-      "At each policy revision: confirm the effective revision, replace the previous source snapshot and rerun affected acceptance cases before promotion.",
+      "When a policy changes, confirm which version applies, replace the saved source copy and rerun the affected acceptance tests before putting the new version into use.",
     allowedUse:
-      "Synthetic workshop use only. No customer data, client documents or real policy commitments.",
+      "Invented workshop examples only. No customer data, client documents or real policy commitments.",
     owner: `${division} product policy lead (role placeholder)`,
   }));
   project.decisions = [
@@ -210,7 +210,7 @@ export function fillExample(project: Project): void {
       owner: "Engineering lead (role placeholder)",
       status: "open",
       notes:
-        "Review the request contract, permission checks and raw-text exclusion. Demonstrate denial and sensitive-input cases with a controlled test harness.",
+        "Review the required request fields, possible replies, permission checks and exclusion of original question text from logs. Use a test setup with recorded inputs and outputs to demonstrate denied access and blocked sensitive input.",
       evidence: "",
     },
     {
@@ -220,7 +220,7 @@ export function fillExample(project: Project): void {
       owner: "Support operations lead (role placeholder)",
       status: "open",
       notes:
-        "Maya and Leila label G-12 independently. QA keeps both answers; the policy owner resolves the disagreement using RE-7. QA versions the case, rubric and source as regression data because this case is already visible. Collect separate unseen cases for a release holdout; the dataset owner accepts a frozen reference, while the outcome owner separately decides release.",
+        "Maya and Leila independently choose an answer category for G-12. Quality assurance (QA) keeps both opinions; the policy owner resolves their disagreement using RE-7. Save a version of the case, scoring rules (rubric) and source for regression tests that catch repeat failures. Because the team has seen G-12, use separate unseen cases for the final release test (holdout). The dataset owner accepts the fixed reference; the outcome owner separately decides release.",
       evidence: "",
     },
     {

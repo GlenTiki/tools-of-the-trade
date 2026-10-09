@@ -44,7 +44,8 @@ function SaveLabel({ status }: { status: string }) {
     draft: "New draft · stays in this browser",
     saved: "Saved in this browser",
     unavailable: "Browser save unavailable · export to keep your work",
-    recovery: "Saved file needs recovery · edits are in memory",
+    recovery:
+      "Saved file needs recovery · new edits last only while this page stays open",
     invalid: "Project could not be saved · review the invalid edit",
   };
   return (
@@ -66,8 +67,9 @@ function RecoveryBanner({
     <div className="notice warning">
       <strong>Your previous saved file could not be opened.</strong>
       <p>
-        It is preserved. Download it before replacing the saved copy. Current
-        edits stay in memory until you choose to save a new project.
+        It is preserved. Download it before replacing the saved copy. New edits
+        last only while this page stays open, until you choose to save a new
+        project.
       </p>
       <div className="button-row">
         <button

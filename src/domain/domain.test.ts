@@ -229,3 +229,39 @@ it("roundtrips structured decision answers and includes them in the handoff", ()
     "reviewer-question: A named person must inspect the failure cases.",
   );
 });
+
+it("points readers to form labels while retaining each missing-field check", () => {
+  const project = createProject(true);
+  project.sources[0].updateCadence = "";
+  project.sources[0].owner = "";
+  project.sources[0].name = "";
+  project.rules[0].owner = "";
+  project.rules[0].name = "";
+  project.needs[0].owner = "";
+  project.checks[0].owner = "";
+  project.sources[0].allowedUse = "";
+  project.rules[0].exampleFail = "";
+  const gaps = projectGaps(project);
+  const source = gaps.find(
+    (gap) => gap.id === `source-${project.sources[0].id}-detail`,
+  )!;
+  expect(source.detail).toContain("How often does it change?");
+  expect(source.detail).toContain("Who may use it, and for what?");
+  expect(source.detail).not.toMatch(/updateCadence|allowedUse/);
+  expect(source.detail).toContain("Source owner");
+  expect(source.detail).toContain("Source name");
+  const rule = gaps.find(
+    (gap) => gap.id === `rule-${project.rules[0].id}-detail`,
+  )!;
+  expect(rule.detail).toContain("An example that should fail");
+  expect(rule.detail).not.toContain("exampleFail");
+  expect(rule.detail).toContain("Rule name");
+  expect(rule.detail).toContain("Who can confirm it?");
+  expect(
+    gaps.find((gap) => gap.id === `need-${project.needs[0].id}-detail`)?.detail,
+  ).toContain("Who can confirm this need?");
+  expect(
+    gaps.find((gap) => gap.id === `check-${project.checks[0].id}-detail`)
+      ?.detail,
+  ).toContain("Evidence owner");
+});

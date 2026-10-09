@@ -1,5 +1,34 @@
 import type { Check, Gap, Project } from "./schema";
 
+const fieldLabels: Record<string, string> = {
+  actor: "Who needs this?",
+  task: "What do they need to do?",
+  outcome: "Why does this matter?",
+  acceptance: "A result they would accept",
+  when: "When this is true…",
+  then: "The system must…",
+  exceptions: "Exceptions or missing information",
+  source: "Where does this rule come from?",
+  examplePass: "An example that should pass",
+  exampleFail: "An example that should fail",
+  division: "Division",
+  product: "Product or scope",
+  authority: "Authority when sources disagree",
+  updateCadence: "How often does it change?",
+  allowedUse: "Who may use it, and for what?",
+  method: "Method",
+  dataset: "Test cases or review material",
+  metric: "Measure or review criterion",
+  expected: "Expected result or acceptance threshold",
+};
+
+function missingFieldNames(
+  fields: string[],
+  names: Record<string, string>,
+): string {
+  return fields.map((key) => names[key] ?? fieldLabels[key]).join("; ");
+}
+
 function missing(value: string): boolean {
   return !value.trim();
 }
@@ -31,7 +60,7 @@ function needGaps(project: Project): Gap[] {
       gap(
         "needs-empty",
         "Capture a user need",
-        "Name the actor, task, intended outcome and acceptance case.",
+        "Name the person, what they need to do, why it matters and an example of a result they would accept.",
         "needs",
       ),
     ];
@@ -45,7 +74,7 @@ function needGaps(project: Project): Gap[] {
         gap(
           `need-${need.id}-detail`,
           "Complete the user need",
-          `${need.task || need.id}: missing ${absent.join(", ")}.`,
+          `${need.task || need.id}: missing ${missingFieldNames(absent, { owner: "Who can confirm this need?" })}.`,
           "needs",
         ),
       );
@@ -99,8 +128,8 @@ function ruleGaps(project: Project): Gap[] {
       gaps.push(
         gap(
           `rule-${rule.id}-detail`,
-          "Complete the rule contract",
-          `${rule.name || rule.id}: missing ${absent.join(", ")}.`,
+          "Complete the rule and its examples",
+          `${rule.name || rule.id}: missing ${missingFieldNames(absent, { name: "Rule name", owner: "Who can confirm it?" })}.`,
           "rules",
         ),
       );
@@ -156,8 +185,8 @@ function sourceGaps(project: Project): Gap[] {
       gaps.push(
         gap(
           `source-${source.id}-detail`,
-          "Establish source provenance",
-          `${source.name || source.id}: missing ${absent.join(", ")}.`,
+          "Record where the source comes from and who can confirm it",
+          `${source.name || source.id}: missing ${missingFieldNames(absent, { name: "Source name", owner: "Source owner" })}.`,
           "sources",
         ),
       );
@@ -195,7 +224,7 @@ function checkGaps(check: Check): Gap[] {
       gap(
         `check-${check.id}-detail`,
         "Define the check",
-        `${name}: missing ${absent.join(", ")}.`,
+        `${name}: missing ${missingFieldNames(absent, { owner: "Evidence owner" })}.`,
         "checks",
       ),
     );
@@ -204,7 +233,7 @@ function checkGaps(check: Check): Gap[] {
       gap(
         `check-${check.id}-run`,
         "Supply evaluation evidence",
-        `${name} is ${check.status}; no release conclusion follows from completing this form.`,
+        `${name} is ${check.status}; filling in the plan alone does not show that the work is ready to use.`,
         "checks",
       ),
     );
@@ -270,7 +299,7 @@ function choiceGaps(project: Project): Gap[] {
     gaps.push(
       gap(
         "approval-component",
-        "Model the review boundary",
+        "Add the person who must review the work",
         "Human approval is selected without a reviewer component.",
         "architecture",
       ),

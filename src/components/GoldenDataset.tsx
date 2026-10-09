@@ -16,7 +16,7 @@ export default function GoldenDataset() {
       <details className="dataset-case" open>
         <summary>Follow case G-12</summary>
         <p>
-          <strong>Policy and rubric:</strong> {lifecycle.policy}
+          <strong>Policy and review rules:</strong> {lifecycle.policy}
         </p>
         <p>
           <strong>Question:</strong> {lifecycle.question}

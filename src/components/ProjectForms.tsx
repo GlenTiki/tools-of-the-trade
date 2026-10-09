@@ -56,7 +56,7 @@ export function OutcomeForm({ project, update }: EditorProps) {
           multiline
           value={project.baseline}
           onChange={(v) => set("baseline", v)}
-          hint="Describe the current task and its cost. Leave measurements unknown until you collect them."
+          hint="Describe how the task works today and what goes wrong. This is your baseline: the starting point for comparison. Mark numbers unknown until measured."
         />
         <Field
           help={
@@ -71,7 +71,7 @@ export function OutcomeForm({ project, update }: EditorProps) {
           multiline
           value={project.successMeasure}
           onChange={(v) => set("successMeasure", v)}
-          hint="Describe a measurable user benefit and the errors you cannot accept."
+          hint="Say what the user should be able to do, how you will check it, and which mistakes would mean the work is not acceptable."
         />
       </div>
       <Field
@@ -79,6 +79,7 @@ export function OutcomeForm({ project, update }: EditorProps) {
         value={project.outcomeOwner}
         onChange={(v) => set("outcomeOwner", v)}
         placeholder="A named business owner or a role to confirm"
+        hint="Name the person who can decide whether the result meets the user’s need. If you do not know, record who you need to ask."
       />
     </Panel>
   );
@@ -171,8 +172,8 @@ export function NeedsForm({ project, update }: EditorProps) {
       aside={<button onClick={add}>Add a user need</button>}
     >
       <p className="muted">
-        Describe a task before choosing a model or a platform. Someone with real
-        experience should check the example.
+        Describe what a person needs to do before choosing a solution. Ask
+        someone who does that task to check your example.
       </p>
       {project.needs.length === 0 && (
         <Empty>Start with one user and one task. More detail can follow.</Empty>
@@ -334,11 +335,13 @@ function SourceCard({
         />
         <Field
           label="Division (optional unless routing applies)"
+          hint="Name the business unit, such as Retail. Fill this in if the system uses it to choose the correct documents or team."
           value={source.division}
           onChange={(v) => set("division", v)}
         />
         <Field
           label="Product or scope (optional unless routing applies)"
+          hint="Say which product or work this source covers. This prevents using a rule from a different product."
           value={source.product}
           onChange={(v) => set("product", v)}
         />
@@ -356,7 +359,8 @@ function SourceCard({
             />
           }
           label="Authority when sources disagree"
-          placeholder="Fictional example: Approved bulletin B7 supersedes procedure P3 section 4; otherwise refer the conflict to the service owner."
+          hint="Say which source takes priority and who can confirm that choice."
+          placeholder="Fictional example: Approved notice B7 replaces the rule in procedure P3 section 4; otherwise refer the conflict to the service owner."
           value={source.authority}
           onChange={(v) => set("authority", v)}
         />
@@ -438,8 +442,9 @@ export function RulesForm({ project, update }: EditorProps) {
         aside={<button onClick={addRule}>Add a business rule</button>}
       >
         <p className="muted">
-          A dataset rarely tells the whole story. Capture the rule an
-          experienced colleague uses when two answers look plausible.
+          A business rule says what must happen in a particular situation. Ask
+          an experienced colleague for the rule, its exceptions and one correct
+          and incorrect example.
         </p>
         {project.rules.length === 0 && (
           <Empty>Capture one rule with a passing and failing example.</Empty>

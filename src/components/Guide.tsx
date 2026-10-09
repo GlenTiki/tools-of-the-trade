@@ -35,8 +35,8 @@ function RoleGuide({
         Your role & your collaborators
       </summary>
       <p className="muted">
-        Choose your current responsibility. The same person may act as PM,
-        technical lead and reviewer at different points.
+        Choose the role you have in this conversation. One person may be the
+        project manager, technical lead and reviewer at different points.
       </p>
       <div className="form-grid">
         <Select
@@ -134,10 +134,11 @@ export default function Guide({
         <p className="eyebrow">
           <Compass size={15} aria-hidden /> Your guided plan
         </p>
-        <h2>From client mandate to useful outcomes.</h2>
+        <h2>From the client’s request to a useful result.</h2>
         <p className="muted">
-          Seven connected conversations about the engagement. Revisit or skip
-          stages to suit the work; advisory delivery need not include software.
+          Use these seven steps to plan the work with your client. Return to any
+          step when you learn more. Skip software design if you are delivering
+          advice.
         </p>
         <a href="#delivery">Open engagement checkpoints</a>
         <ol className="step-list">
@@ -157,8 +158,9 @@ export default function Guide({
           Explore a specialist AI example
         </button>
         <p className="small muted">
-          Optional: a fictional AI support assistant. Its routing and model
-          choices do not apply to every engagement.
+          Optional: a made-up support assistant that uses artificial
+          intelligence (AI). It shows how to fill in the plan; use only the
+          parts your project needs.
         </p>
       </aside>
       <div className="guide-body">

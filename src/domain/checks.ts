@@ -20,10 +20,11 @@ function needCheck(need: Need, project: Project): Check {
   return {
     ...base(`check-need-${need.id}`, `Demonstrate: ${need.task || need.id}`),
     method:
-      "Exercise the user task and inspect the outcome against the stated acceptance criteria.",
+      "Ask someone to perform the user task. Compare what happens with the result the user agreed would be acceptable.",
     dataset:
-      "Representative task cases, including unavailable information and a controlled failure.",
-    metric: "Per-case acceptance outcome and missing results.",
+      "Use examples of normal work, an example with missing information and a deliberate failure whose expected response you know.",
+    metric:
+      "Record whether each case meets the agreed result and which results are missing.",
     expected: need.acceptance,
     owner: need.owner,
     needIds: [need.id],
@@ -36,7 +37,7 @@ function ruleCheck(rule: Rule, project: Project): Check {
   return {
     ...base(`check-rule-${rule.id}`, `Verify rule: ${rule.name || rule.id}`),
     method:
-      "Exercise the rule, each exception and a denied or conflicting case at the implementation boundary.",
+      "Check the rule where the system acts on it. Include each exception, a request that must be refused and a case with conflicting information.",
     dataset: [rule.examplePass, rule.exampleFail].filter(Boolean).join("\n"),
     metric: "Correct rule decisions and unintended effects.",
     expected: rule.then,
@@ -59,18 +60,18 @@ const methods: Partial<Record<Component["kind"], [string, string, string]>> = {
   ],
   retrieval: [
     "Evidence retrieval",
-    "Compare retrieved source IDs with reviewed relevance labels at a fixed result count.",
-    "Recall at k, wrong-division results and latency.",
+    "Ask a reviewer which source passages answer each question. Retrieve a fixed number of passages and compare their IDs with that list.",
+    "Of all relevant passages, how many appear in the first k results? Also count wrong-division passages and record the response time.",
   ],
   model: [
     "Answer support",
     "Review required facts and citations against the supplied evidence, including no-answer cases.",
-    "Supported claims, omissions and correct abstention.",
+    "Claims supported by a source, missing facts and cases where the system correctly declines to answer.",
   ],
   router: [
     "Division and product isolation",
     "Exercise each division/product rule and ambiguous, missing or conflicting routing inputs.",
-    "Correct route and prohibited cross-scope results.",
+    "Correct destination and any results from a division or product the user must not access.",
   ],
   database: [
     "Persistence and retention",
@@ -84,7 +85,7 @@ const methods: Partial<Record<Component["kind"], [string, string, string]>> = {
   ],
   worker: [
     "Worker recovery",
-    "Interrupt processing and inspect retry, cancellation and result reconciliation.",
+    "Stop a job partway through. Check that a retry resumes safely, cancellation prevents further work, and stored results match completed actions.",
     "Completed effects and recoverable failures.",
   ],
   human: [
@@ -101,7 +102,7 @@ function componentCheck(node: Component): Check[] {
       ...base(`check-component-${node.id}`, method[0]),
       method: method[1],
       dataset:
-        "Define representative cases and at least one controlled failure for this boundary.",
+        "Choose examples of normal use and a deliberate failure for this component. Write what should happen before running each check.",
       metric: method[2],
       needIds: [...node.needIds],
       ruleIds: [...node.ruleIds],

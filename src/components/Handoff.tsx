@@ -20,9 +20,11 @@ export default function Handoff({ project, update }: EditorProps) {
     <div className="stack">
       <Panel title="A specification someone can act on">
         <p>
-          Export the engagement decisions, deliverables and evidence together.
-          Ask the next person to assess, decide or deliver the agreed scope. Use
-          a coding agent only for an explicitly authorised software task.
+          Download the plan so the next person can see what to deliver, which
+          decisions are settled and what still needs an answer. The project JSON
+          file can be reopened in this app. The brief is a readable text
+          document. Candidate cases are draft examples to check before using
+          them as tests.
         </p>
         <div className="button-row">
           <button
@@ -63,15 +65,15 @@ export default function Handoff({ project, update }: EditorProps) {
           onChange={(value) =>
             update({ ...project, assumptions: value.split("\n") })
           }
-          hint="One assumption per line. Unknowns belong in the handoff, not in an agent's guess."
+          hint="An assumption is something you rely on but have not confirmed. Write one per line and say who can check it."
         />
       </Panel>
       <Panel title={`${gaps.length} open design or evidence questions`}>
         <p className="muted">
-          This is a list of missing information, not a readiness score. A human
-          still decides whether the evidence supports the intended use. An empty
-          software graph means software design is not assessed; it does not
-          establish architectural completeness.
+          These questions point to empty fields and missing links. A complete
+          form still needs review by the person responsible for the work. If no
+          software components are recorded, this app has not assessed the
+          software design.
         </p>
         <ul className="gap-list">
           {gaps.map((gap) => (
@@ -90,8 +92,10 @@ export default function Handoff({ project, update }: EditorProps) {
       </Panel>
       <Panel title="Bring an existing specification into the map">
         <p>
-          Use the local companion with your existing Claude Code login. It
-          submits only the file you select and returns a draft for review.
+          This optional command-line tool runs on your computer and needs
+          Node.js and an existing Claude Code login. Run the commands below in a
+          terminal. It sends the selected specification file to Claude and
+          returns a draft project.
         </p>
         <pre>
           <code>
@@ -105,9 +109,10 @@ export default function Handoff({ project, update }: EditorProps) {
           before asking an agent to implement it.
         </p>
         <p className="muted">
-          The website has no model credentials. The local converter disables
-          tools and MCP. Add <code>--prompt-only</code> to inspect the prompt
-          without a model call.
+          The website does not hold your model login. The converter disables
+          Claude’s tools and external tool connections (MCP). Add{" "}
+          <code>--prompt-only</code> to read what it would send without calling
+          the model.
         </p>
         <a
           href="https://github.com/GlenTiki/tools-of-the-trade/blob/main/docs/tool-selection.md"

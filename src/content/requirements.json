@@ -1,101 +1,101 @@
 [
   {
     "id": "api-contract",
-    "title": "Define the API contract",
-    "why": "Inputs and failures must have predictable behavior.",
-    "dataset": "Fictional q-17: division=Retail, question=Can I pause for 10 days?, product absent. Compare a request with product=Everyday and one with product empty.",
-    "metric": "For absent product, assert outcome=clarify, missing=[product] and retrievalCalls=0. Reject an empty supplied product as invalid; do not treat it as a known product.",
-    "evidence": "Save q-17 input and response: “Which Retail product: Everyday or Plus?” with retrievalCalls=0. Retain separate absent, empty and authorized-product assertions in the contract suite.",
-    "decision": "Which callers and tenants may access which resources?"
+    "title": "Define accepted requests and responses",
+    "why": "An API is the interface software uses to request work from other software. Its contract states allowed inputs, outputs and failures so callers can handle them.",
+    "dataset": "The engineer prepares fictional request q-17: division=Retail, question=Can I pause for 10 days?, product absent. Compare product=Everyday with product supplied as an empty string.",
+    "metric": "The test engineer checks that an absent product returns outcome=clarify, missing=[product] and retrievalCalls=0, meaning no search ran. An empty supplied product is invalid, not a known product.",
+    "evidence": "Save q-17 and the response “Which Retail product: Everyday or Plus?” with retrievalCalls=0. Keep separate tests for absent, empty and permitted products; an assertion is a check that fails if the result differs.",
+    "decision": "Which requesting applications and customer organisations may read or change each resource?"
   },
   {
     "id": "source-provenance",
-    "title": "Establish the source of the data",
-    "why": "Retrieval and training inherit source errors and access limits.",
-    "dataset": "Fictional manifest: applicableRevision=RE-7; RE-7 maximum=30 days; RE-8 maximum=45 days and state=draft. Question: “What is the maximum pause?”",
-    "metric": "The answer cites RE-7 and says maximum 30 days subject to adviser eligibility confirmation. Any answer based on draft RE-8 fails this source-authority check.",
-    "evidence": "Retain the manifest revision, source IDs and answer/source pair. Marking RE-7 revoked must make its chunks and source-tagged cached answers ineligible for further use.",
-    "decision": "What may leave the boundary, and what must be removed?"
+    "title": "Record which source supports the answer",
+    "why": "Source provenance means where information came from and which version may be used. Search and model training can carry forward errors or use information without permission.",
+    "dataset": "The source owner supplies this fictional manifest, a record of approved source versions: applicableRevision=RE-7. RE-7 allows maximum=30 days subject to adviser eligibility confirmation. RE-8 allows maximum=45 days and state=draft. Ask: “What is the maximum pause?”",
+    "metric": "The reviewer expects a citation to RE-7 and maximum 30 days subject to adviser eligibility confirmation. Any answer based on draft RE-8 fails because it is not the applicable approved source.",
+    "evidence": "The engineer saves the manifest revision, source identifiers and answer with its source passage. Test withdrawing RE-7: its searchable passages and cached answers, which are saved previous results, must stop being eligible for use.",
+    "decision": "Which data may leave the agreed environment, and how will withdrawn sources and retained data be removed?"
   },
   {
     "id": "retrieval-relevance",
-    "title": "Build a retrieval golden dataset",
-    "why": "An answer cannot cite evidence it never retrieved.",
-    "dataset": "Fictional question: “Can an account under review take a pause?” Relevant IDs are P1 (one pause per 12 months) and P2 (accounts under review excluded). Top two returned: P1 and unrelated fee passage P9.",
-    "metric": "Recall@2 = 1/2 = 50%; hit@2 = 1. P2 is absent, so the retrieved evidence cannot settle the question even though hit@2 is positive.",
-    "evidence": "Keep corpus version, relevant IDs [P1,P2] and returned ranking [P1,P9]. A passing evidence check retrieves the exclusion P2; it does not infer permission from P1 alone.",
-    "decision": "What counts as sufficient evidence for each question?"
+    "title": "Prepare reviewed cases for source search",
+    "why": "Retrieval means finding relevant source passages. A golden dataset is a versioned set of questions with reviewed expected results, used to test whether search finds the evidence an answer needs.",
+    "dataset": "The subject expert labels this fictional question: “Can an account under review take a pause?” Relevant passages are P1 (one pause per 12 months) and P2 (accounts under review excluded). Search returns P1 and unrelated fee passage P9 as its top two results.",
+    "metric": "The test engineer calculates recall@2 = 1/2 = 50%: one of the two relevant passages appears in the top two results. Hit@2 = 1 means at least one relevant passage was found. Missing P2 still prevents an answer to the exclusion question.",
+    "evidence": "Save the source collection version, reviewed relevant IDs [P1,P2] and returned order [P1,P9]. The subject expert requires the exclusion P2 before the answer can settle eligibility; finding P1 alone does not grant permission.",
+    "decision": "Which source passages are necessary to settle each question, and who reviews that expectation?"
   },
   {
     "id": "answer-grounding",
-    "title": "Evaluate the answer against evidence",
-    "why": "Plausible language and valid citations do not prove support.",
-    "dataset": "Fictional EX-2 says a specialist may review a 45-day request. Question: “Will a 45-day pause be approved?” Candidate: “Your 45-day pause will be approved [EX-2].”",
-    "metric": "Mark the approval claim unsupported: EX-2 permits review but does not guarantee approval. Corrected draft: “A specialist may review a 45-day request, but EX-2 does not guarantee approval.”",
-    "evidence": "Store the candidate, exact EX-2 passage, unsupported-claim label and reviewed correction. A valid citation with an unsupported approval promise must fail.",
-    "decision": "Which unsupported claim could cause harm?"
+    "title": "Check that each answer claim follows from its source",
+    "why": "Grounding means supporting an answer with the source evidence. A convincing sentence and a real citation can still make a claim that the source does not support.",
+    "dataset": "The reviewer receives fictional source EX-2: a specialist may review a 45-day request. Question: “Will a 45-day pause be approved?” Candidate answer: “Your 45-day pause will be approved [EX-2].”",
+    "metric": "The reviewer marks the approval claim unsupported because permission to review does not guarantee approval. Expected correction: “A specialist may review a 45-day request, but EX-2 does not guarantee approval.”",
+    "evidence": "The test engineer saves the candidate, exact EX-2 passage, reviewer’s unsupported-claim label and correction. The check must reject the approval promise even though its citation identifies a real source.",
+    "decision": "Which unsupported promise could harm a user, and who decides the acceptable response?"
   },
   {
     "id": "tool-safety",
-    "title": "Test the tool and permission boundary",
-    "why": "A tool call can change real state.",
-    "dataset": "Fictional purchase: amount=1200, requesterRole=team-lead, reason=Urgent replacement, approveException=true. Rule P1 sends amounts above 1000 to Finance; only Finance may approve exceptions.",
-    "metric": "Assert route=Finance, exceptionApproved=false and submittedPurchases=0. The request flag cannot grant the requester Finance authority.",
-    "evidence": "Retain the input, authenticated role, permission decision and purchase-count assertion. As a separate retry case, two identical submissions with key ref-31 must return referral R-8 and create only one referral.",
-    "decision": "Which actions require a person, and who may approve them?"
+    "title": "Test actions and who may authorise them",
+    "why": "A tool is an operation an agent or application can call, such as creating a purchase. The receiving service must check permission because a request can change real records.",
+    "dataset": "The test engineer supplies fictional purchase amount=1200, requesterRole=team-lead, reason=Urgent replacement, approveException=true. Rule P1 sends amounts above 1000 to Finance; only Finance may approve exceptions.",
+    "metric": "Check route=Finance, exceptionApproved=false and submittedPurchases=0. The request’s approveException flag is supplied data; it does not grant the requester Finance authority.",
+    "evidence": "Save the input, verified signed-in role, permission decision and check of the stored purchase count. For a separate retry case, two identical submissions with request key ref-31 must return referral R-8 and create only one referral.",
+    "decision": "Which actions need a person’s approval, who may give it, and which exact action details do they approve?"
   },
   {
     "id": "judge-calibration",
-    "title": "Calibrate automated evaluators",
-    "why": "An evaluator can agree with itself and still be wrong.",
-    "dataset": "Fictional reviewed labels: referral-required=Q1–Q5; routine=Q6–Q10. Judge predicts referral for Q1,Q2,Q3,Q6 and routine for the other six.",
-    "metric": "TP=3, FP=1, FN=2, TN=4. Referral precision=3/4=75%; recall=3/5=60%; false-positive rate=1/5=20%.",
-    "evidence": "Retain rubric version and all ten human/judge pairs. Review Q4 and Q5 (missed referrals) and Q6 (false referral) with the policy specialist before accepting judge scores.",
-    "decision": "When do people review disagreement or low confidence?"
+    "title": "Check automated scorers against reviewed answers",
+    "why": "An automated evaluator, or judge, assigns quality labels or scores. Calibration checks its decisions against independently reviewed human labels before anyone relies on its scores.",
+    "dataset": "The policy specialist supplies fictional reviewed labels: referral-required=Q1–Q5; routine=Q6–Q10. The judge predicts referral for Q1,Q2,Q3,Q6 and routine for the other six.",
+    "metric": "The test engineer counts TP=3 (correct referrals), FP=1 (unnecessary referral), FN=2 (missed referrals), TN=4 (correct routine cases). Referral precision=3/4=75% is correct referrals divided by predicted referrals; recall=3/5=60% is referrals found divided by referrals needed; false-positive rate=1/5=20% is unnecessary referrals divided by routine cases.",
+    "evidence": "Save the rubric version, meaning the scoring rules, and all ten human/judge label pairs. The policy specialist reviews Q4 and Q5 (missed referrals) and Q6 (false referral); unresolved disagreement remains visible before judge scores inform a decision.",
+    "decision": "Who reviews disagreements, and which judge errors prevent its scores being used?"
   },
   {
     "id": "statistical-comparison",
-    "title": "Compare changes with uncertainty",
-    "why": "A small observed improvement can be noise.",
-    "dataset": "Fictional paired results on the same 100 cases: both pass=74, only A passes=6, only B passes=10, both fail=10. The case, not an individual repeated call, is the comparison unit.",
-    "metric": "A succeeds on 80/100; B on 84/100. Paired gain=(10−6)/100=4 percentage points. That point estimate does not meet a predeclared 5-point practical-gain target.",
-    "evidence": "Keep all paired rows, the practical-gain rule and a paired uncertainty calculation. Do not call B a demonstrated improvement from the two success totals alone.",
-    "decision": "What improvement matters, and how costly is a false win?"
+    "title": "Compare changes and acknowledge uncertainty",
+    "why": "A higher score on a sample may occur by chance. Compare both versions on the same cases and estimate how uncertain the difference is before deciding.",
+    "dataset": "The test engineer records fictional paired results on the same 100 cases: both pass=74, only A passes=6, only B passes=10, both fail=10. Each case is the comparison unit; repeated calls for it are not new independent cases.",
+    "metric": "A succeeds on 80/100; B on 84/100. Paired gain=(10−6)/100=4 percentage points. This estimated gain is below the predeclared 5-point practical-gain target, the improvement the team agreed would matter.",
+    "evidence": "Save each case’s A and B results, the practical-gain rule and an uncertainty calculation that keeps each pair together. The decision owner must not call B a demonstrated improvement from the two totals alone.",
+    "decision": "What improvement would justify a change, and what would it cost to declare a winner that is not actually better?"
   },
   {
     "id": "operational-health",
-    "title": "Connect quality to operations",
-    "why": "A service needs both dependable operation and useful outputs.",
-    "dataset": "Fictional ten eligible requests: seven correct answers within five seconds; one correct referral in four seconds; one error page in one second; one correct answer in eight seconds.",
-    "metric": "Useful-and-timely outcomes=(7+1)/10=80%, below a proposed 90% target. Nine fast responses do not equal nine useful outcomes.",
-    "evidence": "Retain request IDs, result codes, elapsed time and review labels without message text. Separately, one confirmed cross-tenant disclosure triggers private-retrieval shutdown and the on-call response.",
-    "decision": "What triggers rollback, and which content may telemetry retain?"
+    "title": "Check whether the live service is useful and timely",
+    "why": "Operations means the work of running and supporting a live service. A fast response is not a successful outcome when it is wrong or unusable.",
+    "dataset": "The service owner reviews fictional ten eligible requests: seven correct answers within five seconds; one correct referral in four seconds; one error page in one second; one correct answer in eight seconds.",
+    "metric": "The test engineer counts useful-and-timely outcomes=(7+1)/10=80%, below a proposed 90% target. Nine fast responses include the error page, so they do not equal nine useful outcomes.",
+    "evidence": "Save request identifiers, result codes, elapsed time and review labels without message text. Separately, one confirmed disclosure between customer organisations triggers private-source search shutdown and the assigned incident responder’s action.",
+    "decision": "Which failure requires stopping or restoring the service, and what may its monitoring records retain?"
   },
   {
     "id": "hosting-capacity",
-    "title": "Validate model-serving capacity",
-    "why": "A model that fits in memory may still miss the service target.",
-    "dataset": "Illustrative load run: 100 prompts, each 1000 input tokens and capped at 100 output tokens, at concurrency 10. A and B use the same reviewed prompt cases.",
-    "metric": "Proposed p95 first-token limit=2 seconds. Illustrative fixture A=1.8 seconds, B=3.2 seconds: B fails this workload’s latency gate. Task-quality results must pass separately.",
-    "evidence": "Keep run configuration, hardware and model revisions, per-request timing, output lengths and quality labels. The fictional timing values illustrate a decision; they are not provider benchmarks.",
-    "decision": "Which quantization and batching choices preserve quality?"
+    "title": "Check that the model can serve the planned workload",
+    "why": "Model serving runs a model to answer requests. Fitting it in memory is not enough: it must also respond promptly and meet the task-quality requirement under the planned load.",
+    "dataset": "The hosting engineer prepares an illustrative load run: 100 prompts, each 1000 input tokens and capped at 100 output tokens, at concurrency 10. Tokens are pieces of text counted by the model; concurrency is requests in progress together. A and B use the same reviewed cases.",
+    "metric": "The proposed p95 first-token limit=2 seconds measures the time until output starts for the 95th percentile of requests. Illustrative fixture A=1.8 seconds, B=3.2 seconds: B fails this workload’s delay limit. Task-quality results must pass separately.",
+    "evidence": "Save hardware and model versions, run settings, timing for every request, output lengths and quality labels. The hosting engineer hands these to the service owner. These fictional timings illustrate a decision; they are not provider benchmarks.",
+    "decision": "Do lower-precision model weights (quantization) or processing requests together (batching) retain quality while meeting the service target?"
   },
   {
     "id": "adaptation-holdout",
-    "title": "Protect the adaptation holdout",
-    "why": "Optimization can learn quirks of your metric or dataset.",
-    "dataset": "Fictional advisory cases A1 and A2 share one client source; B1 and C1 are unrelated. Proposed development=[A1,B1], held-out=[A2,C1]. Jo has read A1 while editing the prompt.",
-    "metric": "The proposed split fails: A2 shares the exposed source. Use development=[A1,A2,B1] and held-out=[C1]; do not inspect C1 during prompt edits.",
-    "evidence": "Keep source-group IDs, split manifest and exposure record. If C1 enters optimization, mark it exposed and collect a new independent comparison set.",
-    "decision": "Why should prompt optimization or training beat the simpler baseline?"
+    "title": "Keep final comparison cases out of development",
+    "why": "Adaptation changes prompts or model parameters to improve performance. A holdout is data kept out of that work so the final comparison does not reward familiarity with the test.",
+    "dataset": "The test engineer checks fictional advisory cases: A1 and A2 share one client source; B1 and C1 are unrelated. Proposed development=[A1,B1], held-out=[A2,C1]. Jo has read A1 while editing the prompt.",
+    "metric": "The split fails because A2 shares the source already exposed to development. Use development=[A1,A2,B1] and held-out=[C1]. Jo must not inspect C1 while editing the prompt.",
+    "evidence": "Save source-group identifiers, the split manifest (which case belongs in which group) and who has seen each group. If C1 is used to improve the prompt, mark it exposed and collect a new independent comparison set.",
+    "decision": "What evidence would show that prompt changes or training improve on the simpler starting approach?"
   },
   {
     "id": "synthetic-review",
-    "title": "Review synthetic data before use",
-    "why": "Generated examples can repeat errors and hide missing cases.",
-    "dataset": "Fictional generator makes 20 variants of G-12 and labels all answer-yes because 20+10=30. RE-7 allows only one pause per 12 months; G-12’s earlier pause was four months ago.",
-    "metric": "Policy review rejects all 20 labels: resolved outcome is referral-required, with no approval promise. Twenty paraphrases of the same wrong answer do not provide independent policy coverage.",
-    "evidence": "Preserve generator version, parent case G-12, rejected labels and correction reason. Keep all variants with G-12 in the exposed regression group; use independently collected unseen cases for final comparison.",
-    "decision": "Which real cases are missing from the synthetic distribution?"
+    "title": "Review generated cases before treating them as evidence",
+    "why": "Synthetic data means examples produced by a generator rather than independently collected from the work. Many generated variations can repeat the same wrong assumption.",
+    "dataset": "The reviewer inspects a fictional generator’s 20 variants of G-12, all labelled answer-yes because 20+10=30. RE-7 permits only one pause per 12 months; G-12’s earlier pause was four months ago.",
+    "metric": "The policy owner rejects all 20 labels: the reviewed result is referral-required, with no approval promise. Twenty rewordings of the same wrong answer do not test independent policy situations.",
+    "evidence": "Save the generator version, original case G-12, rejected labels and correction reason. The test engineer keeps all variants with G-12 in the exposed regression group, used to recheck known failures. Collect separate unseen cases for final comparison.",
+    "decision": "Which real situations are absent from the generated cases, and who will supply independent examples?"
   }
 ]

@@ -1,137 +1,137 @@
 [
   {
     "id": "first-api",
-    "title": "Ship your first grounded API",
-    "audience": "Web engineer · begin here",
-    "summary": "Turn a familiar endpoint into a system that can find evidence, answer and be tested.",
+    "title": "Build an API that answers from sources",
+    "audience": "Web engineer · a first source-backed service",
+    "summary": "An API lets other software request work. Build one that finds approved source passages, returns supported answers and reports when evidence is missing.",
     "steps": [
       {
         "node": "api",
-        "task": "Write the user outcome and response contract. Fictional example: For “reset HH2”, accept productId=HH2 and return answer plus source IDs; absent productId returns needs_product."
+        "task": "The engineer writes the request and response contract: the fields other software sends and receives. Fictional example: For “reset HH2”, accept productId=HH2 and return the answer plus source identifiers; absent productId returns needs_product."
       },
       {
         "node": "data",
-        "task": "Identify source ownership and allowed use. Fictional example: Use approved HH2-r3; exclude revoked HH2-r2 and tickets outside the signed-in tenant."
+        "task": "The source owner identifies approved documents and who may read them. A tenant is a customer organisation with separate private records. Fictional example: Use approved HH2-r3; exclude withdrawn HH2-r2 and tickets outside the signed-in tenant."
       },
       {
         "node": "search",
-        "task": "Retrieve evidence before you generate. Fictional example: Search “reset HH2”; expect HH2-r3:s4 before asking a model to answer."
+        "task": "The engineer retrieves, or searches for, evidence before asking a model to answer. Fictional example: For “reset HH2”, expect HH2-r3:s4, meaning section s4 of revision r3, in the returned passages."
       },
       {
         "node": "golden-dataset",
-        "task": "Label real questions and relevant sources. Fictional example: Label Q1 relevant to HH2-r3:s4; label Q2 “refund policy” unanswerable from the reset manual."
+        "task": "The subject expert and test engineer prepare a golden dataset: questions with independently reviewed expected results. Fictional example: Q1 needs HH2-r3:s4; Q2 asks “refund policy”, which the reset manual cannot answer. Record that distinction before testing."
       },
       {
         "node": "generation",
-        "task": "Require supported answers and explicit abstention. Fictional example: HH2-r3 says 10 seconds: answer 10 and cite s4; no evidence means “I cannot establish that from this manual”."
+        "task": "The answer reviewer checks each claim against its source. Abstention means explicitly declining to answer without enough evidence. Fictional example: HH2-r3 says 10 seconds, so answer 10 and cite s4; without evidence, say “I cannot establish that from this manual”."
       },
       {
         "node": "evaluation-baseline",
-        "task": "Measure a simple baseline before adding complexity. Fictional example: On the same 10 questions, keyword search hits 7 relevant sources; record 7/10 before trying hybrid search."
+        "task": "The test engineer records a baseline, the simple starting approach used for comparison. Fictional example: On the same 10 questions, keyword search finds a relevant source for 7: record 7/10 before trying hybrid search, which combines word matching with similarity search."
       },
       {
         "node": "operations",
-        "task": "Observe failures and prepare a rollback. Fictional example: On one confirmed cross-tenant disclosure, disable private retrieval and route to support."
+        "task": "The service owner assigns a responder and a stop condition before release. Fictional example: One confirmed disclosure between customer organisations disables private-source search and routes users to support. Record who investigates and who may restore access."
       }
     ]
   },
   {
     "id": "agent",
-    "title": "Give an agent tools safely",
-    "audience": "Engineer + product owner",
-    "summary": "Connect an interactive agent, constrain its tools and keep people in consequential decisions.",
+    "title": "Give an agent tools with explicit limits",
+    "audience": "Engineer and product owner · actions and approval",
+    "summary": "An agent uses a model to choose actions; a tool is an operation it can request. Define approval and failure handling before it can change real records.",
     "steps": [
       {
         "node": "api",
-        "task": "Specify the task and what success changes. Fictional example: Task: prepare replacement HH2 at address A; success is an approved order O17, not a plausible message."
+        "task": "The product owner defines the task and the real change that counts as success. Fictional example: Prepare replacement HH2 at address A; success is approved order O17, not a convincing message saying it was ordered."
       },
       {
         "node": "agents",
-        "task": "Separate the agent loop from its integrations. Fictional example: The agent proposes createOrder; the integration verifies account, approval revision and idempotency key before it writes."
+        "task": "The engineer separates the agent’s repeated decide-and-act loop from the integration code that calls external services. Fictional example: The agent proposes createOrder; the integration checks the account, approved draft revision and idempotency key, a request identifier that prevents duplicate effects."
       },
       {
         "node": "p-orchestration",
-        "task": "Define the workflow and failure states. Fictional example: Draft r3 → approved r3 → submitted K17 → created O17; timeout after submission enters status lookup."
+        "task": "The engineer writes the allowed workflow states and transitions. Fictional example: Draft r3 → approved r3 → submitted K17 → created O17. If the reply is lost after submission, look up the request status before attempting another action."
       },
       {
         "node": "evaluation",
-        "task": "Test outputs and the sequence of actions. Fictional example: Retry K17 after timeout: expect O17 and exactly one stored order; no second create action."
+        "task": "The test engineer checks the stored result and sequence of actions. Fictional example: Retry request K17 after a timeout: expect existing order O17 and exactly one stored order, with no second create action."
       },
       {
         "node": "annotation-rubric",
-        "task": "Agree how people judge success. Fictional example: A pass requires the approved item/address and one order; a friendly reply without the order fails."
+        "task": "The product owner and test engineer agree a rubric, the written scoring rules. Fictional example: A pass requires the approved item and address and one order; a friendly reply without an order fails."
       },
       {
         "node": "operations",
-        "task": "Make decisions and failures inspectable. Fictional example: Record K17, draft r3 and O17; show the request stopped before submission if approval is missing."
+        "task": "The service operator needs records that explain which decision led to each action. Fictional example: Record request K17, draft r3 and order O17. If approval is missing, show that the request stopped before submission."
       }
     ]
   },
   {
     "id": "quality",
-    "title": "Decide if a change is better",
-    "audience": "Stakeholder + engineer",
-    "summary": "Ask for evidence you can act on, from representative cases to uncertainty and release decisions.",
+    "title": "Decide whether a change is better",
+    "audience": "Decision owner and engineer · evidence for a change",
+    "summary": "Use reviewed cases to compare versions, understand uncertainty and decide whether the evidence supports release. Completing a test does not itself authorise release.",
     "steps": [
       {
         "node": "evaluation",
-        "task": "Define the consequence of a wrong answer. Fictional example: Wrong duration for HH2 can cause a failed reset; cross-tenant disclosure is a separate release-blocking defect."
+        "task": "The decision owner and subject expert define the cost of each wrong result. Fictional example: The wrong HH2 reset duration can cause failure; disclosing another customer organisation’s ticket is a separate defect that blocks release."
       },
       {
         "node": "golden-dataset",
-        "task": "Capture representative and difficult cases. Fictional example: Q1 asks reset HH2 (10 seconds); Q2 has no product (clarify); Q3 asks another tenant’s ticket (deny)."
+        "task": "The subject expert supplies cases with expected outcomes for a golden dataset, a versioned reference for checks. Fictional example: Q1 asks reset HH2 (10 seconds); Q2 lacks the product (ask for it); Q3 requests another organisation’s ticket (deny access)."
       },
       {
         "node": "data-splits",
-        "task": "Protect independent evaluation data. Fictional example: Keep all messages from ticket T1 in development; leave T2 and its replies in held-out evaluation."
+        "task": "The test engineer separates development cases from held-out cases, which remain unseen until final evaluation. Fictional example: Put ticket T1 and all its messages in development; keep T2 and its replies together in the unseen group."
       },
       {
         "node": "annotation-rubric",
-        "task": "Agree an observable success rubric. Fictional example: “Hold Reset 10 seconds” is supported by HH2-r3:s4; “5 seconds” fails even with the same citation."
+        "task": "The subject expert and reviewers agree a rubric, the written rules for deciding a pass. Fictional example: “Hold Reset 10 seconds” is supported by HH2-r3:s4; “5 seconds” fails even when it cites the same section."
       },
       {
         "node": "p-llm-judge",
-        "task": "Calibrate automated judging against people. Fictional example: For 10 answers, 2 judge-supported answers are human-unsupported; inspect those false positives before accepting judge scores."
+        "task": "The test engineer calibrates an automated judge by comparing its labels with independent human labels. Fictional example: Among 10 answers, 2 marked supported by the judge are unsupported according to people. Inspect those false positives, or incorrect positive labels, before trusting its scores."
       },
       {
         "node": "x-bootstrap",
-        "task": "Compare paired outcomes with uncertainty. Fictional example: A wins 80/100 and B 84/100 on paired cases; 10 B-only wins and 6 A-only wins give +4 points, with uncertainty still required."
+        "task": "The analyst compares both versions on the same cases and calculates uncertainty in the difference. Fictional example: A passes 80/100 and B 84/100. With 10 B-only passes and 6 A-only passes, B gains +4 percentage points; the estimate still needs an uncertainty calculation."
       },
       {
         "node": "operations",
-        "task": "Choose release and rollback criteria. Fictional example: Proposed gate: no observed tenant disclosure; any confirmed disclosure after release disables private retrieval."
+        "task": "The release owner records pass conditions, remaining decisions and the responder’s stop authority. Fictional example: Require no observed disclosure between customer organisations; any confirmed disclosure after release disables private-source search. This sample result does not prove failure is impossible."
       }
     ]
   },
   {
     "id": "adapt",
-    "title": "Adapt and host a model",
-    "audience": "Engineer · deeper exploration",
-    "summary": "Compare prompts, weights and hosting choices while protecting a trustworthy evaluation set.",
+    "title": "Change a model and plan how to run it",
+    "audience": "Engineer · model changes and hosting",
+    "summary": "Compare changes to prompts, learned model parameters and hosting. Keep final evaluation cases unseen while developing the change.",
     "steps": [
       {
         "node": "evaluation-baseline",
-        "task": "Record quality, cost and latency today. Fictional example: Illustrative baseline: 80/100 correct, EUR 4 per 100 requests and p95 latency 2 seconds."
+        "task": "The engineer records the baseline, the current approach, with quality, cost and delay. Fictional example: 80/100 correct, EUR 4 per 100 requests and p95 latency 2 seconds, the delay at the 95th percentile of requests."
       },
       {
         "node": "adaptation",
-        "task": "Choose what you want optimization to change. Fictional example: Improve unsupported-answer errors; keep the same 100-case comparison and reject a change that adds tenant leaks."
+        "task": "The product owner names the error the change should reduce. Optimisation means changing instructions or model parameters to improve a measured result. Fictional example: Reduce unsupported answers on the same 100-case comparison; reject a change that adds disclosure between customer organisations."
       },
       {
         "node": "data-splits",
-        "task": "Keep training and test evidence separate. Fictional example: Train on tickets T1–T20, develop on T21–T25 and hold out T26–T30; keep each ticket’s replies with it."
+        "task": "The test engineer keeps training, development and final test groups separate. Fictional example: Train on tickets T1–T20, develop on T21–T25 and hold out T26–T30 for final evaluation. Keep every ticket’s replies in its group."
       },
       {
         "node": "synthetic-eval-risks",
-        "task": "Check what generated data cannot tell you. Fictional example: If generated HH2 answers all say 5 seconds, independent HH2-r3 evidence exposes the shared error: expected 10."
+        "task": "The subject expert reviews synthetic data, which is produced by a generator and can repeat its errors. Fictional example: Generated HH2 answers all say 5 seconds, but independent source HH2-r3 says 10. Reject the generated labels."
       },
       {
         "node": "hosting",
-        "task": "Plan capacity and operational ownership. Fictional example: At concurrency 10 with 1000-token prompts, proposed p95 first-token limit is 2 seconds; name the on-call owner before exposure."
+        "task": "The hosting engineer tests simultaneous requests and assigns an incident responder before access is enabled. Fictional example: At concurrency 10, meaning requests in progress together, with 1000-token prompts, the proposed p95 first-token limit is 2 seconds. Tokens are pieces of text; first-token delay ends when output starts."
       },
       {
         "node": "x-cost-quality",
-        "task": "Compare practical gains and service costs. Fictional example: Illustrative candidate reduces failures 20→16 per 100 requests but raises cost EUR 4→8; compare EUR 4 extra against the agreed value of four corrected outcomes."
+        "task": "Finance and the product owner compare quality gains with full service cost. Fictional example: Failures fall 20→16 per 100 requests while cost rises EUR 4→8. Compare EUR 4 extra with the agreed value of four corrected outcomes before deciding."
       }
     ]
   }

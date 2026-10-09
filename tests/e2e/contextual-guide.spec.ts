@@ -91,7 +91,7 @@ test("plan help opens a worked topic and returns to the same saved draft", async
     dialog.getByText("Expected result", { exact: true }).first(),
   ).toBeVisible();
   await dialog
-    .getByRole("button", { name: /tested_with.*Build a golden dataset/ })
+    .getByRole("button", { name: /tested with.*Build a golden dataset/ })
     .click();
   await expect(
     dialog.getByRole("heading", {
@@ -118,7 +118,7 @@ test("current need text refines suggestions without changing the plan", async ({
 }) => {
   await page.goto("./");
   await page
-    .getByRole("button", { name: "Next: Understand users and the work" })
+    .getByRole("button", { name: "Next: Understand users and their work" })
     .click();
   await page.getByRole("button", { name: "Add a user need" }).click();
   const task = page.getByLabel("What do they need to do?");
@@ -230,7 +230,7 @@ test("a golden dataset shows the people, dispute and controlled revisions", asyn
   const before = await saved(page);
   await walkthrough
     .getByRole("button", {
-      name: "Next: Resolve against policy and rubric",
+      name: "Next: Resolve the disagreement using the policy and scoring rules",
       exact: true,
     })
     .click();
@@ -242,7 +242,7 @@ test("a golden dataset shows the people, dispute and controlled revisions", asyn
   );
   await walkthrough
     .getByRole("button", {
-      name: "7. Freeze a versioned reference",
+      name: "7. Save a fixed version of the reviewed reference set",
       exact: true,
     })
     .click();

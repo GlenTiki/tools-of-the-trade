@@ -28,7 +28,7 @@ test("a director can start a guided plan, review collaborators and keep it after
   await page.getByLabel("I am working with…").selectOption("finance");
   await expect(page.locator(".collaboration")).toContainText("cost");
   await page
-    .getByRole("button", { name: "Next: Understand users and the work" })
+    .getByRole("button", { name: "Next: Understand users and their work" })
     .click();
   await page.getByRole("button", { name: "Add a user need" }).click();
   await page.getByLabel("Who needs this?").fill("Support adviser");
@@ -245,7 +245,7 @@ test("the field guide adds real evaluation prompts and legacy imports retain not
   const check = page.locator("details.record").filter({
     has: page
       .locator("summary")
-      .getByText("Define the API contract", { exact: true }),
+      .getByText("Define accepted requests and responses", { exact: true }),
   });
   await check.locator("summary").click();
   await expect(

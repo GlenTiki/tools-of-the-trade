@@ -20,6 +20,8 @@ The nine core engagement checkpoints cover mandate, client working agreements, g
 
 The field guide includes connected topics, four learning journeys, seventy worked cases, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
 
+The content explains specialist terms where they are used and names who prepares, reviews and accepts the work. The [clarity review](docs/specs/beginner-content-clarity.md) records the scope, corrections and checks for readers new to a role.
+
 Open **Field guide** beside a plan input, architecture choice or component contract for related topics and a short example. Suggestions use the current input and bundled topic mappings locally. Read the full topic in a dialog, then close it to return to your draft. Reading this help does not add checks or edit the project.
 
 Open **Evaluation → Show golden dataset guide**, or the **Build a golden dataset** topic, to follow case G-12 through eight states. Each state shows who acts, how the record changes, what permits the next state, and what blocks it. The guide preserves reviewer disagreement, separates regression cases from an unseen holdout, and keeps frozen versions when policy changes.

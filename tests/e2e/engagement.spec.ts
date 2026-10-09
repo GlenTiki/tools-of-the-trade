@@ -11,7 +11,9 @@ test("a PM starts an advisory engagement without invented software", async ({
     .click();
   await expect(page.getByLabel("I am contributing as…")).toHaveValue("pm");
   await page.getByLabel("I am working with…").selectOption("engineer");
-  await expect(page.locator(".collaboration")).toContainText("commercial");
+  await expect(page.locator(".collaboration")).toContainText(
+    "client decisions",
+  );
   await page.getByRole("link", { name: "Open engagement checkpoints" }).click();
   await page.screenshot({
     path: info.outputPath("core-checkpoints.png"),
@@ -19,22 +21,22 @@ test("a PM starts an advisory engagement without invented software", async ({
   });
   const mandate = page.locator(".template-card").filter({
     has: page.getByRole("heading", {
-      name: "Engagement mandate and scope",
+      name: "Agree the result and scope",
       exact: true,
     }),
   });
   await mandate.getByRole("button", { name: "Use this checkpoint" }).click();
   await page
-    .getByLabel("Which deliverables will the client receive?")
+    .getByLabel("What finished outputs will the client receive?")
     .fill(
       "Arts organisation: interviews, service map and options memo. No build or live operations.",
     );
   await page
-    .getByLabel("Who can accept the engagement mandate for the client?")
+    .getByLabel("Who may accept the agreed work on the client’s behalf?")
     .fill("Client director; supplier PM coordinates delivery.");
   await page.getByLabel("Accountable owner").fill("Supplier PM");
   await page
-    .getByLabel("Which deliverables will the client receive?")
+    .getByLabel("What finished outputs will the client receive?")
     .scrollIntoViewIfNeeded();
   await page.screenshot({
     path: info.outputPath("engagement-decision.png"),
@@ -42,7 +44,7 @@ test("a PM starts an advisory engagement without invented software", async ({
   });
   await page.reload();
   await expect(
-    page.getByLabel("Which deliverables will the client receive?"),
+    page.getByLabel("What finished outputs will the client receive?"),
   ).toHaveValue(/No build/);
   await page.getByRole("link", { name: "Evaluation", exact: true }).click();
   await page.getByRole("button", { name: "Add a check", exact: true }).click();
@@ -120,12 +122,14 @@ test("specialist selection never hides saved legacy or unmatched answers", async
   await page.goto("./#delivery");
   await expect(
     page.getByRole("heading", {
-      name: "Product and division routing",
+      name: "Route requests to the right product or team",
       exact: true,
     }),
   ).toHaveCount(0);
   await expect(
-    page.getByLabel("Which divisions require separate handling?"),
+    page.getByLabel(
+      "Which products or business divisions need different handling?",
+    ),
   ).toHaveValue("Retail");
   await expect(page.getByLabel("Saved answer: older-note")).toHaveValue(
     "Unmatched saved answer",
@@ -139,7 +143,7 @@ test("specialist selection never hides saved legacy or unmatched answers", async
   await page.getByLabel("Checkpoint topics").selectOption("specialist");
   await expect(
     page.getByRole("heading", {
-      name: "Product and division routing",
+      name: "Route requests to the right product or team",
       exact: true,
     }),
   ).toBeVisible();
@@ -158,29 +162,29 @@ test("a phase plan records dependencies and distinguishes commitments from propo
     .click();
   const roadmap = page.locator(".template-card").filter({
     has: page.getByRole("heading", {
-      name: "Phases, milestones and capacity",
+      name: "Plan phases, review points and available people",
       exact: true,
     }),
   });
   await roadmap.getByRole("button", { name: "Use this checkpoint" }).click();
   await page
-    .getByLabel("Which dependency controls the next milestone?")
+    .getByLabel("Which required input could prevent that review?")
     .fill(
       "Distributor migration: client data owner supplies mapping sample before cutover planning.",
     );
   await page
-    .getByLabel("What marks the next milestone?")
+    .getByLabel("What output will be reviewed next, and who accepts it?")
     .fill("Reconciliation accepted; cutover date proposed, not committed.");
   await page
     .getByRole("button", { name: "Discover and design", exact: true })
     .click();
   await expect(
-    page.getByLabel("Which dependency controls the next milestone?"),
+    page.getByLabel("Which required input could prevent that review?"),
   ).toHaveValue(/Distributor migration/);
   await page.reload();
-  await expect(page.getByLabel("What marks the next milestone?")).toHaveValue(
-    /not committed/,
-  );
+  await expect(
+    page.getByLabel("What output will be reviewed next, and who accepts it?"),
+  ).toHaveValue(/not committed/);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

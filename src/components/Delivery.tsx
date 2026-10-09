@@ -44,6 +44,7 @@ function DecisionEditor({
         />
         <Field
           label="Accountable owner"
+          hint="Name the person who has authority to make this decision. Contributors may advise them, but the owner records the final choice."
           value={decision.owner}
           onChange={(v) => set("owner", v)}
         />
@@ -146,10 +147,9 @@ export default function Delivery({ project, update }: EditorProps) {
           <p className="eyebrow">Delivery & operations</p>
           <h1>Plan the engagement and its next decision.</h1>
           <p>
-            Start with the client mandate, phases and responsibilities. Select
-            specialist topics only when they apply. One person can hold several
-            responsibilities. Record why a checkpoint is not applicable instead
-            of inventing work.
+            Start with what the client asked you to deliver and who can accept
+            it. A checkpoint is a conversation to settle a decision before work
+            proceeds. Choose relevant checkpoints; explain why you skip others.
           </p>
         </div>
       </div>
@@ -200,8 +200,9 @@ export default function Delivery({ project, update }: EditorProps) {
       >
         <p className="muted">
           All saved records remain below, across phases and topics. These
-          records live in your project file. An accepted status is a record of
-          your decision, not an identity-verified approval.
+          records live in your project file. When you select Accepted, the app
+          records your choice. It does not contact the named owner or verify
+          that they approved it.
         </p>
         {project.decisions.length === 0 && (
           <Empty>
@@ -233,10 +234,10 @@ export default function Delivery({ project, update }: EditorProps) {
       </Panel>
       <Panel title="Close the feedback loop">
         <p>
-          Compare the observed result with the client mandate. Record
-          limitations, lessons and the next owner. Advice can close with an
-          accepted deliverable; a live service also needs monitoring and
-          response ownership.
+          Compare what happened with what the client asked for. Record what
+          still needs work and who takes over. For advice, the client may accept
+          a report. For a running service, name who watches for problems and
+          responds.
         </p>
         <p className="muted">
           This workspace records your plan and evidence links. Connect your

@@ -57,7 +57,9 @@ test("cross-role topics are searchable, connected and leave the saved project in
     await expect(
       page.getByRole("heading", { level: 1, name: title, exact: true }),
     ).toBeVisible();
-    await expect(page.getByText("Curated conceptual links.")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Connected concepts", exact: true }),
+    ).toBeVisible();
     await expect(page.locator(".learn-detail-side a").first()).toHaveAttribute(
       "href",
       /^https:\/\//,

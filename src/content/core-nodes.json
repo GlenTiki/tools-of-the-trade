@@ -4,8 +4,8 @@
     "title": "Chunking",
     "parent": "data",
     "type": "component",
-    "summary": "Split extracted text into searchable passages. Choose passage size and overlap, and retain headings, source identifiers and nearby context.",
-    "detail": "Compare retrieval hit rate and recall at a fixed result count on the same labelled questions. A boundary can separate a rule from its exception or a table from its heading. Inspect retrieved passages, not scores alone.\n\nExample: A shed rule says structures under a stated height are exempt, except in a protected area. Keep the exception available beside the rule; a perfectly matched fragment can still support the wrong answer.",
+    "summary": "Split a document into passages that search can find without losing the meaning of a rule or exception.",
+    "detail": "A chunk is one indexed passage. Its size controls how much text travels together; overlap repeats some text in adjacent chunks to preserve context. Keep headings and source identifiers. Test the same labelled questions with the same number of returned results. Hit rate counts questions with any relevant result; recall measures how much of the labelled relevant evidence was found. A split can separate a rule from its exception or a table from its heading. Inspect the actual passages as well as these scores.\n\nExample: A shed rule says structures under a stated height are exempt, except in a protected area. Keep the exception available beside the rule; a perfectly matched fragment can still support the wrong answer.",
     "inputs": ["Parsed text with headings", "Source and page identifiers"],
     "outputs": ["Passages with source links"],
     "failures": [
@@ -39,8 +39,8 @@
     "title": "Embedding model",
     "parent": "search",
     "type": "component",
-    "summary": "Convert questions and passages into vectors for similarity search. Embeddings also support duplicate detection, grouping and classification from labelled examples.",
-    "detail": "Evaluate retrieval on representative questions, including exact identifiers and paraphrases. Hold the corpus and result count fixed. Similarity does not establish factual support. Changing embedding models generally requires compatible query embeddings and a newly embedded corpus.\n\nExample: “Green bin day” and “recycling collection” may be related. “North ward” and “South ward” can also look similar even though their collection days differ. Evaluate both paraphrases and precise identifiers.\n\nNamed examples, not recommendations: sentence-transformers, BGE. Check the selected release and deployment before adoption.",
+    "summary": "Represent text as lists of numbers so search can compare questions with passages that use different wording.",
+    "detail": "An embedding model converts text into a vector, a list of numbers used to compare texts. These representations can also support duplicate detection, grouping and classification from labelled examples. Similar vectors can help find paraphrases, but similarity does not prove an answer is supported. Test representative questions, including exact identifiers, against a fixed corpus: the collection of searchable documents. Keep the number of returned results fixed. If you change embedding models, the query and document vectors must remain compatible; this generally requires embedding the document collection again.\n\nExample: “Green bin day” and “recycling collection” may be related. “North ward” and “South ward” can also look similar even though their collection days differ. Evaluate both paraphrases and precise identifiers.\n\nNamed examples, not recommendations: sentence-transformers, BGE. Check the selected release and deployment before adoption.",
     "inputs": ["Query text", "Passages and embedding model version"],
     "outputs": ["Query and passage vectors"],
     "failures": [
@@ -74,9 +74,12 @@
     "title": "Vector index",
     "parent": "search",
     "type": "component",
-    "summary": "Store and search passage vectors. Select an exact or approximate method according to the required response time, capacity and retrieval quality.",
-    "detail": "Compare returned neighbours with exact search on a sample. Measure latency and recall with realistic filters. Approximate search can miss neighbours. Filtering and changed embeddings can alter results; verify both before replacing an index.\n\nExample: Compare an approximate index with exact neighbours on the same vectors. A faster index that drops the only authorised source is a regression even if its average latency improves.\n\nNamed examples, not recommendations: pgvector, FAISS, Qdrant, Weaviate, Milvus, Chroma. Check the selected release and deployment before adoption.",
-    "inputs": ["Passage vectors", "Metadata and access filters"],
+    "summary": "Find passages quickly by searching their stored numerical representations.",
+    "detail": "A vector index stores passage vectors, the number lists produced by an embedding model. Neighbours are vectors most similar to the query vector. Exact search checks the collection for the closest matches; approximate search uses shortcuts that can miss some. Compare the approximate results with exact search on a sample. Measure capacity and storage for the intended collection size, response time, called latency, and recall: how many expected neighbours are returned. Apply realistic access filters. Recheck the results after changing filters or embedding models.\n\nExample: Compare an approximate index with exact neighbours on the same vectors. A faster index that drops the only authorised source is a regression even if its average latency improves.\n\nNamed examples, not recommendations: pgvector, FAISS, Qdrant, Weaviate, Milvus, Chroma. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Passage vectors",
+      "Passage metadata, such as source IDs, and access filters"
+    ],
     "outputs": ["Ranked passage identifiers"],
     "failures": [
       "Approximate search can miss neighbours. Filtering and changed embeddings can alter results; verify both before replacing an index."
@@ -110,9 +113,9 @@
     "parent": "search",
     "type": "component",
     "summary": "Find passages through words, codes, names and phrases. Keyword search supplies a useful baseline and complements searches based on meaning.",
-    "detail": "Measure hit rate or recall at a fixed result count, especially for exact identifiers and specialist terms. Different wording can hide relevant passages. Tokenisation and query processing affect matches; inspect failures before assuming an embedding model is necessary.\n\nExample: A resident supplies form code PL-104. Preserve an exact-code baseline: a semantically related form with a different code is not an acceptable match.\n\nNamed examples, not recommendations: Apache Lucene, OpenSearch. Check the selected release and deployment before adoption.",
+    "detail": "Use keyword search as a baseline: a simple starting result that later methods must improve on. Tokenisation divides text into searchable units; query processing decides how to use them. These choices affect whether a code or phrase matches. At a fixed result count, measure which questions find relevant evidence and how much of that evidence is found. Inspect questions with different wording before deciding that numerical text representations, or embeddings, are needed.\n\nExample: A resident supplies form code PL-104. Preserve an exact-code baseline: a semantically related form with a different code is not an acceptable match.\n\nNamed examples, not recommendations: Apache Lucene, OpenSearch. Check the selected release and deployment before adoption.",
     "inputs": ["Question terms", "Indexed passage text"],
-    "outputs": ["Ranked lexical matches"],
+    "outputs": ["Passages ranked by word or phrase matches"],
     "failures": [
       "Different wording can hide relevant passages. Tokenisation and query processing affect matches; inspect failures before assuming an embedding model is necessary."
     ],
@@ -144,8 +147,8 @@
     "title": "Hybrid search",
     "parent": "search",
     "type": "method",
-    "summary": "Combine keyword and vector search so exact terms and paraphrases can both contribute results. Merge ranked lists or tune their relative influence.",
-    "detail": "Compare the combined results with each search alone on identical questions and a fixed final result count. An extra search adds cost and complexity. Better performance is not automatic; test the blend and avoid tuning against the final evaluation set.\n\nExample: Merge two rankings of the same passage IDs, then compare at a fixed final result count. Increasing the output from five to fifty is not a fair demonstration that fusion improved ranking.",
+    "summary": "Combine exact-word search with search based on numerical text representations to handle both codes and paraphrases.",
+    "detail": "Keyword search and vector search each return an ordered list of passages. Hybrid search combines those lists, a step often called fusion. Compare the merged list with each search alone using the same questions and final result count. The extra search adds cost and complexity; it does not guarantee better results. Adjust the blend on development cases, the examples available for design choices, and keep final evaluation cases out of that adjustment.\n\nExample: Merge two rankings of the same passage IDs, then compare at a fixed final result count. Increasing the output from five to fifty is not a fair demonstration that fusion improved ranking.",
     "inputs": ["Keyword ranking", "Vector ranking"],
     "outputs": ["Combined candidate ranking"],
     "failures": [
@@ -188,9 +191,9 @@
     "parent": "search",
     "type": "component",
     "summary": "Rescore a shortlist using the question and each passage together. Keep the strongest candidates for the answer model after this second pass.",
-    "detail": "Compare retrieval quality before and after reranking, using the same final result count. Record the additional latency. Scores need not be probabilities or comparable between models. Truncated passages and missing candidates can still limit the result.\n\nExample: Retrieve fifty candidates, rerank them, and give the writer five. If the right source never entered the fifty, the reranker cannot recover it. Count that retrieval miss separately.\n\nNamed examples, not recommendations: BGE reranker. Check the selected release and deployment before adoption.",
-    "inputs": ["Query", "Retrieved candidate passages"],
-    "outputs": ["Rescored shortlist"],
+    "detail": "A reranker receives passages already found by search and compares each one with the question. It then changes their order. Compare results before and after this step at the same final result count, and record the extra response time. A relevance score need not be a probability, and scores from different models may use different scales. Text cut off before scoring and relevant passages missing from the first search can still limit the result.\n\nExample: Retrieve fifty candidates, rerank them, and give the writer five. If the right source never entered the fifty, the reranker cannot recover it. Count that retrieval miss separately.\n\nNamed examples, not recommendations: BGE reranker. Check the selected release and deployment before adoption.",
+    "inputs": ["The question", "Passages returned by the first search"],
+    "outputs": ["Passages reordered by a second relevance check"],
     "failures": [
       "Scores need not be probabilities or comparable between models. Truncated passages and missing candidates can still limit the result."
     ],
@@ -222,11 +225,11 @@
     "title": "Large language model",
     "parent": "generation",
     "type": "component",
-    "summary": "Generate answers from supplied context, produce structured fields or propose tool calls. Select a model for the task it must perform.",
-    "detail": "Measure required facts, source support, refusals, cost and latency across repeated runs of an evaluation set. Fluent output can contain unsupported claims. Model choice and settings do not replace evidence checks or controls around tool execution.\n\nExample: The source says Monday, but the model writes Friday with a plausible citation. Fluent prose and a valid source ID are insufficient; check the stated day against the passage.\n\nModel-family examples: Mistral, Qwen and Gemma. Inference runtime examples: llama.cpp and Ollama. These are different roles, not recommendations. Check the selected release and deployment before adoption.",
+    "summary": "Use a language model to draft text, fill defined fields or propose an operation for the application to check.",
+    "detail": "A large language model (LLM) generates output from a prompt: instructions and any supplied context, such as source passages. A tool call is a proposed operation with arguments; the application decides whether to execute it. Test the model on an evaluation set of representative tasks. Check required facts, support from sources, appropriate refusals, cost and response time across repeated runs. Fluent output can still be wrong. Model settings do not replace evidence checks or permission controls.\n\nExample: The source says Monday, but the model writes Friday with a plausible citation. Fluent prose and a valid source ID are insufficient; check the stated day against the passage.\n\nModel-family examples: Mistral, Qwen and Gemma. Software that runs model inference, meaning generation from a trained model, includes llama.cpp and Ollama. These are different roles, not recommendations. Check the selected release and deployment before adoption.",
     "inputs": [
-      "Prompt and authorised context",
-      "Model version and generation settings"
+      "Instructions and permitted source material",
+      "Model revision and generation settings"
     ],
     "outputs": ["Generated answer or structured response"],
     "failures": [
@@ -260,8 +263,8 @@
     "title": "Language-model judge",
     "parent": "evaluation",
     "type": "component",
-    "summary": "Use a model to score answers against an explicit rubric. Ask for individual decisions and reasons so reviewers can inspect disagreements.",
-    "detail": "Compare its decisions with independently reviewed human labels. Report errors by outcome and repeat a sample to assess consistency. Agreement is not proof of correctness. Position, answer length and model preferences can bias judgements; keep calibration separate from final evaluation.\n\nExample: Ask two reviewers to score a sample before calibrating the judge. Inspect cases where the judge rewards a longer answer that adds unsupported facts. A repeatable judge may repeat the same bias.",
+    "summary": "Use a model to assess an answer against written scoring rules, while keeping its decisions open to review.",
+    "detail": "A rubric states what earns each score and how to handle missing or unsupported information. Ask the judge for separate decisions and reasons. Compare these with labels assigned by independent human reviewers, then repeat some cases to check consistency. Calibrating the judge means checking and adjusting its use of the rubric on development cases. Keep that work separate from final evaluation. Agreement is not proof of correctness: answer order, length or a model’s preferences can bias both scores and reasons.\n\nExample: Ask two reviewers to score a sample before calibrating the judge. Inspect cases where the judge rewards a longer answer that adds unsupported facts. A repeatable judge may repeat the same bias.",
     "inputs": ["Candidate answer", "Rubric and reference evidence"],
     "outputs": ["Fact-level scores with reasons"],
     "failures": [
@@ -296,10 +299,10 @@
     "parent": "generation",
     "type": "component",
     "summary": "Route questions into defined categories, such as topic, answerability or difficulty. Implement the decision with rules, a trained classifier or a prompted model.",
-    "detail": "Report a confusion matrix and results for each class. Choose thresholds against the cost of each error. A high overall score can conceal failures in rare classes. Monitor changing questions and review uncertain cases rather than assuming every route fits.\n\nExample: An answerability classifier accepts all questions and appears accurate when most are answerable. Its false-positive rate on unanswerable questions is still 100%; report each outcome.\n\nNamed examples, not recommendations: scikit-learn. Check the selected release and deployment before adoption.",
+    "detail": "A classifier chooses a label for an input. An answerability label, for example, says whether the available evidence can answer a question. If a score determines the choice, the threshold is the cutoff for accepting a label. A confusion matrix counts correct and incorrect predictions for each actual class. Use it to inspect missed cases and false alarms separately. Choose the cutoff with the cost of both errors in mind. A high overall score can conceal failures in a rare class; uncertain cases may need review.\n\nExample: An answerability classifier accepts all questions and appears accurate when most are answerable. Its false-positive rate on unanswerable questions is still 100%; report each outcome.\n\nNamed examples, not recommendations: scikit-learn. Check the selected release and deployment before adoption.",
     "inputs": [
-      "Question or candidate features",
-      "Label definitions and threshold"
+      "The question or measured properties used to classify it",
+      "Label meanings and the score cutoff"
     ],
     "outputs": ["Predicted route or class"],
     "failures": [
@@ -334,7 +337,7 @@
     "parent": "generation",
     "type": "component",
     "summary": "Compare answer claims with retrieved evidence and flag claims that the passages do not support. Keep the distinction between support, contradiction and uncertainty.",
-    "detail": "Evaluate against human-labelled claims, including numbers, tables and paraphrases. Report missed unsupported claims and incorrect rejections separately. A checker can misread evidence or lose it through truncation. A positive result does not establish that the underlying source is true.\n\nExample: “The fee is waived for students” does not support “The fee is waived for everyone.” The checker must retain the condition, not merely recognise similar vocabulary.",
+    "detail": "A claim is a factual statement within an answer. Compare each claim with the supplied passage and label it supported, contradicted or unresolved. Test the checker against reviewed human labels, including numbers, tables and different wordings of the same fact. Count missed unsupported claims separately from correct claims rejected by mistake. The checker can misread a condition or lose evidence when text is cut off to fit a limit. Even a supported claim can inherit an error from its source.\n\nExample: “The fee is waived for students” does not support “The fee is waived for everyone.” The checker must retain the condition, not merely recognise similar vocabulary.",
     "inputs": ["Answer claims", "Supplied source passages"],
     "outputs": ["Supported, contradicted or unresolved labels"],
     "failures": [
@@ -369,7 +372,7 @@
     "parent": "data",
     "type": "component",
     "summary": "Detect personal data or harmful content at input and output boundaries. Combine appropriate fixed patterns with model checks where needed.",
-    "detail": "Measure missed detections and incorrect removals for each data category or moderation outcome, using labelled cases. Unusual formats and ambiguous names cause errors. Check before external transfer as well as after generation; output redaction cannot undo an earlier disclosure.\n\nExample: A resident includes a phone number in a question. If it reaches an external model before output filtering runs, later redaction cannot undo that transfer. Test the input boundary independently.\n\nNamed examples, not recommendations: Presidio. Check the selected release and deployment before adoption.",
+    "detail": "Personal data includes information that identifies a person; PII is a common abbreviation for personally identifiable information. Moderation checks content against a defined harm policy. Specify what the detector should flag, then count missed detections and harmless text removed by mistake using labelled cases. Unusual formats and ambiguous names can cause errors. Check before text leaves for an external service as well as after generation. Redaction means removing or masking text; doing it only in the final answer cannot undo an earlier disclosure.\n\nExample: A resident includes a phone number in a question. If it reaches an external model before output filtering runs, later redaction cannot undo that transfer. Test the input boundary independently.\n\nNamed examples, not recommendations: Presidio. Check the selected release and deployment before adoption.",
     "inputs": [
       "Text crossing a defined boundary",
       "Detection policy and labelled cases"
@@ -407,7 +410,7 @@
     "parent": "agents",
     "type": "method",
     "summary": "Allow a bounded sequence of searches when one query cannot supply enough evidence. The system can revise its query and decide when to stop.",
-    "detail": "Compare final answer quality, retrieval results, search count, latency and cost against a simpler fixed pipeline. More searches can repeat the same mistake or never reach an answer. Set explicit stopping conditions and inspect unsuccessful search sequences.\n\nExample: The first search finds the waste policy but not the holiday calendar. A second targeted search can help. Repeating the same empty query ten times adds cost without evidence.",
+    "detail": "Retrieval-augmented generation (RAG) supplies searched evidence to an answer model. In an agentic version, the model can choose another permitted search after seeing an earlier result. Start with a fixed one-search workflow as the baseline. Compare answer quality, evidence found, search count, response time and cost. Set a maximum number of searches and a clear stop result when evidence is still missing. More searches can repeat the same mistake rather than improve the answer.\n\nExample: The first search finds the waste policy but not the holiday calendar. A second targeted search can help. Repeating the same empty query ten times adds cost without evidence.",
     "inputs": ["Question", "Permitted search tools and stopping policy"],
     "outputs": ["Evidence from bounded searches", "Answer or explicit failure"],
     "failures": [
@@ -442,7 +445,7 @@
     "parent": "search",
     "type": "method",
     "summary": "Check the quality of retrieved evidence before generation. Route weak results to a defined fallback, such as rewriting the query and searching again.",
-    "detail": "Measure the checker's errors and compare final answer quality, latency and cost with the original retrieval path. The checker can reject useful evidence or accept weak passages. A fallback needs its own evaluation and must respect the original data-access boundary.\n\nExample: A check rejects an irrelevant planning passage and searches again for the collection calendar. Test whether the fallback improves the answer, and whether the check incorrectly rejects a useful passage.",
+    "detail": "In retrieval-augmented generation, the answer model receives passages found by search. A corrective workflow first checks whether those passages are useful. A fallback is a defined alternative, such as rewriting the query and searching again. Compare the whole workflow with the original search on the same cases. Check both useful passages rejected by mistake and weak passages incorrectly accepted. The alternative route must obey the same access permissions, and its extra response time and cost count in the comparison.\n\nExample: A check rejects an irrelevant planning passage and searches again for the collection calendar. Test whether the fallback improves the answer, and whether the check incorrectly rejects a useful passage.",
     "inputs": ["Retrieved passages", "Quality check and permitted fallback"],
     "outputs": ["Accepted or replacement evidence"],
     "failures": [
@@ -477,7 +480,7 @@
     "parent": "search",
     "type": "method",
     "summary": "Use a model's retrieval and support assessments to guide whether it searches and whether its answer follows the evidence. Treat these as signals to evaluate.",
-    "detail": "Measure retrieval decisions and evidence support separately, then compare complete answers with a baseline lacking these signals. A model can approve its own mistake. Implementations differ; do not assume a generic self-check reproduces a particular trained Self-RAG method.\n\nExample: A generated reflection says an answer is supported, but the source gives a different date. Keep independent labelled checks. A generic “check your work” prompt is not the trained Self-RAG method.",
+    "detail": "Self-RAG uses model-generated assessments to guide retrieval and judge whether an answer follows the evidence. Treat those assessments as predictions to test, not independent approval. Compare search decisions and answer support with reviewed labels, then compare the complete workflow with one that lacks those signals. The published trained method uses a specific model and training approach. A general instruction to check an answer does not reproduce that method, and a model can endorse its own mistake.\n\nExample: A generated reflection says an answer is supported, but the source gives a different date. Keep independent labelled checks. A generic “check your work” prompt is not the trained Self-RAG method.",
     "inputs": [
       "Question and retrieved evidence",
       "A compatible model or defined self-check workflow"
@@ -515,7 +518,7 @@
     "parent": "search",
     "type": "method",
     "summary": "Choose a retrieval path according to the question's assessed difficulty. Simple questions may use a short path; complex questions may require several searches.",
-    "detail": "Compare quality, latency and cost for every route and against a baseline that always takes the longer path. Routing a difficult question to a short path can remove necessary evidence. The claimed saving depends on the actual mix of questions.\n\nExample: A simple bin-day query takes one search; a holiday exception may need two sources. Test the cases misrouted to the short path and compare with always using the longer path.",
+    "detail": "An adaptive retrieval workflow first chooses how much search a question needs. One route may use a single lookup; another may gather several sources before generating an answer. Compare correctness, response time and cost for each route against a workflow that always uses the longer path. Inspect difficult questions incorrectly sent to the short route, where necessary evidence may be missing. The saving depends on how often each type of question occurs in actual use.\n\nExample: A simple bin-day query takes one search; a holiday exception may need two sources. Test the cases misrouted to the short path and compare with always using the longer path.",
     "inputs": ["Question", "Difficulty routing policy"],
     "outputs": ["Selected retrieval route"],
     "failures": [
@@ -550,11 +553,11 @@
     "parent": "search",
     "type": "method",
     "summary": "Use entities, relationships or graph summaries to retrieve evidence across documents. Consider the approach when questions depend on connections that passage matching misses.",
-    "detail": "Compare complete answers and supporting evidence with a passage-retrieval baseline. Include graph construction and update costs. Extraction mistakes can become graph relationships. Stale communities or summaries can persist after source changes, so keep links back to the underlying documents.\n\nExample: A question asks how several departments share responsibility. Preserve links from each graph claim to its source. A stale summary can repeat a relationship removed from the current policy.",
+    "detail": "A graph represents named things, or entities, as nodes and their relationships as links. GraphRAG uses these relationships or summaries of connected groups to find evidence across documents. It may help questions that join facts about several departments or events. First compare it with ordinary passage search on those questions. Include the work to build and update the graph. An extraction error can create a false link; an old group summary can preserve a removed relationship. Keep every claim traceable to its source.\n\nExample: A question asks how several departments share responsibility. Preserve links from each graph claim to its source. A stale summary can repeat a relationship removed from the current policy.",
     "inputs": ["Documents", "Extracted entities and relationships"],
-    "outputs": ["Graph evidence or community summaries"],
+    "outputs": ["Related source facts or summaries of connected groups"],
     "failures": [
-      "Extraction mistakes can become graph relationships. Stale communities or summaries can persist after source changes, so keep links back to the underlying documents."
+      "Extraction errors can create false relationships. Summaries of connected groups can remain outdated after source changes; keep links to the underlying documents."
     ],
     "requirements": ["source-provenance", "retrieval-relevance"],
     "related": [
@@ -584,8 +587,8 @@
     "title": "Late chunking",
     "parent": "search",
     "type": "method",
-    "summary": "Create chunk representations after the embedding model processes a larger text context. This can preserve information lost when a passage is embedded alone.",
-    "detail": "Compare retrieval on the same documents and questions with and without the technique. Inspect context-dependent failures. The method depends on compatible model outputs and context limits. Processing a larger context does not guarantee that every chunk retains the needed information.\n\nExample: A passage says “this exemption” after a heading defines its scope. Compare embeddings made with and without surrounding context, using the same source and questions.",
+    "summary": "Let a passage’s numerical representation use surrounding text, including headings that explain what the passage means.",
+    "detail": "With ordinary chunking, an embedding model may process each passage separately. With late chunking, a compatible model first processes a larger text and produces representations for its individual text pieces, or tokens. Those representations are then combined within the chosen passage boundaries. Compare retrieval with and without this approach on identical questions. Check that the model exposes the needed outputs and that the larger text fits its context limit. More surrounding text does not guarantee that a chunk preserves the necessary meaning.\n\nExample: A passage says “this exemption” after a heading defines its scope. Compare embeddings made with and without surrounding context, using the same source and questions.",
     "inputs": ["Document context", "Compatible embedding model outputs"],
     "outputs": ["Context-aware chunk vectors"],
     "failures": [
@@ -620,7 +623,7 @@
     "parent": "search",
     "type": "method",
     "summary": "Add a short description of a passage's document context before indexing it for keyword and vector search. Keep the original passage and source relationship.",
-    "detail": "Compare retrieval quality with the unmodified passage baseline. Include the cost of generating and updating context descriptions. An invented or misleading description can distort both searches. Review a sample and regenerate descriptions when the source context changes.\n\nExample: Add that a passage belongs to the North ward calendar. If the generated note says South ward instead, both keyword and vector retrieval can be misled. Keep the original passage separately.",
+    "detail": "A short passage may omit the document name or subject that makes it understandable. Add a brief description of that context before creating its keyword and vector search entries. Keep the original passage separately so a reviewer can distinguish source text from the added description. Compare search results with the unchanged-passage baseline. Generating descriptions adds cost, and a wrong description can mislead both searches. Review examples and update descriptions when their source context changes.\n\nExample: Add that a passage belongs to the North ward calendar. If the generated note says South ward instead, both keyword and vector retrieval can be misled. Keep the original passage separately.",
     "inputs": ["Source passage", "Generated contextual description"],
     "outputs": ["Context-enriched index entry"],
     "failures": [
@@ -654,8 +657,8 @@
     "title": "Multi-vector retrieval",
     "parent": "search",
     "type": "method",
-    "summary": "Represent a passage with multiple vectors rather than one. Token-level matching can preserve strong local matches that a single passage vector loses.",
-    "detail": "Compare retrieval with a single-vector baseline on the same queries. Measure storage, indexing cost and response time. Additional vectors increase resource use. Matching individual terms still does not establish that the passage contains the complete answer or supports its claims.\n\nExample: A short form code matters more than the paragraph’s general topic. Multiple vectors can preserve local matches, but measure storage and latency alongside retrieval quality.",
+    "summary": "Compare smaller parts of a question and passage when a single numerical summary loses important words or codes.",
+    "detail": "A vector is a list of numbers representing text. A multi-vector method can keep one representation for each token, a piece of text, rather than one for the whole passage. Late interaction compares these smaller representations at search time. Compare its results with a single-vector baseline on the same questions. Measure storage, indexing work and response time too. Strong matches for individual terms still do not prove that a passage contains the full answer or supports its claims.\n\nExample: A short form code matters more than the paragraph’s general topic. Multiple vectors can preserve local matches, but measure storage and latency alongside retrieval quality.",
     "inputs": ["Question tokens", "Multiple passage vectors"],
     "outputs": ["Late-interaction relevance ranking"],
     "failures": [
@@ -689,8 +692,8 @@
     "title": "HyDE",
     "parent": "search",
     "type": "method",
-    "summary": "Generate a hypothetical answer, embed it and use that representation to retrieve real source passages. Keep the generated answer separate from the evidence.",
-    "detail": "Compare retrieval with a baseline that embeds the original question. Examine results for questions whose wording differs from the documents. Invented details can steer retrieval in the wrong direction. Only retrieved, checked sources should support the eventual answer.\n\nExample: A hypothetical answer helps translate a vague query into likely document language. If it invents Friday as the collection day, do not present that generated text as evidence.",
+    "summary": "Use a made-up answer as a search aid when the user’s wording differs from the source documents.",
+    "detail": "HyDE means Hypothetical Document Embeddings. The model writes a possible answer, converts it to a numerical text representation, or embedding, and uses that to search real documents. Compare this with searching from the original question’s embedding. The hypothetical text is a query aid, not a source. Invented details can steer search toward the wrong passage. Only retrieved sources that pass the task’s evidence checks should support the final answer.\n\nExample: A hypothetical answer helps translate a vague query into likely document language. If it invents Friday as the collection day, do not present that generated text as evidence.",
     "inputs": ["Original query", "Hypothetical generated document"],
     "outputs": ["Retrieved real passages"],
     "failures": [
@@ -725,8 +728,11 @@
     "parent": "search",
     "type": "method",
     "summary": "Rewrite, expand or split a question before retrieval. Preserve the user's original intent and combine results from any necessary subquestions.",
-    "detail": "Compare retrieval and final answers against the unchanged query. Include additional searches, latency and cost in the comparison. A rewrite can alter the meaning or introduce assumptions. Splitting a simple question can add work without supplying useful evidence.\n\nExample: Split “When is collection and what if I miss it?” into two searches. Preserve both requests; a rewrite that answers only the collection day is incomplete.",
-    "inputs": ["Original question", "Rewrite or decomposition policy"],
+    "detail": "A query is the text sent to search. Rewrite it to express the same need in document language, or split a compound question into separate searches. Compare the evidence and final answer with those from the unchanged question. Count the additional searches, response time and cost. Check that every part of the original request survives: a rewrite can introduce assumptions, and splitting a simple question can add work without useful evidence.\n\nExample: Split “When is collection and what if I miss it?” into two searches. Preserve both requests; a rewrite that answers only the collection day is incomplete.",
+    "inputs": [
+      "Original question",
+      "Rules for rewriting or splitting the question"
+    ],
     "outputs": ["Rewritten query or subqueries"],
     "failures": [
       "A rewrite can alter the meaning or introduce assumptions. Splitting a simple question can add work without supplying useful evidence."
@@ -760,7 +766,7 @@
     "parent": "search",
     "type": "method",
     "summary": "Search small passages, then supply their larger parent sections to the answer model. Retain explicit links between each indexed passage and its parent.",
-    "detail": "Measure retrieval matches and whether the supplied parent context contains the facts needed for a supported answer. Larger sections consume context space and can displace other evidence. Check that useful neighbouring information outweighs the extra text and distraction.\n\nExample: Search a short shed-height rule, then provide its full section with the protected-area exception. Check that the parent does not consume all context and hide other required evidence.",
+    "detail": "The indexed child is a short passage used to find a match. Its parent is the larger section supplied to the answer model after that match. Keep a stable identifier linking the two. Check whether the added section contains the necessary rule, condition or exception. A model’s context limit is the amount of text it can process at once. A large parent can use that space and displace other evidence, so compare the benefit with the extra text and distraction.\n\nExample: Search a short shed-height rule, then provide its full section with the protected-area exception. Check that the parent does not consume all context and hide other required evidence.",
     "inputs": ["Matched child passage", "Stable parent reference"],
     "outputs": ["Larger contextual passage"],
     "failures": [
@@ -795,7 +801,7 @@
     "parent": "hosting",
     "type": "component",
     "summary": "Reuse a previous result when a new question is sufficiently similar in meaning. Scope reuse to the relevant source versions and permitted audience.",
-    "detail": "Measure additional cache hits, incorrect matches and answer quality against fresh execution. Test near-identical questions with materially different answers. Similarity is not equivalence. A wrong match can serve stale or inappropriate information; evaluate the reuse decision as its own classifier.\n\nExample: “North ward green bin” and “South ward green bin” are similar strings with different answers. A cache hit is a prediction that needs evaluation, not evidence of equivalence.",
+    "detail": "A cache stores a previous computation for reuse. A semantic cache accepts a question that is similar in meaning, even when its text differs. That match predicts that the old answer still applies; it is not proof. Check the permitted audience and source revisions before reuse. Compare with fresh execution and count wrong matches as well as extra cache hits. Include nearly identical questions whose correct answers differ, such as two wards with different collection days.\n\nExample: “North ward green bin” and “South ward green bin” are similar strings with different answers. A cache hit is a prediction that needs evaluation, not evidence of equivalence.",
     "inputs": ["New query and scope", "Cached query-result pairs"],
     "outputs": ["Reusable result or cache miss"],
     "failures": [
@@ -830,7 +836,7 @@
     "parent": "hosting",
     "type": "concept",
     "summary": "Compare models of different sizes and capabilities for the same task. Route between models only when a simpler single-model baseline cannot meet the trade-off.",
-    "detail": "Measure quality, latency and cost by question type, including failures introduced by the router. A smaller model is not automatically cheaper or adequate in a particular deployment. A routing error can send a difficult task to an unsuitable model.\n\nExample: A smaller model may pass simple extraction but fail on exceptions. Compare task groups and actual deployment cost; parameter count alone does not determine either suitability or price.",
+    "detail": "Model size often refers to parameter count: how many numerical values the model uses to generate output. Size alone does not determine task quality or the cost of a deployment. Compare candidate models on the same question groups, including exceptions, with measured response time and cost. A router chooses which model receives each request and can introduce its own errors. Use one model as a baseline before adding that extra decision.\n\nExample: A smaller model may pass simple extraction but fail on exceptions. Compare task groups and actual deployment cost; parameter count alone does not determine either suitability or price.",
     "inputs": [
       "Candidate models and deployment settings",
       "Representative tasks"
@@ -868,7 +874,7 @@
     "parent": "hosting",
     "type": "component",
     "summary": "Reuse embeddings, retrieval results or answers instead of recomputing identical work. Define which inputs and versions make an existing result valid.",
-    "detail": "Measure avoided calls, latency savings and correctness against fresh results. Include invalidation behaviour after a source or prompt change. An incomplete cache key can preserve stale answers or cross access boundaries. Include relevant model, document, prompt and permission context in the reuse policy.\n\nExample: The calendar changes but the question stays the same. An answer cache keyed only by question serves yesterday’s rule. Include the source version and access scope in the reuse policy.",
+    "detail": "A cache stores a result so the application can reuse it. Its key identifies the inputs and versions for which that result is valid. Invalidation makes a stored result ineligible after a relevant change. Measure avoided calls and response-time savings, then compare reused results with fresh ones. Test source and prompt updates. A key that omits permission scope or a source revision can return another user’s data or an outdated answer.\n\nExample: The calendar changes but the question stays the same. An answer cache keyed only by question serves yesterday’s rule. Include the source version and access scope in the reuse policy.",
     "inputs": [
       "Request identity and relevant versions",
       "Stored computation results"
@@ -905,8 +911,8 @@
     "title": "Batching",
     "parent": "hosting",
     "type": "method",
-    "summary": "Process many requests together for workloads such as evaluation or document processing. Distinguish asynchronous provider batches from local inference batches when assessing the benefit.",
-    "detail": "Measure completed outputs, cost and elapsed processing time. Reconcile each output with its input identifier. Discounts and latency vary by service. Partial failures, limits and missing outputs need explicit handling; matching totals alone cannot detect duplicated or mismatched results.\n\nExample: A batch sends 100 requests and returns 100 rows, but one request is duplicated and another missing. Reconcile identifiers, not only totals, before treating the run as complete.",
+    "summary": "Process multiple identified requests together and check that every request has the right result.",
+    "detail": "A provider batch is submitted for later processing; a local inference batch lets a model process several requests together. Their scheduling, prices and waiting times differ. Measure completed outputs, cost and total elapsed time. Match each result to its input identifier, a step called reconciliation. Keep individual errors and missing outputs visible. The same number of inputs and outputs does not prove completeness when one result may be duplicated and another absent.\n\nExample: A batch sends 100 requests and returns 100 rows, but one request is duplicated and another missing. Reconcile identifiers, not only totals, before treating the run as complete.",
     "inputs": ["Identified independent requests", "Batch policy and limits"],
     "outputs": ["Individually matched results and errors"],
     "failures": [
@@ -944,11 +950,11 @@
     "title": "Local models",
     "parent": "hosting",
     "type": "concept",
-    "summary": "Run inference on infrastructure you control. Evaluate hardware, model, runtime and operations together rather than treating local execution as free.",
-    "detail": "Compare task quality, latency and resource use with the existing deployment. Test actual model precision and hardware. Compression and memory limits can affect results. Local inference alone does not establish that every surrounding tool, log or telemetry path remains local.\n\nExample: A model runs locally but a surrounding tool exports logs. Inspect the full data path; local inference describes where computation occurs, not every connection made by the application.\n\nNamed examples, not recommendations: llama.cpp, Ollama. Check the selected release and deployment before adoption.",
+    "summary": "Run a model on infrastructure you control, then check the hardware, quality and complete data path.",
+    "detail": "Inference is the use of a trained model to generate a result. A runtime is the software that loads the model and performs that computation. Compare task quality, response time and resource use on the intended hardware with the existing deployment. Test the actual model precision and memory limits; compressed weights can change results. A locally running model does not make every surrounding tool or telemetry connection local. Inspect where requests, logs and other recorded data go.\n\nExample: A model runs locally but a surrounding tool exports logs. Inspect the full data path; local inference describes where computation occurs, not every connection made by the application.\n\nNamed examples, not recommendations: llama.cpp, Ollama. Check the selected release and deployment before adoption.",
     "inputs": [
-      "Model weights and runtime",
-      "Hardware and serving configuration"
+      "Model weights and the software that runs them",
+      "Hardware and server settings"
     ],
     "outputs": ["Locally served inference results"],
     "failures": [
@@ -982,10 +988,10 @@
     "title": "Orchestration framework",
     "parent": "agents",
     "type": "framework",
-    "summary": "Connect parsing, retrieval, generation and checks through reusable workflow abstractions. Choose them according to the pipeline and maintenance needs.",
-    "detail": "Measure the resulting pipeline and test component boundaries. Include the effort to inspect, modify and reproduce a failed run. Framework defaults can hide behaviour or constrain an unusual workflow. Keep task logic and evidence visible rather than relying on the framework name.\n\nExample: A framework retries a failed action automatically. Confirm that the action is safe to repeat rather than assuming retries are harmless because the orchestration library provides them.\n\nNamed examples, not recommendations: LangChain, DSPy. Check the selected release and deployment before adoption.",
+    "summary": "Connect the steps of a task and make their order, data and failure behavior explicit.",
+    "detail": "An orchestration framework helps connect document extraction, search, generation and checks into a workflow. Test what each step receives and returns, and inspect how failures change the next step. Include the effort to reproduce and modify a failed run when comparing approaches. Framework defaults can hide retries or other behavior. Start by writing down the required sequence; then ask whether a framework makes that sequence easier to maintain than ordinary functions.\n\nExample: A framework retries a failed action automatically. Confirm that the action is safe to repeat rather than assuming retries are harmless because the orchestration library provides them.\n\nNamed examples, not recommendations: LangChain, DSPy. Check the selected release and deployment before adoption.",
     "inputs": ["Component contracts", "Workflow and error policy"],
-    "outputs": ["Executed workflow with observable transitions"],
+    "outputs": ["An executed workflow with visible steps and state changes"],
     "failures": [
       "Framework defaults can hide behaviour or constrain an unusual workflow. Keep task logic and evidence visible rather than relying on the framework name."
     ],
@@ -1018,8 +1024,11 @@
     "parent": "generation",
     "type": "method",
     "summary": "Request answers in a defined schema for downstream code. Use supported constraints or validation with a bounded correction strategy.",
-    "detail": "Measure first-pass schema validity, correction frequency and semantic correctness. Report missing or unsupported information separately from formatting errors. A valid structure can contain false values. Constraint support varies, and retries add cost without guaranteeing that the facts improve.\n\nExample: An answer has the correct string, list and boolean types but says Friday instead of Monday. Shape validation can pass while the answer is wrong; check semantics separately.\n\nNamed examples, not recommendations: Outlines, Instructor. Check the selected release and deployment before adoption.",
-    "inputs": ["JSON schema", "Prompt and candidate response"],
+    "detail": "JSON is a structured text format for exchanging values. A schema defines fields and their allowed types, such as a string answer, a list of citations and a boolean answerable flag. Structured output helps downstream software read those fields reliably. Check how often the first response matches the schema and how often a correction attempt is needed. Limit those attempts. Separately check whether the field values are true and supported: correct JSON structure does not establish correct content. Constraint support varies between models and tools.\n\nExample: An answer has the correct string, list and boolean types but says Friday instead of Monday. Shape validation can pass while the answer is wrong; check semantics separately.\n\nNamed examples, not recommendations: Outlines, Instructor. Check the selected release and deployment before adoption.",
+    "inputs": [
+      "Schema defining the JSON fields and allowed values",
+      "Prompt and proposed response"
+    ],
     "outputs": ["Validated fields or explicit validation failure"],
     "failures": [
       "A valid structure can contain false values. Constraint support varies, and retries add cost without guaranteeing that the facts improve."
@@ -1061,7 +1070,7 @@
     "parent": "data",
     "type": "component",
     "summary": "Extract text and structure from PDFs, scans, slides and tables before indexing. Preserve page references, reading order and heading relationships.",
-    "detail": "Compare a sample with the original pages. Check table values, reading order and important fields, not just whether extraction produced text. Confident extraction can still be wrong. Missing layout or OCR errors can become retrieval and answer failures later.\n\nExample: A two-column calendar is read across rows and assigns Thursday to the wrong ward. Inspect the extracted values and page positions before blaming retrieval or generation.\n\nNamed examples, not recommendations: Unstructured, Docling. Check the selected release and deployment before adoption.",
+    "detail": "Parsing extracts text and document structure from a file. Optical character recognition (OCR) reads characters from scanned images. Compare sample outputs with the original pages, including table values, headings, reading order and page references. Text that looks fluent can still contain an OCR error or a value assigned to the wrong row. Check these inputs before blaming search or answer generation for a downstream mistake.\n\nExample: A two-column calendar is read across rows and assigns Thursday to the wrong ward. Inspect the extracted values and page positions before blaming retrieval or generation.\n\nNamed examples, not recommendations: Unstructured, Docling. Check the selected release and deployment before adoption.",
     "inputs": ["Source files with layout", "Extraction configuration"],
     "outputs": ["Text, structure and source locations"],
     "failures": [
@@ -1096,7 +1105,7 @@
     "parent": "evaluation",
     "type": "framework",
     "summary": "Run versioned datasets and scorers through a repeatable evaluation workflow. Use reports and gates to compare changes and identify regressions.",
-    "detail": "Check scorers against human-reviewed cases, verify output completeness and deliberately trigger a known failure before trusting a passing gate. A convenient built-in metric may measure a different property from the one your task needs. Keep metric definitions and release thresholds explicit.\n\nExample: A runner reports a high average after silently skipping failed cases. Require one visible result per input case, including errors, and prove a known defect makes the gate fail.\n\nNamed examples, not recommendations: DeepEval, TruLens. Check the selected release and deployment before adoption.",
+    "detail": "An evaluation framework runs test cases and applies scorers, the rules or models that assess each result. A gate uses those results to decide whether a change may proceed. Check scorers against reviewed cases before trusting the gate. Require an output or explicit error for every input, and insert a known defect to prove the intended check fails. A built-in metric may measure a different property from the user’s task. Record the metric definition and release threshold.\n\nExample: A runner reports a high average after silently skipping failed cases. Require one visible result per input case, including errors, and prove a known defect makes the gate fail.\n\nNamed examples, not recommendations: DeepEval, TruLens. Check the selected release and deployment before adoption.",
     "inputs": ["Versioned cases and scorer definitions", "Candidate pipeline"],
     "outputs": ["Per-case results, summaries and gate decisions"],
     "failures": [
@@ -1131,7 +1140,7 @@
     "parent": "operations",
     "type": "concept",
     "summary": "Record connected steps and their timing in a common format. Link retrieved evidence, model activity and outcomes to the version that produced them.",
-    "detail": "Check expected spans and fields against a known request. Confirm failures and omitted outputs remain visible across component boundaries. Missing instrumentation obscures the cause of failure. Captured prompts and passages can contain sensitive data; control access, collection and retention.\n\nExample: A trace records a generated answer but omits the passages supplied to the writer. You cannot distinguish a retrieval miss from an ignored passage; verify expected fields with a known request.\n\nNamed examples, not recommendations: OpenTelemetry. Check the selected release and deployment before adoption.",
+    "detail": "A trace links the steps of one request. Each recorded step, or span, can contain timing, status and safe references to the evidence or configuration used. Instrumentation is the code that creates these records. Run a known request and check that expected steps and errors appear. Missing steps can hide the cause of failure. Prompts and source passages may contain sensitive data, so define what is collected, who may read it and how long it remains available.\n\nExample: A trace records a generated answer but omits the passages supplied to the writer. You cannot distinguish a retrieval miss from an ignored passage; verify expected fields with a known request.\n\nNamed examples, not recommendations: OpenTelemetry. Check the selected release and deployment before adoption.",
     "inputs": ["Request and component events", "Capture and retention policy"],
     "outputs": ["Linked spans with versions and outcomes"],
     "failures": [
@@ -1165,13 +1174,13 @@
     "title": "Wilson interval",
     "parent": "math",
     "type": "metric",
-    "summary": "A confidence interval expresses uncertainty in a measured proportion.",
-    "detail": "A confidence interval expresses uncertainty in a measured proportion. A 95% procedure has approximately 95% coverage across repeated samples under its assumptions. It does not assign a 95% probability to this particular fixed interval. Question selection and dependence still matter.\n\nIllustrative: 16 correct answers out of 20 gives a Wilson interval of approximately 58% to 92%.",
+    "summary": "Show how uncertain an observed success rate is when it comes from a limited sample.",
+    "detail": "A proportion is a count divided by a total, such as 16 correct answers out of 20. A Wilson confidence interval gives a range calculated from that sample. Under its sampling assumptions, a 95% procedure covers the true proportion in approximately 95% of repeated samples. It does not assign a 95% probability to the particular interval you observed. Ask how the questions were selected and whether their outcomes are related before applying the calculation.\n\nIllustrative: 16 correct answers out of 20 gives a Wilson interval of approximately 58% to 92%.",
     "inputs": [
       "Count of correct cases",
       "Total scored cases and confidence level"
     ],
-    "outputs": ["Interval for a proportion"],
+    "outputs": ["A confidence interval for the success proportion"],
     "failures": [
       "A small or unrepresentative sample can mislead even when the formula is correct."
     ],
@@ -1208,8 +1217,8 @@
     "title": "Rule of three",
     "parent": "math",
     "type": "method",
-    "summary": "With zero failures in n independent trials having the same failure probability, 3/n approximates a one-sided 95% upper confidence bound.",
-    "detail": "With zero failures in n independent trials having the same failure probability, 3/n approximates a one-sided 95% upper confidence bound. Generalising to real traffic also requires representative cases. Zero observed failures is not a guarantee, and repeated copies of one question are not independent evidence.\n\nIllustrative: zero failures in 60 trials gives an approximate 5% upper bound; the exact binomial bound is 4.87%.",
+    "summary": "Estimate an upper bound on the failure rate when a test has found no failures.",
+    "detail": "If n trials are independent and share the same failure probability, 3/n approximates a one-sided 95% upper confidence bound. One-sided means it supplies an upper limit rather than a lower-and-upper range. Independence means one trial’s outcome does not change the probability of another’s. To apply the result to real requests, the cases must also represent those requests. Zero observed failures is not a guarantee; copies of the same question do not create independent evidence.\n\nIllustrative: zero failures in 60 trials gives an approximate 5% upper bound; the exact binomial bound is 4.87%.",
     "inputs": ["Number of independent trials", "Zero observed failures"],
     "outputs": ["Approximate one-sided upper bound"],
     "failures": ["Zero observed failures does not establish zero risk."],
@@ -1238,9 +1247,12 @@
     "title": "Precision, recall and false-positive rate",
     "parent": "math",
     "type": "metric",
-    "summary": "For an answerability decision, precision is the proportion of yes decisions that are correct.",
-    "detail": "For an answerability decision, precision is the proportion of yes decisions that are correct. Recall is the proportion of answerable questions accepted. False-positive rate is the proportion of unanswerable questions accepted. Name each denominator; threshold choice depends on the consequences of both errors.\n\nIllustrative: 8 true positives, 4 false positives, 2 false negatives and 6 true negatives give 67% precision, 80% recall and 40% false-positive rate.",
-    "inputs": ["Binary predictions", "Reviewed binary labels"],
+    "summary": "Separate wrong acceptances from missed opportunities when a system chooses yes or no.",
+    "detail": "For answerability, define positive as a question the evidence can answer. A true positive (TP) is accepted and answerable; a false positive (FP) is accepted but unanswerable. A false negative (FN) is rejected but answerable; a true negative (TN) is rejected and unanswerable. Precision asks how many accepted cases were answerable. Recall asks how many answerable cases were accepted. False-positive rate asks how many unanswerable cases were accepted. Name each denominator, the group being counted, before choosing a score cutoff.\n\nIllustrative: 8 true positives, 4 false positives, 2 false negatives and 6 true negatives give 67% precision, 80% recall and 40% false-positive rate.",
+    "inputs": [
+      "Predicted yes/no decisions",
+      "Reviewed answerable/unanswerable labels"
+    ],
     "outputs": ["Precision, recall and false-positive rate"],
     "failures": [
       "The same numerator can produce different claims when the denominator is omitted."
@@ -1270,11 +1282,11 @@
     "title": "Retrieval recall and hit rate",
     "parent": "math",
     "type": "metric",
-    "summary": "Recall at k measures the fraction of labelled relevant passages retrieved among the first k results.",
-    "detail": "Recall at k measures the fraction of labelled relevant passages retrieved among the first k results. Hit rate at k measures questions with at least one relevant result. They coincide when each question has one relevant passage. Neither establishes that the answer used the evidence.\n\nIllustrative: evidence appears for 8 of 10 questions in the top three results, giving an 80% hit rate at three.",
+    "summary": "Check whether search found any useful evidence and how much of the required evidence it missed.",
+    "detail": "First label which passage identifiers are relevant to each question. The number k is the fixed number of top results you inspect. Recall at k is the fraction of those labelled relevant passages present in the top k results. Hit rate at k counts questions with at least one relevant result. The measures coincide when each question has one relevant passage, but a hit can miss an important exception when several passages are needed. Neither measure proves the final answer used the evidence.\n\nIllustrative: evidence appears for 8 of 10 questions in the top three results, giving an 80% hit rate at three.",
     "inputs": [
-      "Retrieved identifiers at k",
-      "Labelled relevant identifiers per query"
+      "Passage identifiers in the first k search results",
+      "Reviewed relevant passage identifiers for each question"
     ],
     "outputs": ["Hit rate at k and mean recall at k"],
     "failures": [
@@ -1313,15 +1325,15 @@
     "title": "Compounding error and independence",
     "parent": "math",
     "type": "method",
-    "summary": "If every stage must succeed, independent stage success probabilities can be multiplied.",
-    "detail": "If every stage must succeed, independent stage success probabilities can be multiplied. Without independence, multiply conditional probabilities given earlier success, not isolated stage accuracies. Recovery paths can change what counts as success. Measure the complete workflow; stage scores alone do not determine its reliability.\n\nIllustrative: five independent stages, each succeeding with probability 0.95, all succeed with probability 0.95⁵, or about 77.4%.",
+    "summary": "Estimate the chance that a whole workflow succeeds when several steps must all work.",
+    "detail": "First define success for the complete workflow and for each required stage. Independent stage outcomes do not affect one another; only in that case can you multiply their separate success probabilities. Otherwise use conditional probabilities: the chance a stage succeeds given that the earlier stages succeeded. A recovery step can change what counts as overall success. Measure complete runs rather than treating separately measured stage scores as a guaranteed workflow result.\n\nIllustrative: five independent stages, each succeeding with probability 0.95, all succeed with probability 0.95⁵, or about 77.4%.",
     "inputs": [
-      "Stage success definitions",
-      "Joint or conditional success measurements"
+      "Definitions of success for each required stage",
+      "Whole-workflow outcomes or stage outcomes conditional on earlier success"
     ],
-    "outputs": ["An explicitly qualified pipeline model"],
+    "outputs": ["A workflow success estimate with its assumptions"],
     "failures": [
-      "Multiplying marginal rates without independence can give the wrong result."
+      "Multiplying each stage’s separately measured success rate can mislead when stage outcomes are related."
     ],
     "requirements": ["statistical-comparison"],
     "related": [
@@ -1348,14 +1360,16 @@
     "title": "Run-to-run variation",
     "parent": "math",
     "type": "method",
-    "summary": "Repeated runs reveal variation in a fixed evaluation setup.",
-    "detail": "Repeated runs reveal variation in a fixed evaluation setup. Their observed range is descriptive, not a significance test or a boundary below which changes are meaningless. Compare matched cases and uncertainty. Repetition does not correct an unrepresentative question set or eliminate selection bias.\n\nIllustrative: scores of 81, 84, 80, 83 and 82 have a mean of 82 and an observed range of 80–84.",
+    "summary": "Repeat the same evaluation to see how much its result changes between runs.",
+    "detail": "Keep the cases and settings fixed, then record each run’s score. The range is the smallest to largest observed score. It describes those runs; it is not a significance test, a procedure for assessing a difference under a stated statistical model. A change inside that range is not automatically meaningless. Compare versions on the same cases and assess uncertainty. Repetition cannot repair a question set that excludes important users or failures.\n\nIllustrative: scores of 81, 84, 80, 83 and 82 have a mean of 82 and an observed range of 80–84.",
     "inputs": [
       "Repeated comparable runs",
       "Fixed case and configuration identifiers"
     ],
     "outputs": ["Observed score variation"],
-    "failures": ["The observed range is not a test of significance."],
+    "failures": [
+      "The observed range of repeated scores does not establish whether a difference is statistically meaningful."
+    ],
     "requirements": ["statistical-comparison"],
     "related": [
       {
@@ -1380,9 +1394,12 @@
     "title": "Agreement between markers: kappa",
     "parent": "math",
     "type": "metric",
-    "summary": "Cohen’s kappa compares observed agreement with agreement expected from the two markers’ label frequencies.",
-    "detail": "Cohen’s kappa compares observed agreement with agreement expected from the two markers’ label frequencies. Report it alongside raw agreement, sample size and the disagreement table. Class imbalance and small samples affect interpretation. Agreement between people or models does not establish factual correctness.\n\nIllustrative: 85% observed agreement and 65% expected agreement give kappa = (0.85 − 0.65) / (1 − 0.65) = 0.571.",
-    "inputs": ["Paired reviewer labels", "Defined categories"],
+    "summary": "Measure how consistently two reviewers assign categories, while accounting for how often each category is used.",
+    "detail": "Cohen’s kappa compares actual agreement with agreement calculated from each reviewer’s label frequencies: how often they use each category. That expected agreement is a reference calculation, not proof that reviewers guessed. Report the agreement percentage, case count and table of disagreements beside kappa. Results need care when one category is much more common than others or the sample is small. Two reviewers can agree because they share the same mistake.\n\nIllustrative: 85% observed agreement and 65% expected agreement give kappa = (0.85 − 0.65) / (1 − 0.65) = 0.571.",
+    "inputs": [
+      "One label from each reviewer for each case",
+      "The categories both reviewers use"
+    ],
     "outputs": ["Raw agreement and Cohen kappa"],
     "failures": [
       "Agreement can be high while both reviewers repeat the same mistake."
@@ -1413,8 +1430,11 @@
     "parent": "math",
     "type": "dataset",
     "summary": "Reserve evaluation cases that do not guide prompt, model or threshold choices.",
-    "detail": "Reserve evaluation cases that do not guide prompt, model or threshold choices. They help assess performance beyond the examples used for development. Repeated decisions based on their results turn them into a tuning set. Keep final evaluation representative and record when its cases change.\n\nIllustrative: report 96 of 100 on the development set separately from 82 of 100 on an untouched evaluation set.",
-    "inputs": ["Cases withheld from tuning", "Declared evaluation policy"],
+    "detail": "Keep some evaluation cases out of decisions about prompts, models and score cutoffs. This held-out set tests how well those choices work beyond the examples used to develop them. If you repeatedly change the system after seeing its results, the set becomes development data. Choose final cases that represent the intended tasks and record changes to the set.\n\nIllustrative: report 96 of 100 on the development set separately from 82 of 100 on an untouched evaluation set.",
+    "inputs": [
+      "Cases not used to choose prompts, models or cutoffs",
+      "Rules for when final evaluation cases may be used"
+    ],
     "outputs": ["Independent final evaluation evidence"],
     "failures": [
       "Repeated optimisation against the final test makes it a development set."
@@ -1443,14 +1463,16 @@
     "title": "Pinning versions and settings",
     "parent": "math",
     "type": "method",
-    "summary": "Record and hold fixed the dataset, rubric, prompt, model version and supported generation settings for a comparison.",
-    "detail": "Record and hold fixed the dataset, rubric, prompt, model version and supported generation settings for a comparison. This reduces uncontrolled differences; it does not guarantee deterministic outputs. Evaluate the settings you intend to deploy, and record provider changes that cannot be pinned.",
+    "summary": "Keep the relevant versions and settings fixed so a comparison measures the change you intended.",
+    "detail": "Pinning means identifying a specific revision rather than a name that can silently change. Record the dataset, scoring rules or rubric, prompt instructions, model revision and supported generation settings. Hold them fixed except for the variable you intend to compare. This reduces unexplained differences but does not guarantee identical outputs on repeated runs. Use the settings intended for deployment and record provider changes you cannot control.",
     "inputs": [
       "Model, prompt and dataset versions",
       "Recorded generation settings"
     ],
-    "outputs": ["Reproducible experiment configuration"],
-    "failures": ["Recorded settings do not guarantee deterministic execution."],
+    "outputs": ["Recorded versions and settings for repeating the comparison"],
+    "failures": [
+      "The same recorded settings can still produce different outputs on repeated runs."
+    ],
     "requirements": ["statistical-comparison"],
     "related": [
       {
@@ -1475,10 +1497,13 @@
     "title": "Digest pin",
     "parent": "math",
     "type": "method",
-    "summary": "Store a cryptographic digest of an approved file and compare it when the file is used.",
-    "detail": "Store a cryptographic digest of an approved file and compare it when the file is used. A mismatch reveals changed bytes. A match does not prove the content is correct or complete. Review intentional updates and reconcile the records before accepting a new digest.\n\nIllustrative: changing one expected fact in an evaluation fixture changes its digest and fails the integrity check.",
-    "inputs": ["Approved file bytes", "Expected cryptographic digest"],
-    "outputs": ["Integrity check result"],
+    "summary": "Detect whether a file’s exact contents changed after its reviewed version was recorded.",
+    "detail": "A cryptographic digest, or hash, is a value calculated from a file’s bytes. Record the expected digest after review, then calculate it again when the file is used. A mismatch identifies changed bytes. A match does not prove that the source content was correct or complete. Investigate an intentional update and revise the approval record before accepting its new digest; do not silently overwrite the expected value.\n\nIllustrative: changing one expected fact in an evaluation fixture changes its digest and fails the integrity check.",
+    "inputs": [
+      "Exact bytes of the reviewed file",
+      "Digest recorded for that reviewed version"
+    ],
+    "outputs": ["Match or mismatch with the recorded digest"],
     "failures": [
       "A hash of incorrect or incomplete data faithfully preserves that error."
     ],
@@ -1516,8 +1541,11 @@
     "parent": "math",
     "type": "method",
     "summary": "Introduce a controlled defect that the check is meant to detect, confirm the check fails, then restore the correct behaviour.",
-    "detail": "Introduce a controlled defect that the check is meant to detect, confirm the check fails, then restore the correct behaviour. Verify that the changed code actually ran. One detected defect demonstrates a working check for that case, not complete coverage of every failure.\n\nIllustrative: alter a known result or omit a required output, then confirm the gate reports that specific failure.",
-    "inputs": ["A known correct fixture", "One controlled defect"],
+    "detail": "Deliberately introduce one defect that the check claims to detect, then confirm the check fails for that reason. A fixture is fixed test data; a gate is a check that decides whether work may proceed. Change a known fixture value or remove required behavior, and verify that the changed path actually runs. Restore the correct behavior afterwards. One detected defect demonstrates this check for this case, not complete protection against every failure.\n\nIllustrative: alter a known result or omit a required output, then confirm the gate reports that specific failure.",
+    "inputs": [
+      "Fixed test data with a known correct result",
+      "One deliberately introduced defect"
+    ],
     "outputs": ["Evidence that the intended check can fail"],
     "failures": [
       "The altered code may not run, or the failure may come from an unrelated error."
@@ -1546,13 +1574,13 @@
     "title": "Bootstrap confidence interval",
     "parent": "math",
     "type": "method",
-    "summary": "Estimate uncertainty by resampling observed units with replacement and recalculating the statistic.",
-    "detail": "Estimate uncertainty by resampling observed units with replacement and recalculating the statistic. For two versions answering the same questions, resample matched question pairs together. Use a method appropriate to the statistic and dependence structure. Resampling cannot repair unrepresentative data or create new independent observations.\n\nResample question pairs, calculate the mean score difference each time, then construct an interval for that difference. The fraction of resamples favouring B is not itself a confidence interval.",
+    "summary": "Estimate uncertainty by repeatedly rebuilding a sample from the observations you already have.",
+    "detail": "Bootstrap resampling draws observed units with replacement: an item can appear more than once in a resample. Recalculate the chosen statistic for each resample to get a distribution of possible estimates. For two versions answering the same questions, draw question IDs and keep each question’s A/B results together. For related observations, preserve the relevant groups. Choose an interval method suitable for the statistic and data relationships. Resampling cannot create new independent evidence or repair unrepresentative cases.\n\nResample question pairs, calculate the mean score difference each time, then construct an interval for that difference. The fraction of resamples favouring B is not itself a confidence interval.",
     "inputs": [
-      "Matched results or correctly grouped observations",
-      "Statistic and resampling procedure"
+      "Observed results paired or grouped to preserve their relationships",
+      "The statistic to estimate and the resampling method"
     ],
-    "outputs": ["Bootstrap distribution and confidence interval"],
+    "outputs": ["Repeated resampled estimates and a confidence interval"],
     "failures": [
       "Resampling individual rows can break dependence between cases or paired versions."
     ],
@@ -1580,11 +1608,11 @@
     "title": "Power analysis",
     "parent": "math",
     "type": "method",
-    "summary": "Plan sample size for a specified comparison, meaningful effect, false-positive threshold and desired probability of detecting that effect.",
-    "detail": "Plan sample size for a specified comparison, meaningful effect, false-positive threshold and desired probability of detecting that effect. Baseline rates, variability, pairing and dependence also matter. A five-point improvement has no universal sample requirement. State the assumptions before collecting data rather than calculating reassuring power afterwards.",
+    "summary": "Plan how much evidence a comparison needs before you collect its results.",
+    "detail": "Power is the probability that a specified test detects an effect of a stated size when that effect exists. Define the smallest useful improvement, the allowed false-alarm rate, called alpha, and the desired power. Also specify the starting rate or variability, whether versions answer the same cases, and whether cases are related. These assumptions determine the sample-size calculation. There is no universal question count for a five-point improvement. Ask a statistical reviewer to check the design before the run rather than seeking reassuring power afterwards.",
     "inputs": [
-      "Meaningful effect and baseline variability",
-      "Error threshold, target power and design"
+      "Smallest useful improvement and expected starting rate or variability",
+      "False-alarm limit, target detection probability and study design"
     ],
     "outputs": ["Planned sample size under stated assumptions"],
     "failures": [
@@ -1614,15 +1642,15 @@
     "title": "Krippendorff’s alpha",
     "parent": "math",
     "type": "metric",
-    "summary": "Measure agreement among raters using a distance appropriate to nominal, ordinal or numerical judgements.",
-    "detail": "Measure agreement among raters using a distance appropriate to nominal, ordinal or numerical judgements. Alpha accommodates multiple raters and missing ratings. Report the scale, sample and uncertainty alongside the coefficient. Weighted Cohen’s kappa also handles ordinal ratings from two raters; graded scores do not make kappa unusable.",
+    "summary": "Check agreement when several reviewers score cases, including cases with missing ratings.",
+    "detail": "Krippendorff’s alpha compares observed disagreement with a reference level of disagreement based on the ratings. Choose a distance rule for the scale: nominal categories have no order; ordinal categories have an order; numerical ratings have measured differences. This rule determines how much two ratings disagree. Alpha can handle several reviewers and missing ratings. Report the scale, case count and uncertainty beside the coefficient. Weighted Cohen’s kappa also handles ordered categories for two reviewers, so graded scores do not rule it out.",
     "inputs": [
-      "Ratings across reviewers and items",
-      "Scale-appropriate disagreement distance"
+      "Ratings from the reviewers for each item, including missing ratings",
+      "A rule for the size of disagreements on the chosen scale"
     ],
     "outputs": ["Agreement estimate with uncertainty"],
     "failures": [
-      "The choice of nominal or ordinal distance changes the estimand."
+      "Treating ordered ratings as unordered categories changes what the agreement score measures."
     ],
     "requirements": ["judge-calibration"],
     "related": [
@@ -1649,8 +1677,8 @@
     "title": "Calibration",
     "parent": "math",
     "type": "metric",
-    "summary": "Compare predicted probabilities with observed outcomes on labelled data.",
-    "detail": "Compare predicted probabilities with observed outcomes on labelled data. Predictions near 90% should correspond to approximately 90% positive outcomes for the defined event. Examine sample counts, uncertainty and relevant subgroups. Verbal confidence and token probabilities are not automatically calibrated probabilities that an entire answer is correct.\n\nIllustrative: among 100 answers each assigned 90% correctness probability, 70 are correct. The observed correctness frequency is 70%, with sampling uncertainty.",
+    "summary": "Check whether predicted probabilities match how often the stated outcome actually happens.",
+    "detail": "Define the event first, such as an answer being correct. Among cases assigned about 90% probability, roughly 90% should meet that definition if the probabilities are well calibrated. A calibration curve groups predictions into ranges, or bins, and compares their average probability with the observed fraction of positive outcomes. Report the number of cases and uncertainty for each group. A model saying \"90% sure\", or assigning a probability to its next text token, does not automatically estimate the correctness of an entire answer.\n\nIllustrative: among 100 answers each assigned 90% correctness probability, 70 are correct. The observed correctness frequency is 70%, with sampling uncertainty.",
     "inputs": ["Predicted probability for a defined event", "Observed labels"],
     "outputs": ["Calibration curve and supporting counts"],
     "failures": [
@@ -1685,15 +1713,15 @@
     "title": "Drift",
     "parent": "math",
     "type": "concept",
-    "summary": "Track changes in incoming questions, source material, expected answers and system performance over time.",
-    "detail": "Track changes in incoming questions, source material, expected answers and system performance over time. Distribution change and quality degradation are related but different observations. Compare defined windows and relevant task groups with suitable baselines. Repeat-run variation on unchanged cases does not establish whether live traffic has changed.",
+    "summary": "Notice when the questions, sources or performance of a deployed system change.",
+    "detail": "Drift can mean a change in the mix of requests, their content or the relationship between inputs and expected answers. A new mix of task types is a distribution change; more wrong answers is performance degradation. One does not automatically prove the other. Compare defined time windows with the same task-group measures and suitable earlier baselines. Repeating an unchanged test set measures run variation, not whether incoming requests have changed. Ask which users or task groups the monitor might miss.",
     "inputs": [
       "Versioned traffic samples and source records",
       "Comparable performance measurements"
     ],
     "outputs": ["Evidence of changing data or outcomes"],
     "failures": [
-      "A distribution change need not imply degradation; degradation can occur without the monitored distribution changing."
+      "A changed request mix may leave quality unchanged; quality can also worsen without a change in the monitored request mix."
     ],
     "requirements": ["operational-health"],
     "related": [
@@ -1719,13 +1747,15 @@
     "title": "Multi-armed bandits",
     "parent": "math",
     "type": "method",
-    "summary": "Adapt traffic allocation using observed rewards while retaining exploration.",
-    "detail": "Adapt traffic allocation using observed rewards while retaining exploration. This can prioritise useful choices during an experiment, but does not guarantee faster or clearer inference. Outcome-dependent assignment complicates comparison beyond unequal sample sizes. Log assignment probabilities and use methods designed for the adaptive experiment and its objective.",
+    "summary": "Allocate more requests to options that appear useful while continuing to try alternatives.",
+    "detail": "A multi-armed bandit treats each option, such as a model configuration, as an arm. A reward is the measured outcome it aims to improve. The policy uses observed rewards to choose later assignments, while exploration keeps some alternatives in use. Record the probability of choosing each assigned option. Because outcomes influence who receives each option, a simple comparison of average rewards can mislead. Use analysis designed for that adaptive assignment. Decide whether your aim is better outcomes during the experiment, a reliable comparison, or both.",
     "inputs": [
-      "Defined rewards and assignment policy",
-      "Sequential observations with assignment probabilities"
+      "Definition of reward and the rule for choosing an option",
+      "Ordered observations with their assignment probabilities"
     ],
-    "outputs": ["Adaptive allocation and policy-aware estimates"],
+    "outputs": [
+      "Changing allocation of requests and estimates that account for the assignment rule"
+    ],
     "failures": [
       "Adaptive assignment is not interchangeable with a fixed randomised comparison."
     ],
@@ -1753,13 +1783,13 @@
     "title": "Sequential testing and repeated looks",
     "parent": "math",
     "type": "method",
-    "summary": "Repeatedly checking an ordinary fixed-sample significance test and stopping at a favourable result can inflate false positives.",
-    "detail": "Repeatedly checking an ordinary fixed-sample significance test and stopping at a favourable result can inflate false positives. Prespecify the stopping rule or use a sequential procedure with valid error control. Confidence sequences support repeated inspection under their assumptions; casually reusing conventional intervals does not provide that protection.",
+    "summary": "Plan when an experiment may stop so repeated checks do not create a misleading success.",
+    "detail": "A fixed-sample test assumes you collect the planned amount of data before making its decision. Rechecking that test after every new result and stopping when it looks favorable can raise the false-positive rate: claiming a difference when the assumed no-difference model holds. Declare the inspection and stopping rule in advance, or use a valid sequential procedure designed for repeated checks. Confidence sequences are interval methods that support repeated inspection under their assumptions; ordinary fixed-sample intervals do not automatically do so.",
     "inputs": [
-      "Sequential outcomes",
-      "Prespecified stopping rule or valid sequential procedure"
+      "Results arriving in order",
+      "An agreed stopping rule or a valid method for repeated checks"
     ],
-    "outputs": ["Evidence with controlled repeated-look error"],
+    "outputs": ["A decision with the repeated-check error rate controlled"],
     "failures": [
       "Repeatedly inspecting ordinary fixed-sample intervals can inflate false positives."
     ],
@@ -1787,8 +1817,8 @@
     "title": "Fair comparisons and causal claims",
     "parent": "math",
     "type": "method",
-    "summary": "A score difference can reflect different questions, users or operating conditions rather than the changed component.",
-    "detail": "A score difference can reflect different questions, users or operating conditions rather than the changed component. Offline, compare versions on matched cases with controlled settings. Online, randomise at an appropriate unit where feasible. Observational comparisons require explicit assumptions; randomisation alone does not remove interference or measurement errors.",
+    "summary": "Check whether the change caused the improvement, rather than merely coinciding with easier cases or different conditions.",
+    "detail": "Offline, run both versions on the same cases with other settings controlled. These are matched comparisons. In a live experiment, random assignment can help make user groups comparable. Choose an appropriate unit, such as user rather than request, when requests from one person affect each other. An observational comparison uses existing differences without random assignment and needs explicit assumptions about other causes. Even randomisation does not remove measurement errors or interference, where one group’s treatment affects another. Ask what else changed before making a causal claim.",
     "inputs": [
       "Comparable cases and explicit intervention",
       "Assignment and measurement policy"
@@ -1851,8 +1881,11 @@
     "parent": "math",
     "type": "method",
     "summary": "Separate an answer into claims and assess whether supplied passages support, contradict or leave each claim unresolved.",
-    "detail": "Separate an answer into claims and assess whether supplied passages support, contradict or leave each claim unresolved. This measures grounding in those passages, not their truth or completeness. The checker still needs validation against reviewed labels, particularly for numerical, qualified or context-dependent statements.\n\nIllustrative: six of eight claims are supported and two are unresolved. The unresolved claims need investigation; their origin cannot be inferred from that result alone.",
-    "inputs": ["Atomic answer claims", "Evidence passages and reviewed labels"],
+    "detail": "Break an answer into individual factual statements, often called atomic claims. For each one, decide whether a supplied passage supports it, contradicts it or leaves it unresolved. This is a check of grounding: the relationship between the answer and its supplied evidence. It does not establish that the source is true or complete. Compare checker decisions with reviewed human labels, especially for numbers, conditions and facts that need surrounding context.\n\nIllustrative: six of eight claims are supported and two are unresolved. The unresolved claims need investigation; their origin cannot be inferred from that result alone.",
+    "inputs": [
+      "Individual factual claims from the answer",
+      "Source passages and independently reviewed claim labels"
+    ],
     "outputs": ["Support, contradiction or unresolved decisions"],
     "failures": [
       "A supported statement can still inherit a false or outdated source."
@@ -1882,11 +1915,14 @@
     "parent": "math",
     "type": "metric",
     "summary": "Compare generated and reference answers using representations of meaning rather than exact wording.",
-    "detail": "Compare generated and reference answers using representations of meaning rather than exact wording. This can recognise paraphrases, but similarity is not factual equivalence or entailment. Negation, numbers and omitted conditions can change correctness while leaving similarity high. Pair the score with checks of required facts and source support.",
-    "inputs": ["Compatible vectors", "A selected similarity measure"],
+    "detail": "Text embeddings represent words or passages as vectors, lists of numbers. A similarity measure such as cosine compares those numerical representations and can recognize different wordings of a similar idea. It does not prove factual equivalence or entailment, meaning that one statement supports another. Negation, numbers and missing conditions can change correctness while leaving similarity high. Use compatible representations and check required facts and source support alongside the score.",
+    "inputs": [
+      "Text vectors from compatible representations",
+      "The similarity calculation to apply"
+    ],
     "outputs": ["Similarity score, not truth probability"],
     "failures": [
-      "Negation and changed numbers can remain close in embedding space."
+      "Sentences with a changed number or an added \"not\" can still have similar numerical representations."
     ],
     "requirements": ["statistical-comparison"],
     "related": [
@@ -1914,7 +1950,7 @@
     "parent": "math",
     "type": "method",
     "summary": "Use defined test cases to investigate harmful content and differences across relevant groups.",
-    "detail": "Use defined test cases to investigate harmful content and differences across relevant groups. State the harm being measured, the comparator and the context in which a difference is inappropriate. Report subgroup coverage and uncertainty. Passing one benchmark neither establishes universal fairness nor replaces task-specific review.",
+    "detail": "A benchmark is a defined collection of test cases and scoring rules. Start with the harm you want to investigate, such as different refusal rates for otherwise equivalent requests from different groups. Identify what comparison is appropriate in that setting. Report which groups appear in the cases, their case counts and uncertainty in the results. A passing result applies to the measured harm and context; it cannot establish fairness everywhere or replace review of the actual task.",
     "inputs": [
       "Defined harm and context",
       "Relevant test cases and reviewed outcomes"
@@ -1945,14 +1981,16 @@
     "title": "Cost and quality trade-offs",
     "parent": "math",
     "type": "method",
-    "summary": "Compare configurations on consistent tasks using quality, cost and relevant operating constraints.",
-    "detail": "Compare configurations on consistent tasks using quality, cost and relevant operating constraints. A Pareto frontier identifies options not dominated on the chosen measures. Include uncertainty, latency and other required limits before discarding alternatives. A cheaper configuration with the same point estimate is not necessarily equivalent in quality.",
+    "summary": "Compare cost and quality on the same tasks to identify options worth considering.",
+    "detail": "Record quality, cost, response time and required safety or capacity limits for each configuration. An option is dominated if another is no more costly and no worse in quality, with at least one strict advantage. The Pareto frontier contains the options not dominated on those chosen measures. Check uncertainty and other constraints before discarding an option. Equal measured scores, called point estimates, do not prove equal underlying quality. Ask which trade-offs are acceptable for the task.",
     "inputs": [
-      "Comparable quality and cost measurements",
-      "Latency, capacity and safety constraints"
+      "Quality and cost measured on comparable tasks",
+      "Response-time, capacity and safety requirements"
     ],
     "outputs": ["Candidate configurations and trade-offs"],
-    "failures": ["Equal point estimates do not establish equivalent quality."],
+    "failures": [
+      "The same measured score does not prove that two configurations have equal underlying quality."
+    ],
     "requirements": ["statistical-comparison"],
     "related": [
       {
@@ -1982,15 +2020,15 @@
     "title": "Red-teaming",
     "parent": "math",
     "type": "method",
-    "summary": "Use scoped adversarial attempts to discover failures beyond ordinary evaluation cases.",
-    "detail": "Use scoped adversarial attempts to discover failures beyond ordinary evaluation cases. Define the threat model, permitted actions and how outcomes are judged. Preserve successful attacks as regression cases and continue discovery. Success rates on a curated or adaptive attack set are not estimates of failure prevalence in ordinary traffic.",
+    "summary": "Deliberately try to make the system fail within an agreed test scope, then keep the failures as future checks.",
+    "detail": "Red-teaming uses adversarial cases: inputs designed to defeat a protection or expose harmful behavior. A threat model states what an attacker can control and what harm matters. Agree which actions the testers may attempt and what counts as a failure. Turn successful attacks into regression cases that must remain fixed after later changes. Continue looking for new attacks. Results from a deliberately difficult or adaptively chosen attack set do not estimate how often ordinary users encounter failure.",
     "inputs": [
-      "Threat model and permitted scope",
-      "Adversarial cases and outcome rubric"
+      "Attacker capabilities, harm to test and permitted actions",
+      "Deliberately challenging cases and rules for judging the outcome"
     ],
     "outputs": ["Discovered failures and regression cases"],
     "failures": [
-      "Attack-set success rate is not ordinary traffic failure prevalence."
+      "The fraction of successful test attacks does not estimate how often ordinary requests fail."
     ],
     "requirements": ["tool-safety"],
     "related": [
@@ -2021,7 +2059,7 @@
     "parent": "home",
     "type": "concept",
     "summary": "Prepare trustworthy inputs and keep their origins visible.",
-    "detail": "Start with what the task needs, who may use it and how a reviewer can find the original. Parsing and chunking prepare source material. Annotation creates labels. Training changes a model; evaluation measures it. These are different uses of data, even when they begin with the same documents.\n\nExample: a council calendar can be an answer source. Questions written from that calendar become evaluation cases only after their expected answers and source references are reviewed.",
+    "detail": "Start with the task, who may use each source and how a reviewer can find its original. Parsing extracts text and structure. Chunking splits text into searchable passages. Annotation assigns reviewed labels, such as the expected answer to a question. Training uses examples to change model behavior; evaluation checks behavior against expectations. Keep these uses distinct even when they begin with the same documents. Provenance is the record of where an item came from and how it changed.\n\nExample: a council calendar can be an answer source. Questions written from that calendar become evaluation cases only after their expected answers and source references are reviewed.",
     "inputs": ["Source documents", "Task and access boundaries"],
     "outputs": ["Versioned source records", "Prepared and labelled data"],
     "failures": [
@@ -2060,8 +2098,8 @@
     "parent": "home",
     "type": "concept",
     "summary": "Find the evidence needed for a particular question.",
-    "detail": "Begin with a simple retrieval baseline and labelled relevant passages. Add keyword, vector, hybrid or reranking steps only to address an observed failure. Hold the final result count fixed when comparing alternatives. Retrieval returns evidence candidates; it does not establish that a generated answer used them correctly.\n\nExample: finding a bin calendar for the wrong ward is a relevant-topic match but a task failure.",
-    "inputs": ["Question", "Authorised document corpus"],
+    "detail": "Retrieval finds candidate evidence for a question. Begin with a simple search method and reviewed labels that name which passages are relevant to each question. This first method is the baseline for comparisons. Add keyword matching, vector similarity or a second ranking pass only to address an observed failure. Compare methods at the same final result count. A relevant-looking passage may still be from the wrong ward or revision, and finding correct evidence does not prove the answer used it correctly.\n\nExample: finding a bin calendar for the wrong ward is a relevant-topic match but a task failure.",
+    "inputs": ["Question", "Collection of documents the caller may access"],
     "outputs": ["Ranked evidence with source IDs"],
     "failures": [
       "A high similarity score can hide the wrong date, ward or policy version."
@@ -2099,7 +2137,7 @@
     "parent": "home",
     "type": "concept",
     "summary": "Turn available context into an answer, structured result or proposed action.",
-    "detail": "Define the expected outcome before choosing a model. Separate output shape from factual support, and separate proposed tool calls from executed actions. Prompt versions and generation settings belong in the experiment record. Use a refusal or unresolved state when the task cannot be completed from the permitted information.\n\nExample: valid JSON containing a fabricated collection day is still a failed answer.",
+    "detail": "Generation turns instructions and available context into model output. The prompt is the supplied instruction and context; a structured result uses defined fields instead of free-form prose. Decide what result the user needs before choosing a model. Check output structure separately from source support. A proposed tool call is a request for the application to consider, not an executed action. Record prompt versions and generation settings for comparisons, and return an explicit unresolved result when the permitted evidence cannot settle the task.\n\nExample: valid JSON containing a fabricated collection day is still a failed answer.",
     "inputs": ["Prompt and permitted context", "Expected response contract"],
     "outputs": ["Answer or explicit unresolved result"],
     "failures": ["Fluent or well-formed output can still be unsupported."],
@@ -2136,7 +2174,7 @@
     "parent": "home",
     "type": "concept",
     "summary": "Choose the evidence that tells you whether this system meets its task.",
-    "detail": "Define failures and their consequences, then select the appropriate checks. Retrieval needs relevance labels. A judge needs reviewed decisions. Tools need contract, permission and side-effect tests. Hosting needs workload and recovery measurements. A golden dataset is useful for task behaviour, but it is not a substitute for every engineering check.\n\nKeep per-case outcomes, version identifiers, missing outputs and uncertainty visible before interpreting a summary score.",
+    "detail": "Evaluation checks whether a system meets a defined task. Start with failures and their consequences, then choose evidence for each part. Search needs reviewed relevant passages. An automated judge needs reviewed scoring decisions. Tools need tests for valid inputs, permissions and actual effects. Hosting needs workload and recovery measurements. A golden dataset is a reviewed set of task examples; it cannot replace all these other checks. Keep every case outcome, missing output and version visible before interpreting an average score.\n\nKeep per-case outcomes, version identifiers, missing outputs and uncertainty visible before interpreting a summary score.",
     "inputs": ["Task criteria", "Candidate system and cases"],
     "outputs": ["Evidence-backed comparison", "Explicit unresolved risks"],
     "failures": [
@@ -2175,7 +2213,7 @@
     "parent": "evaluation",
     "type": "concept",
     "summary": "Understand the calculation, its assumptions and what the number cannot tell you.",
-    "detail": "Choose the question first: accuracy, agreement, uncertainty, comparison, calibration or cost. Then select a statistic whose inputs match the task. A metric name without its denominator and unit of analysis is incomplete. Some methods require independent observations, while paired comparisons must preserve the relationship between versions.\n\nThe worked figures are illustrative. Interactive calculations expose arithmetic; they do not validate the dataset or choose an acceptable risk for you.",
+    "detail": "Choose the question before the calculation: correctness, reviewer agreement, uncertainty, comparison, probability calibration or cost. Name the denominator, the total used in a fraction, and the unit of analysis, such as one question or one user. Some methods assume independent observations, whose outcomes do not affect one another. A paired comparison tests both versions on the same units and must preserve those pairs. Ask whether the observations match the method’s assumptions before interpreting its number.\n\nThe worked figures are illustrative. Interactive calculations expose arithmetic; they do not validate the dataset or choose an acceptable risk for you.",
     "inputs": [
       "Defined evaluation question",
       "Appropriate observations and assumptions"
@@ -2217,18 +2255,18 @@
     "parent": "evaluation",
     "type": "dataset",
     "summary": "Create reviewed examples that define the behaviour your project must demonstrate.",
-    "detail": "Start with task groups and failure costs. Select representative cases, then add distinct edge and failure cases without pretending that a failure-heavy collection represents live traffic. Record case ID, question, expected facts or action, relevant source IDs, answerability, reviewer and version. Include conflicting sources, missing evidence and exceptions where they matter.\n\nA golden dataset means reviewed expectations, not a particular split. Mark each case as development, regression or held-out evaluation. Do not repeatedly tune on cases later described as untouched.\n\nExample: North ward asks for green-bin day; source calendar-v3 says Monday. Expected facts include the ward, bin colour and day. A question about an absent holiday schedule should remain unresolved.",
+    "detail": "Group the tasks and identify costly failures. Select cases that reflect real use, then add boundary and failure cases; a deliberately failure-heavy set does not represent normal request frequencies. For each case record its ID, question, expected facts or action, relevant source IDs, whether evidence can answer it, reviewer and version. Include missing evidence, conflicts and exceptions. A label is a reviewed judgement of the expected result. A split divides cases into separate groups reserved for different uses. Assign the case’s role: development guides changes, regression catches known failures, and held-out evaluation remains unavailable for design choices.\n\nA golden dataset means reviewed expectations, not a particular split. Mark each case as development, regression or held-out evaluation. Do not repeatedly tune on cases later described as untouched.\n\nExample: North ward asks for green-bin day; source calendar-v3 says Monday. Expected facts include the ward, bin colour and day. A question about an absent holiday schedule should remain unresolved.",
     "inputs": [
-      "Task groups and representative questions",
-      "Authoritative sources and reviewers"
+      "Task groups and questions that represent them",
+      "Sources whose authority has been confirmed, and reviewers able to judge the task"
     ],
     "outputs": [
-      "Versioned cases with reviewed expectations",
-      "Explicit split and coverage record"
+      "Versioned cases with reviewed expected results",
+      "Record of represented tasks and each case’s assigned dataset group"
     ],
     "failures": [
       "Model-generated expected answers can repeat the system’s own errors.",
-      "Repeated or related cases can leak across splits."
+      "Closely related cases appear in both development and final evaluation, making the final results look more independent than they are."
     ],
     "requirements": ["source-provenance", "statistical-comparison"],
     "related": [
@@ -2279,7 +2317,7 @@
     "parent": "golden-dataset",
     "type": "method",
     "summary": "Make the expected result clear enough that reviewers can disagree usefully.",
-    "detail": "Define each required fact or permitted action, what counts as unsupported content, and when a case cannot be scored. Have reviewers label a shared sample independently, discuss disagreements and refine the instructions on development cases. Freeze the rubric for the comparison and validate any automated judge against reviewed labels.\n\nExample: “Names Monday” alone is insufficient if the question also identifies the ward and bin colour. Mark each required fact and any invented exception. Do not quietly change expected facts after seeing a candidate’s result.",
+    "detail": "A rubric is a written set of scoring rules. Specify required facts or permitted actions, unsupported additions and when a case cannot be scored. Give the same sample to reviewers to label independently. Discuss disagreements and refine the instructions on development cases; this is rubric calibration. Keep the rubric fixed for the comparison. If a model scores answers, compare its labels with the reviewed human decisions before relying on it.\n\nExample: “Names Monday” alone is insufficient if the question also identifies the ward and bin colour. Mark each required fact and any invented exception. Do not quietly change expected facts after seeing a candidate’s result.",
     "inputs": ["Task criteria", "Source-backed examples and counterexamples"],
     "outputs": ["Reviewed labels", "Versioned rubric and disagreement log"],
     "failures": [
@@ -2314,7 +2352,7 @@
     "parent": "data",
     "type": "dataset",
     "summary": "Give each example a declared role before using it to improve or measure the system.",
-    "detail": "Training examples update weights or serve as optimisation inputs. Development examples guide choices such as prompts, thresholds and model selection. A final test set supports a comparison after those choices are fixed. A regression set catches known failures and may be visible during development; it is not automatically an independent final test.\n\nSplit at the unit that prevents leakage: document, user, event or time period where appropriate. Two paraphrases of the same source question in different files do not create independent evidence.",
+    "detail": "Training examples can change model weights, the numerical values learned by the model, or guide an optimisation procedure. Development examples help choose prompts, score cutoffs and models. Final test examples assess those choices after they are fixed. A regression set checks previously discovered failures and can remain visible during development; it is not automatically an untouched final test. Leakage occurs when information from a final test case influences those earlier choices. Keep related documents, conversations or events together when splitting data.\n\nSplit at the unit that prevents leakage: document, user, event or time period where appropriate. Two paraphrases of the same source question in different files do not create independent evidence.",
     "inputs": [
       "Cases and relationships between them",
       "Declared development and evaluation policy"
@@ -2359,14 +2397,14 @@
     "parent": "golden-dataset",
     "type": "method",
     "summary": "Use generated candidates to extend coverage, then check their facts and independence.",
-    "detail": "Record the source, generator, prompt, transformations and reviewer for a synthetic case. Validate expected answers against independent evidence. Check duplicates and related examples across splits. A model can help draft questions but cannot make its own answers authoritative by placing them in a dataset.\n\nExample: a generator creates ten versions of the same bin-day question. They may test wording variation, but they do not provide ten independent policy scenarios. Report their shared origin and retain real or independently authored evaluation cases.",
+    "detail": "Synthetic cases are generated examples rather than observations collected directly from users. Record the source used to create each one, the generator, its instructions, subsequent edits and reviewer. This is the case’s provenance. Check expected answers against independent source evidence, then look for duplicates and related cases across development and final-test sets. A model can draft questions, but putting its answer in a dataset does not make that answer authoritative.\n\nExample: a generator creates ten versions of the same bin-day question. They may test wording variation, but they do not provide ten independent policy scenarios. Report their shared origin and retain real or independently authored evaluation cases.",
     "inputs": [
       "Generated candidates and provenance",
       "Independent sources and human review"
     ],
     "outputs": [
-      "Accepted or rejected reviewed cases",
-      "Lineage and overlap record"
+      "Reviewed cases accepted or rejected",
+      "Record of each case’s origin and any overlap with other cases"
     ],
     "failures": [
       "Synthetic cases may preserve the generator’s blind spots or copy training examples."
@@ -2400,7 +2438,7 @@
     "parent": "evaluation",
     "type": "method",
     "summary": "Measure a known version before claiming that a change helps.",
-    "detail": "Pin the candidate version, cases, source corpus, prompt, rubric and supported model settings. Pilot the runner on a few known cases, including a controlled failure. Verify output identifiers and errors before the full run. Compare alternatives on matched cases and preserve repeated runs where randomness matters.\n\nReport per-group outcomes, denominators, latency, cost and missing results. Keep first failures visible when investigating a retry. A later successful attempt is additional evidence, not permission to erase an earlier invariant failure.",
+    "detail": "A baseline is the known version against which you compare a change. Record exact revisions of the system, cases, source collection, prompt, scoring rubric and supported model settings. First run a small pilot with known results, including a deliberate failure. Check that every input ID has an output or explicit error. Then compare alternatives on the same cases and repeat runs when outputs can vary.\n\nReport results for each task group, case counts, response time, cost and missing outputs. Preserve initial failures when a retry succeeds. The later result does not erase evidence that a rule the system must always satisfy was broken.",
     "inputs": [
       "Versioned candidate and cases",
       "Fixed rubric and execution configuration"
@@ -2442,7 +2480,7 @@
     "parent": "evaluation",
     "type": "concept",
     "summary": "Distinguish confidence in a prediction from uncertainty in an evaluation result.",
-    "detail": "Prediction calibration asks whether stated probabilities match observed outcomes. A confidence interval describes uncertainty in a statistic under a sampling procedure. Neither is the model’s tone of voice. Repeated runs estimate variation for the selected cases; they do not make those cases representative of future traffic.\n\nExample: a classifier reports 90% confidence for one answer while a small test set gives a wide interval for overall accuracy. These are different quantities and must not be merged into a universal readiness score.",
+    "detail": "Prediction calibration asks whether events assigned a given probability occur at about that rate. A confidence interval describes uncertainty in a measured statistic using a stated sampling procedure. These answer different questions, and neither is established by a model sounding certain. Repeated runs show variation on the selected cases; they do not make those cases representative of future requests. First ask whether the number describes one prediction, an observed test score or variation between runs.\n\nExample: a classifier reports 90% confidence for one answer while a small test set gives a wide interval for overall accuracy. These are different quantities and must not be merged into a universal readiness score.",
     "inputs": [
       "Defined event or metric",
       "Labels, sample design and repeated results"

@@ -39,9 +39,14 @@ function FieldEditor({
       <Select
         label="Field type"
         value={field.type}
-        options={["string", "number", "boolean", "date", "object", "array"].map(
-          (value) => ({ value, label: value }),
-        )}
+        options={[
+          ["string", "Text (string)"],
+          ["number", "Number"],
+          ["boolean", "Yes or no (boolean)"],
+          ["date", "Date"],
+          ["object", "Group of named fields (object)"],
+          ["array", "List of values (array)"],
+        ].map(([value, label]) => ({ value, label }))}
         onChange={(type) => change({ ...field, type: type as Field["type"] })}
       />
       <Select
@@ -54,10 +59,11 @@ function FieldEditor({
         }
         label="Classification"
         value={field.classification}
-        options={["public", "internal", "sensitive"].map((value) => ({
-          value,
-          label: value,
-        }))}
+        options={[
+          ["public", "Public: intended for anyone to read"],
+          ["internal", "Internal: intended for staff use"],
+          ["sensitive", "Sensitive: needs restricted access"],
+        ].map(([value, label]) => ({ value, label }))}
         onChange={(classification) =>
           change({
             ...field,
@@ -105,17 +111,20 @@ function StepEditor({
           <GuideHelp context="process" label="Process step" value={step.name} />
         }
         label="Step name"
-        placeholder="Check tenant membership before retrieving ticket passages"
+        placeholder="Check the user belongs to the customer organisation before searching its tickets"
         value={step.name}
         onChange={(name) => change({ ...step, name })}
       />
       <Select
         label="Step kind"
         value={step.kind}
-        options={["input", "rule", "tool", "review", "output"].map((value) => ({
-          value,
-          label: value,
-        }))}
+        options={[
+          ["input", "Input: receive information"],
+          ["rule", "Rule: apply a condition"],
+          ["tool", "Tool: call another program"],
+          ["review", "Review: ask a person to decide"],
+          ["output", "Output: return the result"],
+        ].map(([value, label]) => ({ value, label }))}
         onChange={(kind) =>
           change({ ...step, kind: kind as ProcessStep["kind"] })
         }
@@ -184,7 +193,11 @@ function DataFields({
   return (
     <details className="architecture-section" open>
       <summary>Data fields ({component.fields.length})</summary>
-      <p>Describe the data this component owns or accepts.</p>
+      <p>
+        A field is one named piece of data, such as a product ID. List what this
+        component stores or receives. Mark a field required if a request cannot
+        omit it.
+      </p>
       {component.fields.map((field) => (
         <FieldEditor
           key={field.id}
@@ -334,7 +347,7 @@ export default function ComponentInspector({
             />
           }
           label="Description"
-          placeholder="Fictional example: Accept tenant ID, product ID and question; return approved passages for that tenant/product or an explicit no-evidence result."
+          placeholder="Fictional example: Accept the customer organisation ID, product ID and question. Return approved passages for that organisation and product, or say no matching evidence was found."
           value={component.description}
           multiline
           onChange={(description) => onChange({ ...component, description })}
@@ -350,25 +363,26 @@ export default function ComponentInspector({
           label="Component kind"
           value={component.kind}
           options={[
-            "ui",
-            "service",
-            "database",
-            "source",
-            "retrieval",
-            "model",
-            "queue",
-            "worker",
-            "human",
-            "router",
-            "policy",
-          ].map((value) => ({ value, label: value }))}
+            ["ui", "User interface: screens and controls"],
+            ["service", "Service: process requests"],
+            ["database", "Database: store data"],
+            ["source", "Source: original information"],
+            ["retrieval", "Retrieval: find relevant information"],
+            ["model", "AI model: generate or classify"],
+            ["queue", "Queue: hold work waiting to run"],
+            ["worker", "Worker: run background jobs"],
+            ["human", "Human: a person who reviews"],
+            ["router", "Router: choose the next destination"],
+            ["policy", "Policy: enforce permission or business rules"],
+          ].map(([value, label]) => ({ value, label }))}
           onChange={(kind) =>
             onChange({ ...component, kind: kind as Component["kind"] })
           }
         />
         <TextField
           label="Domain or responsibility"
-          placeholder="Product-support evidence retrieval"
+          hint="Describe the job this part owns, such as finding support documents. State where its responsibility ends."
+          placeholder="Find permitted product-support documents"
           value={component.domain}
           onChange={(domain) => onChange({ ...component, domain })}
         />

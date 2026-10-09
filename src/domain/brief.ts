@@ -11,7 +11,7 @@ function needs(project: Project): string {
   return project.needs
     .map(
       (need) =>
-        `### ${value(need.task)} (${need.id})\n\nActor: ${value(need.actor)}\n\nOutcome: ${value(need.outcome)}\n\nAcceptance: ${value(need.acceptance)}\n\nOwner: ${value(need.owner)}`,
+        `### ${value(need.task)} (${need.id})\n\nPerson doing the task: ${value(need.actor)}\n\nOutcome: ${value(need.outcome)}\n\nAcceptable result: ${value(need.acceptance)}\n\nOwner: ${value(need.owner)}`,
     )
     .join("\n\n");
 }
@@ -35,7 +35,7 @@ function checks(project: Project): string {
   return project.checks
     .map(
       (check) =>
-        `### ${value(check.title)} (${check.id}; ${check.status})\n\nMethod: ${value(check.method)}\n\nDataset: ${value(check.dataset)}\n\nMetric: ${value(check.metric)}\n\nExpected: ${value(check.expected)}\n\nOwner: ${value(check.owner)}\n\nEvidence: ${value(check.evidence)}\n\nTrace: needs [${check.needIds.join(", ")}]; rules [${check.ruleIds.join(", ")}]; components [${check.componentIds.join(", ")}].`,
+        `### ${value(check.title)} (${check.id}; ${check.status})\n\nMethod: ${value(check.method)}\n\nCases or material to review: ${value(check.dataset)}\n\nMeasure or review criterion: ${value(check.metric)}\n\nExpected: ${value(check.expected)}\n\nOwner: ${value(check.owner)}\n\nEvidence: ${value(check.evidence)}\n\nTrace: needs [${check.needIds.join(", ")}]; rules [${check.ruleIds.join(", ")}]; components [${check.componentIds.join(", ")}].`,
     )
     .join("\n\n");
 }
@@ -65,8 +65,8 @@ export function implementationBrief(project: Project): string {
     `## Outcome\n\nObjective: ${value(project.objective)}\n\nAudience: ${value(project.audience)}\n\nBaseline: ${value(project.baseline)}\n\nSuccess measure: ${value(project.successMeasure)}\n\nOwner: ${value(project.outcomeOwner)}\n\nRoles: ${project.roles.join(", ") || "[unassigned]"}.`,
     `## User needs\n\n${needs(project) || "[none recorded]"}`,
     `## Business rules\n\n${rules(project) || "[none recorded]"}`,
-    `## Source provenance\n\n${bullets(project.sources.map((source) => sourceText(source, project.choices.divisionRouting)))}`,
-    `## Architecture\n\nParent relationships describe internals, not additional services.\n\n${architecture(project) || "No software components recorded; software design has not been assessed."}\n\nConnections:\n${bullets(project.edges.map((edge) => `${edge.source} -> ${edge.target} (${edge.kind}): ${value(edge.label)}`))}`,
+    `## Sources and who can confirm them\n\n${bullets(project.sources.map((source) => sourceText(source, project.choices.divisionRouting)))}`,
+    `## Architecture\n\nA parent component contains smaller parts. Their names and IDs below let the reader follow the connections.\n\n${architecture(project) || "No software components recorded; software design has not been assessed."}\n\nConnections:\n${bullets(project.edges.map((edge) => `${edge.source} -> ${edge.target} (${edge.kind}): ${value(edge.label)}`))}`,
     `## Evaluation checks\n\n${checks(project) || "[none recorded]"}`,
     `## Decisions\n\n${project.decisions.map(decisionText).join("\n\n") || "[none recorded]"}`,
     `## Assumptions\n\n${bullets(project.assumptions)}`,

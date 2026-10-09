@@ -170,8 +170,8 @@ export default function Learn({
             </button>
           ))}
           <p className="learn-navigation-note">
-            Follow a request through the system. At each boundary, ask what
-            evidence would show it works.
+            Follow a request from one part of the system to the next. At each
+            handover, ask what should happen and how you would check it.
           </p>
           <label className="learn-technical">
             <input
@@ -179,7 +179,7 @@ export default function Learn({
               checked={technical}
               onChange={(event) => setTechnical(event.target.checked)}
             />{" "}
-            Show technical contracts
+            Show technical contracts (inputs and outputs)
           </label>
         </aside>
         <div className="learn-content" ref={heading} tabIndex={-1}>
@@ -270,8 +270,9 @@ function Overview({
             Design with evidence.
           </h1>
           <p>
-            Explore how intelligent products work, from your first API to the
-            tests and decisions that earn trust.
+            Explore how AI products work. Start with an API: the agreed way one
+            program asks another for information or an action. Then follow the
+            request through the system and learn how to check the result.
           </p>
           <button
             type="button"
@@ -521,9 +522,19 @@ function Topic({
             <Calculator concept={concept.id} />
             <details className="learn-contract" open={technical}>
               <summary>Inputs, outputs and the component contract</summary>
+              <p>
+                A contract states what this part needs from its caller and what
+                it promises to return.
+              </p>
               <div>
-                <BulletList title="Inputs" items={concept.inputs} />
-                <BulletList title="Outputs" items={concept.outputs} />
+                <BulletList
+                  title="Inputs — what this part receives"
+                  items={concept.inputs}
+                />
+                <BulletList
+                  title="Outputs — what this part produces"
+                  items={concept.outputs}
+                />
               </div>
             </details>
           </section>
@@ -584,7 +595,7 @@ function Evidence({ concept }: { concept: Concept }) {
           <summary>{check.title}</summary>
           <p>{check.why}</p>
           <dl>
-            <dt>Dataset</dt>
+            <dt>Dataset — cases or material to check</dt>
             <dd>{check.dataset}</dd>
             <dt>Measure</dt>
             <dd>{check.metric}</dd>
@@ -629,7 +640,10 @@ function Related({
   return (
     <section className="learn-panel">
       <h2>Connected concepts</h2>
-      <p>Curated conceptual links.</p>
+      <p>
+        Explore a related topic to see what this part depends on or how to test
+        it.
+      </p>
       <div className="learn-related">
         {concept.related.map((relation) => (
           <button
@@ -637,7 +651,7 @@ function Related({
             key={`${relation.id}-${relation.relation}`}
             onClick={() => navigate(relation.id)}
           >
-            <span>{relation.relation}</span>
+            <span>{relation.relation.replaceAll("_", " ")}</span>
             {conceptById.get(relation.id)?.title}
             <ArrowRight size={14} />
           </button>
@@ -656,8 +670,9 @@ function CodeExamples({ concept }: { concept: Concept }) {
         <CodeExample key={index} example={example} />
       ))}
       <p className="learn-caption">
-        Examples run only when you copy and execute them. Illustrative examples
-        need your configuration and validation.
+        This page does not run the code. Examples marked illustrative show the
+        approach; you must supply the named settings and test the code in your
+        own environment.
       </p>
     </section>
   );
@@ -724,8 +739,8 @@ function PlatformLens({ platform, area }: { platform: string; area: string }) {
       <p className="learn-eyebrow">Platform perspective</p>
       <h2>{selected.label}</h2>
       <p>
-        Implementation options for this part of the system. Your evidence
-        requirements stay the same.
+        These products offer ways to build this part of the system. You still
+        need to run the same checks on the result.
       </p>
       {capabilities.map((capability) => (
         <div className="learn-platform-card" key={capability.kind}>
@@ -787,12 +802,14 @@ function CosineCalculator() {
       </div>
       <output aria-live="polite">
         {result === null
-          ? "Enter two nonzero vectors with the same number of finite values."
+          ? "Enter two equally long lists of numbers. Each list needs at least one value other than zero. Infinity is not allowed."
           : `Cosine similarity: ${result.toFixed(4)}`}
       </output>
       <p className="learn-caption">
-        Separate values with commas or spaces. Cosine compares vector
-        directions. It does not establish factual truth or entailment.
+        A vector is a list of numbers. Separate them with commas or spaces.
+        Cosine similarity compares the directions represented by the lists: 1
+        means the same direction, 0 means perpendicular and -1 means opposite. A
+        high score does not prove that two sentences say the same true thing.
       </p>
     </section>
   );
@@ -826,9 +843,11 @@ function WilsonCalculator() {
           : "Enter whole counts, with successes between zero and a positive total."}
       </output>
       <p className="learn-caption">
-        Uses z = 1.96 for independent binomial trials. Repeated outputs from one
-        question are not independent questions. An interval does not correct an
-        unrepresentative dataset.
+        This range shows uncertainty around a pass rate from a sample. The
+        calculation uses z = 1.96 for a 95% interval and assumes independent
+        pass/fail cases. Repeating one question does not create new independent
+        questions. A narrow range can still mislead if the cases do not
+        represent real use.
       </p>
     </section>
   );
@@ -899,13 +918,22 @@ function ConfusionCalculator() {
             ))}
           </span>
         ) : (
-          "Enter nonnegative whole counts within the safe integer range."
+          "Enter whole counts of zero or more. The combined total must not exceed 9,007,199,254,740,991."
         )}
       </output>
       <p className="learn-caption">
-        First define the positive class. A rate with no denominator stays
-        undefined. Review errors by user group and task as well as the overall
-        average.
+        Choose what counts as positive, such as a faulty device. True positives
+        are faults correctly flagged; false positives are working devices
+        flagged as faulty. False negatives are missed faults; true negatives are
+        working devices correctly cleared. A rate is undefined when there are no
+        relevant cases to divide by. Check each user group and task as well as
+        the average.
+      </p>
+      <p className="learn-caption">
+        Accuracy is the number of correct decisions divided by all cases. F1
+        summarises results for the positive class: 2 × true positives ÷ (2 ×
+        true positives + false positives + false negatives). Correctly cleared
+        negative cases count toward accuracy but do not enter F1.
       </p>
     </section>
   );

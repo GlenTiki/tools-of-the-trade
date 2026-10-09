@@ -104,7 +104,7 @@ describe("generic engagements", () => {
       projectGaps(project).find(
         (gap) => gap.id === "source-client-brief-detail",
       )?.detail,
-    ).toContain("division, product");
+    ).toContain("Division; Product or scope");
   });
   it("exports readable questions without losing legacy or unknown answers", () => {
     const project = createProject();
@@ -125,14 +125,14 @@ describe("generic engagements", () => {
     expect(restored).toEqual(project);
     const brief = implementationBrief(restored);
     expect(brief).toContain(
-      "Which divisions require separate handling?: Retail",
+      "Which products or business divisions need different handling?: Retail",
     );
     expect(brief).toContain("former-field: Saved detail");
     expect(brief).toContain("Preserve me");
     expect(
       brief.split("## Decisions\n\n")[1].split("\n\n## Assumptions")[0],
     ).toBe(
-      "### Existing routing\n\nLifecycle: design; status: open; owner: Lead.\n\nDecision: Preserve me\n\nEvidence: [unresolved]\n\nTemplate: division-routing\n\nWhich divisions require separate handling?: Retail\n\nformer-field: Saved detail",
+      "### Existing routing\n\nLifecycle: design; status: open; owner: Lead.\n\nDecision: Preserve me\n\nEvidence: [unresolved]\n\nTemplate: division-routing\n\nWhich products or business divisions need different handling?: Retail\n\nformer-field: Saved detail",
     );
   });
 });

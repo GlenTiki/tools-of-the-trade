@@ -4,8 +4,8 @@
     "title": "Agents and tool execution",
     "parent": "home",
     "type": "component",
-    "summary": "Turn model suggestions into controlled actions.",
-    "detail": "An agent combines a model, state, tools and an execution loop. Make the boundary between a proposed action and an authorized effect visible. Evaluate the resulting state, not only the final message.",
+    "summary": "Let a model propose steps toward a task while the application controls what can actually happen.",
+    "detail": "An agent combines a model with tools, stored task state and a loop that chooses the next step. A tool is an operation such as searching documents or creating a referral. State records what has happened so far. The model can propose a call, but the application must validate its arguments, check permission and record the result. Start by listing the allowed operations and stop conditions. Judge success from the resulting records or effects, not only from the final message.",
     "inputs": ["Task", "Available tools", "Execution policy"],
     "outputs": ["Answer or action result", "Execution history"],
     "failures": ["A persuasive final answer can conceal a failed action."],
@@ -33,8 +33,12 @@
     "parent": "home",
     "type": "component",
     "summary": "Keep the service understandable when it succeeds or fails.",
-    "detail": "Separate operational health from answer quality. Correlate requests, model calls and tool outcomes, then link failures to reproducible evaluation cases. Define retention and access for the evidence itself.",
-    "inputs": ["Requests", "Telemetry", "Quality assessments"],
+    "detail": "Operational health describes whether the service responds and stays within its resource limits. Answer quality describes whether its output is correct and useful. Measure both. Link the events from one request using identifiers so you can locate a failed search, model call or tool action. Turn repeatable failures into evaluation cases. Decide what diagnostic evidence to retain, who may read it and when it should be removed.",
+    "inputs": [
+      "Incoming requests",
+      "Recorded service events and measurements",
+      "Reviewed answer-quality results"
+    ],
     "outputs": ["Operational decisions", "Incident evidence"],
     "failures": ["A green uptime dashboard can coexist with wrong answers."],
     "requirements": ["operational-health"],
@@ -64,10 +68,17 @@
     "title": "Model hosting and capacity",
     "parent": "home",
     "type": "component",
-    "summary": "Choose where inference runs and test the resource budget.",
-    "detail": "Compare provider APIs with a model server you operate. Evaluate the intended context lengths and concurrency on the actual hardware. Cloud deployment, local inference and on-premises operation are distinct choices.",
-    "inputs": ["Model artifacts", "Hardware or provider", "Workload"],
-    "outputs": ["Inference endpoint", "Capacity measurements"],
+    "summary": "Choose where the model runs and test whether that setup can serve the expected workload.",
+    "detail": "Inference means running a trained model to generate a result. You can call a provider’s service or operate a model server yourself. Test the amount of text per request, called context length, and the number of simultaneous requests, called concurrency, on the intended setup. Record response time and memory use. A model running on your laptop, on company premises or in a cloud service has different operating responsibilities. Ask who controls the machine, data path, updates and access before comparing capacity.",
+    "inputs": [
+      "Model files",
+      "Hardware or model-service provider",
+      "Expected request sizes and demand"
+    ],
+    "outputs": [
+      "Address of the model service",
+      "Measurements of the workload it can handle"
+    ],
     "failures": [
       "A model that loads can still fail under concurrent long contexts."
     ],
@@ -98,9 +109,13 @@
     "title": "Adaptation and learning",
     "parent": "home",
     "type": "component",
-    "summary": "Improve behavior using examples and an explicit objective.",
-    "detail": "Prompt optimization changes instructions or demonstrations. Fine-tuning changes model weights. Both need independent evaluation, data provenance and a baseline that justifies the extra complexity.",
-    "inputs": ["Task examples", "Baseline", "Metric"],
+    "summary": "Improve the system for a specific task, then test whether the improvement holds on new cases.",
+    "detail": "Prompt optimisation changes the instructions or examples sent to the model. Fine-tuning changes some or all of the model’s learned numerical values, called weights. Both need a clear objective and examples whose source, permissions and labels are known. Compare the candidate with an unchanged baseline on cases that did not guide the improvements. Start by locating a repeated task failure; then ask whether better instructions, better evidence or changed weights is the appropriate intervention.",
+    "inputs": [
+      "Task examples",
+      "Unchanged version for comparison",
+      "Rule for measuring success"
+    ],
     "outputs": ["Candidate program or model", "Comparison results"],
     "failures": [
       "Optimizing the test set makes the reported improvement unreliable."
@@ -129,8 +144,12 @@
     "parent": "agents",
     "type": "method",
     "summary": "Let the model request a tool, then return its result.",
-    "detail": "The application owns argument validation, authorization, execution and stopping conditions. Feed typed results or explicit errors back into the next model step. Bound steps, duration and spend; a tool request is not permission.",
-    "inputs": ["Conversation", "Tool schemas", "Budget"],
+    "detail": "A tool loop alternates between a model proposing an operation and the application returning its result. Arguments are the values supplied to that operation, such as a source ID. The application checks their format and the caller’s permission before execution. Return defined result fields or an explicit error so the model can choose the next step. Set limits on calls, elapsed time and cost. Trace one successful and one failed call to check that the final answer matches what actually happened.",
+    "inputs": [
+      "Conversation so far",
+      "Definitions of each tool’s arguments and results",
+      "Limits on calls, time and cost"
+    ],
     "outputs": ["Tool result", "Next model step", "Stop reason"],
     "failures": [
       "Repeated calls exhaust the budget.",
@@ -164,9 +183,12 @@
     "parent": "agents",
     "type": "concept",
     "summary": "Specify what a tool accepts, returns and changes.",
-    "detail": "A useful contract describes the input schema, result schema, error states and side effects. Server validation must also check resource ownership. A syntactically valid resource ID may refer to someone else’s data.",
-    "inputs": ["Arguments", "Caller identity"],
-    "outputs": ["Validated invocation", "Typed result or error"],
+    "detail": "A tool contract defines its accepted arguments, returned fields, errors and side effects. A side effect is a change outside the answer, such as a saved referral or sent message. A schema describes which fields and value types are valid. Passing that schema does not prove permission: a validly formatted record ID can belong to another user. Ask who checks ownership at execution and how the caller distinguishes an empty result from a failed operation.",
+    "inputs": ["Values supplied to the operation", "Verified caller identity"],
+    "outputs": [
+      "Invocation that passed validation and permission checks",
+      "Result with defined fields, or an explicit error"
+    ],
     "failures": [
       "Schema-valid arguments target an unauthorized resource.",
       "An empty result conceals a tool error."
@@ -195,12 +217,15 @@
     "parent": "agents",
     "type": "protocol",
     "summary": "Connect a user interface to an agent session.",
-    "detail": "ACP defines session prompts, streamed updates, capability negotiation and cancellation. Optional capabilities determine available behavior such as session loading. It connects a client to an agent, not directly to interchangeable model weights.",
-    "inputs": ["Client capabilities", "Session prompt"],
+    "detail": "The Agent Client Protocol (ACP) connects an interface, the client, to a running agent. A session holds their continuing interaction. The protocol carries prompts, progress updates, permission requests and cancellation. Capability negotiation tells each side which optional features the other supports; it does not guarantee every agent can load an old session. Ask what happens if resume is unavailable or a request is cancelled. ACP connects the interface to an agent service, not directly to interchangeable model files.",
+    "inputs": [
+      "Features supported by the client",
+      "A prompt for the agent session"
+    ],
     "outputs": ["Session updates", "Permission request", "Stop reason"],
     "failures": [
-      "Assuming every backend supports resume.",
-      "Treating a reported tool event as proof of safe execution."
+      "The interface assumes an agent can resume a session without checking that capability.",
+      "A reported tool event is treated as proof that execution was safe."
     ],
     "requirements": ["tool-safety"],
     "related": [
@@ -234,8 +259,11 @@
     "parent": "agents",
     "type": "protocol",
     "summary": "Connect an application to tools, resources and prompts.",
-    "detail": "An MCP host manages clients connected to servers. Capability discovery and tool invocation standardize a seam; the host still decides how context reaches the model and when an action is permitted.",
-    "inputs": ["Server capabilities", "Tool arguments"],
+    "detail": "The Model Context Protocol (MCP) connects an application to servers that expose tools, readable resources and reusable prompts. The host is the application; it manages a client connection to each server. Discovery tells the host what a server offers. Invocation asks it to perform a particular operation. The host still decides which content reaches the model and which actions are permitted. Start by tracing one discovered tool through its argument checks, access decision and result.",
+    "inputs": [
+      "Features and tools advertised by a server",
+      "Values for a requested tool operation"
+    ],
     "outputs": ["Resources", "Tool results"],
     "failures": [
       "Server content contains malicious instructions.",
@@ -269,9 +297,13 @@
     "parent": "agents",
     "type": "protocol",
     "summary": "Record structured work, reviews and decisions between participants.",
-    "detail": "CHAP coordinates task state and review decisions. Profiles add capabilities; deployments must verify actual enforcement. Evidence-chain consistency does not prove complete records or factual artifacts. Mako’s example maps ACP permissions to core, review and control interactions.",
+    "detail": "The Collaborative Human-Agent Protocol (CHAP) records tasks, submitted work and review decisions between participants. An artifact is a work product, such as a draft or review record. Profiles are optional groups of protocol capabilities. Check which profile a deployment supports and which rules it actually enforces. A consistent evidence chain links recorded messages so changes can be detected; it does not prove every event was recorded or every claim was true. Trace a submitted artifact to its named reviewer and decision before relying on the audit record.",
     "inputs": ["Participants", "Tasks", "Review artifacts"],
-    "outputs": ["Task transitions", "Recorded decisions", "Audit evidence"],
+    "outputs": [
+      "Recorded task-state changes",
+      "Decisions linked to submitted work",
+      "Evidence about the recorded interaction"
+    ],
     "failures": [
       "A recorded approval can concern a factually wrong artifact.",
       "Advertising a profile is mistaken for verified enforcement."
@@ -304,7 +336,7 @@
     "parent": "agents",
     "type": "method",
     "summary": "Check whether this caller may perform this action now.",
-    "detail": "Enforce scope and resource ownership at the tool boundary. A model choice, UI confirmation or tool description must not substitute for server authorization. Tests should attempt forbidden actions and verify that no effect occurs.",
+    "detail": "Authorization checks whether a verified caller may perform a particular action on a particular resource now. Scope is the set of actions or resources that permission covers. Enforce it where the action executes, and check who owns the resource. A model suggestion, interface confirmation or tool description cannot replace this check. Test a caller who lacks permission and verify that no protected read or write occurs, rather than checking only the wording of the denial.",
     "inputs": ["Caller", "Requested action", "Resource", "Policy"],
     "outputs": ["Allow or deny decision"],
     "failures": [
@@ -338,8 +370,8 @@
     "title": "Bounded retries",
     "parent": "agents",
     "type": "method",
-    "summary": "Retry transient failures without repeating harmful effects.",
-    "detail": "Classify errors before retrying. Cap attempts and use backoff. A timeout can occur after a remote write succeeded, so the next attempt needs an idempotent operation or an outcome check.",
+    "summary": "Repeat an operation only when the failure may be temporary and repetition is safe.",
+    "detail": "A transient failure may clear on another attempt, such as a briefly unavailable service. A permission denial usually will not. Classify the error, cap attempts and use backoff, a delay before trying again. A timeout means no response arrived in time; a remote write may still have completed. Such a write needs idempotency, which makes repetition represent the same intended operation, or a check of the existing outcome. Ask what evidence distinguishes \"not done\" from \"done but response lost\".",
     "inputs": ["Failure category", "Attempt count", "Deadline"],
     "outputs": ["Retry or final failure"],
     "failures": [
@@ -370,12 +402,12 @@
     "parent": "agents",
     "type": "concept",
     "summary": "Make a repeated request represent the same intended action.",
-    "detail": "Use a caller-supplied operation identity and store the accepted result at the effect boundary. Bind that identity to the request meaning. Reusing a key with changed arguments must not silently replay an unrelated result.",
+    "detail": "Idempotency prevents a repeated request from creating another effect for the same intended operation. The caller supplies an operation ID, and the service stores that ID with the accepted arguments and result where the effect is performed. A retry with the same meaning can return the recorded result. Reusing the ID with changed arguments must not silently return an unrelated success. Check how long the service keeps this duplicate-detection record and what happens when a delayed retry arrives.",
     "inputs": ["Operation ID", "Arguments"],
     "outputs": ["One logical effect", "Repeatable response"],
     "failures": [
-      "A fresh key on each retry creates duplicates.",
-      "Deduplication state expires before a delayed retry."
+      "A new operation key on every retry creates duplicates.",
+      "The duplicate-detection record expires before a delayed retry arrives."
     ],
     "requirements": ["tool-safety"],
     "related": [
@@ -401,7 +433,7 @@
     "parent": "agents",
     "type": "method",
     "summary": "Stop further work and explain what already happened.",
-    "detail": "Propagate cancellation through the session and pending permission requests. Reject late approvals for cancelled work. Cancellation does not undo an external effect that already completed; report that outcome separately.",
+    "detail": "Pass a cancellation request to the active task and any pending operations or permission questions. Mark the task as cancelled so late results and approvals cannot restart it. Cancellation stops further work; it does not undo a message already sent or a record already saved. Report completed effects separately. Test a result that arrives after cancellation and an approval that concerns an older version of the request.",
     "inputs": ["Session ID", "Cancellation signal"],
     "outputs": ["Cancelled state", "Known completed effects"],
     "failures": [
@@ -431,10 +463,16 @@
     "title": "Prompt injection",
     "parent": "agents",
     "type": "concept",
-    "summary": "Untrusted content can try to redirect the agent.",
-    "detail": "Treat retrieved text, web pages and tool results as data. Keep credentials and authority outside model-produced arguments. Exercise malicious fixtures through the whole tool path; a prompt-only warning cannot enforce access boundaries.",
-    "inputs": ["Untrusted text", "Privileged tools"],
-    "outputs": ["Threat cases", "Boundary tests"],
+    "summary": "Prevent instructions inside documents or tool results from gaining the authority of the user or application.",
+    "detail": "Prompt injection occurs when untrusted content tries to redirect a model’s behavior. A document might instruct it to export records instead of answering the user. Treat retrieved pages and tool results as content, not new permission. Keep credentials, such as access tokens, and authorization decisions under application control rather than trusting model-generated arguments. Test a malicious document through the complete tool path and verify that the forbidden effect does not occur. A warning in the prompt alone cannot enforce that boundary.",
+    "inputs": [
+      "Text from an untrusted document or tool result",
+      "Tools able to read protected data or cause changes"
+    ],
+    "outputs": [
+      "Specific attack scenarios",
+      "Tests that forbidden reads or effects are blocked"
+    ],
     "failures": [
       "A document instructs the agent to disclose secrets.",
       "A tool result impersonates a trusted instruction."
@@ -462,9 +500,13 @@
     "title": "LangChain and LangGraph",
     "parent": "agents",
     "type": "framework",
-    "summary": "Compose model and tool steps with explicit workflow state.",
-    "detail": "LangChain provides model, tool and agent abstractions. LangGraph supplies lower-level stateful orchestration, persistence and interrupts. Evaluate whether a plain function workflow is sufficient before adding graph state and checkpoint maintenance.",
-    "inputs": ["State", "Nodes", "Transitions"],
+    "summary": "Use a framework to coordinate model and tool steps when the task needs explicit state or pause-and-resume behavior.",
+    "detail": "LangChain provides reusable pieces for models, tools and agents. LangGraph connects steps around shared workflow state: the data that records current progress. Persistence saves that state; a checkpoint is a saved point from which work may resume. Interrupts pause execution for an external decision or input. First ask whether ordinary functions can express the task clearly. If saved state is needed, test a restart after an external action: replaying a step must not create a duplicate effect.",
+    "inputs": [
+      "Data recording the current task state",
+      "Named workflow steps, or nodes",
+      "Rules for moving between steps"
+    ],
     "outputs": ["Workflow execution", "Checkpoints"],
     "failures": [
       "A replay repeats an external side effect.",
@@ -493,13 +535,16 @@
     "title": "LlamaIndex",
     "parent": "agents",
     "type": "framework",
-    "summary": "Connect data retrieval and agent workflows.",
-    "detail": "LlamaIndex provides ingestion, retrieval, query and agent components. Keep document IDs and retrieval evidence visible through abstractions so a failed answer can be traced back to the selected passages.",
+    "summary": "Connect documents to a question-answering workflow while preserving the evidence behind each answer.",
+    "detail": "LlamaIndex provides components to ingest documents, meaning read and prepare them, retrieve relevant passages and produce a response. It also supports agent workflows that can choose operations. Keep document and passage identifiers visible through those steps. When an answer fails, inspect which passages reached the model and how each maps to its original source. Ask whether the integration preserves that path before relying on a convenient query interface.",
     "inputs": ["Documents", "Retrievers", "Tools"],
-    "outputs": ["Context", "Agent or query response"],
+    "outputs": [
+      "Evidence supplied to the model",
+      "Response from the query or agent workflow"
+    ],
     "failures": [
-      "A convenient integration hides source provenance.",
-      "Changing the retriever silently changes answer support."
+      "An integration hides where a source passage came from.",
+      "A changed retriever silently changes the evidence behind the answer."
     ],
     "requirements": ["source-provenance", "retrieval-relevance"],
     "related": [
@@ -525,9 +570,9 @@
     "parent": "operations",
     "type": "method",
     "summary": "Follow one request across retrieval, models and tools.",
-    "detail": "Use related spans to locate latency and failures. Record configuration IDs, safe document references and error categories. Treat prompt text and tool arguments as sensitive data; recording every value is not required for useful diagnostics.",
+    "detail": "A trace connects the steps of one request. Each recorded step is a span with a status, timing and links to related spans. Use those links to locate delay or failure across search, model and tool calls. Record request and configuration IDs, safe source references and error categories. Raw prompts and tool arguments may contain sensitive data. Check a known request to confirm the path is complete without assuming every text value must be recorded.",
     "inputs": ["Request ID", "Span events"],
-    "outputs": ["Correlated execution evidence"],
+    "outputs": ["Linked records of the steps in one request"],
     "failures": [
       "Traces expose private content.",
       "Missing spans make the apparent path incomplete."
@@ -559,8 +604,8 @@
     "title": "OpenTelemetry",
     "parent": "operations",
     "type": "framework",
-    "summary": "Collect telemetry with shared instrumentation interfaces.",
-    "detail": "OpenTelemetry supplies APIs, SDKs and signal conventions. An exporter sends selected telemetry to a chosen destination. It is not a storage backend or a quality evaluator; configure collection and access deliberately.",
+    "summary": "Collect service measurements and linked request events through a common instrumentation system.",
+    "detail": "OpenTelemetry provides interfaces and software libraries for instrumentation, the code that records service behavior. Its signals include traces for request steps, metrics for measurements and logs for individual events. An exporter sends selected records to a configured destination. OpenTelemetry is not itself the storage backend or a judge of answer quality. Start with one known request, inspect its captured fields and confirm the exporter destination, access rules and sampling policy. Sampling keeps only some events and can omit a rare failure.",
     "inputs": ["Instrumentation", "Exporter configuration"],
     "outputs": ["Traces", "Metrics", "Logs"],
     "failures": [
@@ -599,12 +644,12 @@
     "parent": "operations",
     "type": "method",
     "summary": "Detect user-visible degradation across many requests.",
-    "detail": "Track latency distributions, error rates and load. Add separately measured quality signals for AI behavior. Alert on actionable symptoms with an owner and response path rather than every noisy metric.",
-    "inputs": ["Service indicators", "Traffic slices"],
+    "detail": "Monitoring combines observations across requests. Track response-time distributions, not only averages, because a fast average can hide a slow group. Also track error frequency and load, such as the number of concurrent requests. Measure answer quality separately with appropriate reviewed cases. An alert should identify a user-visible problem, an owner and a response action. Ask who will act on it and what evidence they need before enabling a noisy signal.",
+    "inputs": ["Service measurements", "Request groups or observation windows"],
     "outputs": ["Dashboard", "Actionable alert"],
     "failures": [
-      "Average latency conceals slow tails.",
-      "Telemetry success is mistaken for answer correctness."
+      "Average response time hides a group of very slow requests.",
+      "Successful event capture is mistaken for a correct answer."
     ],
     "requirements": ["operational-health"],
     "related": [
@@ -629,10 +674,13 @@
     "title": "Service objectives and error budgets",
     "parent": "operations",
     "type": "metric",
-    "summary": "Define how much failure the service can tolerate.",
-    "detail": "Specify eligible requests, what counts as good, the target and the measurement window. Pair availability and latency objectives with separate quality evaluation. An SLO is an engineering target; an SLA adds contractual consequences.",
+    "summary": "Agree a measurable service target and calculate how much failure that target permits.",
+    "detail": "A service level objective (SLO) states a target over a defined window. Specify eligible events, all requests the promise covers, and which count as good. For a 99% target, the error budget allows up to 1% bad events under that definition. Keep availability and response-time objectives separate from evidence about answer correctness. A service level agreement (SLA) adds contractual consequences. Ask whether failed or abandoned eligible requests remain in the denominator before trusting the reported rate.",
     "inputs": ["Good and eligible event counts", "Target", "Window"],
-    "outputs": ["Indicator", "Remaining error budget"],
+    "outputs": [
+      "Measured fraction of good events",
+      "Remaining allowed bad events under the target"
+    ],
     "failures": [
       "The denominator excludes affected users.",
       "An uptime target is presented as a factual-accuracy promise."
@@ -666,8 +714,12 @@
     "parent": "operations",
     "type": "method",
     "summary": "Contain harm, restore service and preserve evidence.",
-    "detail": "Assign an incident lead, record decisions and separate mitigation from investigation. For AI incidents, capture the affected model, prompt, corpus and tool policy versions without copying private content into unrestricted channels.",
-    "inputs": ["Alert", "Impact evidence", "Runbook"],
+    "detail": "An incident is a service failure that needs a coordinated response. Name an incident lead and record decisions as the response proceeds. Mitigation reduces harm or restores service; investigation explains the cause. Keep those activities distinct. For an AI failure, preserve model, prompt, source-collection and tool-permission revisions so the failed request can be investigated. Use controlled evidence locations rather than copying private content into broad channels. Ask what can be safely paused while the cause remains uncertain.",
+    "inputs": [
+      "Alert",
+      "Evidence of affected users or tasks",
+      "Written response procedure, or runbook"
+    ],
     "outputs": ["Mitigation", "Incident record", "Follow-up tests"],
     "failures": [
       "Responders change multiple variables without a record.",
@@ -696,8 +748,8 @@
     "title": "Release and rollback",
     "parent": "operations",
     "type": "method",
-    "summary": "Restore a known working configuration after a regression.",
-    "detail": "Release a versioned bundle and check a limited rollout before wider traffic. Preserve the prior model, prompt, index and tool contracts. Reverting code cannot automatically reverse external writes already performed.",
+    "summary": "Restore a previously usable system configuration when a new release causes a failure.",
+    "detail": "A regression is behavior that worked before a change and now fails. Version the release as a bundle of code, model, prompt, search index and tool contracts where applicable. Test a limited rollout before exposing more users, and retain the prior bundle so it can be restored. Rollback replaces the active configuration; it cannot automatically undo messages sent or records changed by the faulty version. Rehearse a restore and check the answer sources and caches as well as the code version.",
     "inputs": ["Candidate bundle", "Baseline", "Release criteria"],
     "outputs": ["Promoted or restored version"],
     "failures": [
@@ -731,9 +783,13 @@
     "title": "Langfuse",
     "parent": "operations",
     "type": "tool",
-    "summary": "Inspect traces and connect examples to evaluation.",
-    "detail": "Langfuse combines LLM observability, prompt management and evaluation workflows. Use it to investigate individual failures and compare runs; reviewed labels and evaluator calibration remain the team’s responsibility.",
-    "inputs": ["Instrumented calls", "Datasets", "Scores"],
+    "summary": "Inspect how an answer was produced and connect observed failures to reviewed evaluation cases.",
+    "detail": "Langfuse provides views of model-call traces, prompt versions and evaluation results. A trace records steps from a request; prompt management keeps track of the instructions used. Start with one failed answer and follow its evidence, prompt revision and score. Human reviewers still need to define expected results and check whether an automated evaluator applies those rules correctly. Recording a score does not make the score valid, and trace capture needs deliberate controls for personal data.",
+    "inputs": [
+      "Model calls with recorded diagnostic events",
+      "Evaluation datasets",
+      "Case scores"
+    ],
     "outputs": ["Trace views", "Evaluation results"],
     "failures": [
       "Trace capture contains personal data.",
@@ -762,8 +818,8 @@
     "title": "MLflow",
     "parent": "operations",
     "type": "tool",
-    "summary": "Track AI experiments, traces and evaluation results.",
-    "detail": "Record the configuration and artifacts behind each run so candidate behavior can be compared and reproduced. MLflow supplies tracking and evaluation tooling, not a task-independent definition of a correct answer.",
+    "summary": "Keep the settings, outputs and evidence from experiments together so comparisons can be checked.",
+    "detail": "MLflow tracks runs, their configuration and artifacts, such as datasets, models or result files. A trace records the steps of one request. An evaluator is a rule or model that scores its result. MLflow also supports these trace and evaluation workflows. Before comparing two scores, check that both runs used the intended case set, evaluator and other relevant versions. Preserve enough references to inspect the actual outputs behind a score. The tool records evidence; the team still defines what a correct answer means for the task.",
     "inputs": ["Run configuration", "Artifacts", "Traces", "Evaluators"],
     "outputs": ["Comparable runs", "Versioned evidence"],
     "failures": [
@@ -794,9 +850,16 @@
     "parent": "operations",
     "type": "framework",
     "summary": "Automate checks while retaining control of the question being measured.",
-    "detail": "Ragas supports evaluation workflows; DeepEval offers test-oriented evaluation; promptfoo compares prompts and runs assertions; TruLens links traces and feedback. Choose by the required metric, data path and reproducibility, not by a single headline score.",
-    "inputs": ["Cases", "Expected behavior", "Metric or rubric"],
-    "outputs": ["Case-level results", "Regression signal"],
+    "detail": "Evaluation tools run cases and record how results compare with expectations. Ragas supports evaluation workflows; DeepEval offers test-oriented checks; promptfoo compares prompts and runs assertions, rules that pass or fail; TruLens connects traces with feedback scores. Begin with one case and an explicit expected result. Check whether the tool can show a known failure, preserve case-level outputs and repeat the run with the same inputs. Choose by those needs and the data destination, not by a headline score.",
+    "inputs": [
+      "Cases",
+      "Expected behavior",
+      "A scoring rule or written rubric"
+    ],
+    "outputs": [
+      "Results for individual cases",
+      "Signal that previously working behavior now fails"
+    ],
     "failures": [
       "A judge rewards fluent unsupported text.",
       "Different tool defaults make scores incomparable."
@@ -836,13 +899,13 @@
     "title": "vLLM",
     "parent": "hosting",
     "type": "tool",
-    "summary": "Serve supported models with an optimized inference engine.",
-    "detail": "vLLM manages inference execution, scheduling and memory for supported configurations. Benchmark the chosen model and hardware with realistic input and output lengths. An API-compatible endpoint still needs deployment authentication and capacity controls.",
+    "summary": "Run supported models as a service and test how the server behaves under the expected demand.",
+    "detail": "vLLM is an inference engine: software that runs model computations and serves generated output. It schedules requests and manages memory for supported configurations. Benchmark the chosen model and hardware using realistic input lengths, output lengths and simultaneous requests. An endpoint is the network address callers use. A familiar API format may simplify client integration, but it does not provide authentication or capacity limits. Ask which controls protect the endpoint and what happens when demand exceeds capacity.",
     "inputs": ["Model weights", "Serving configuration", "Requests"],
-    "outputs": ["Generated tokens", "Serving measurements"],
+    "outputs": ["Generated text tokens", "Server performance measurements"],
     "failures": [
-      "A supported model exceeds memory at target concurrency.",
-      "Throughput improves while user latency worsens."
+      "A supported model exceeds memory when the intended number of requests run together.",
+      "The server produces more total output while individual users wait longer."
     ],
     "requirements": ["hosting-capacity"],
     "related": [
@@ -867,13 +930,13 @@
     "title": "llama.cpp",
     "parent": "hosting",
     "type": "tool",
-    "summary": "Run compatible models across local hardware options.",
-    "detail": "llama.cpp provides inference and server tooling with quantized model support. Choose a compatible artifact and backend, then test quality and speed on the actual machine. A local endpoint is not automatically private if exposed on the network.",
+    "summary": "Run a compatible model on selected local hardware and measure its quality and speed there.",
+    "detail": "llama.cpp supplies model execution and server tools, including support for quantized models that store weights with reduced numerical precision. An artifact is the model file; a backend is the implementation for the chosen processor or accelerator. Confirm both are compatible before testing task quality and response time. If a server is enabled, check which network interface it listens on. A process on your machine can still be reachable by other machines.",
     "inputs": ["Compatible model artifact", "Hardware backend"],
     "outputs": ["Local inference", "Server response"],
     "failures": [
-      "The model format or backend is incompatible.",
-      "A bound network interface exposes the endpoint."
+      "The model file format or hardware implementation is incompatible.",
+      "The server listens on a network interface that exposes it to other machines."
     ],
     "requirements": ["hosting-capacity"],
     "related": [
@@ -898,8 +961,8 @@
     "title": "Ollama",
     "parent": "hosting",
     "type": "tool",
-    "summary": "Manage models and call an inference API.",
-    "detail": "Ollama exposes model APIs and local model management. Make the server destination and model identity explicit. A client library can target another host, so local installation alone does not establish where each request runs.",
+    "summary": "Manage model files and send prompts to an explicitly chosen inference server.",
+    "detail": "Ollama provides model management and an API, an interface through which software requests model output. The client making a request and the server running the model can be on different machines. Record the server address and the exact model revision before a test. A locally installed client does not prove that a request stays local, and a model tag is a name whose referenced revision may change. Inspect the destination and model identity rather than inferring them from installation.",
     "inputs": ["Model name", "Server address", "Prompt"],
     "outputs": ["Model response"],
     "failures": [
@@ -930,9 +993,13 @@
     "parent": "hosting",
     "type": "metric",
     "summary": "Measure how many requests fit within latency and memory limits.",
-    "detail": "Test context length, output length, concurrency and workload mix together. Separate time to first token from later token speed. Weight size is only part of memory use; caches and runtime buffers also consume capacity.",
-    "inputs": ["Hardware", "Model", "Concurrent workload"],
-    "outputs": ["Latency distribution", "Throughput", "Memory use"],
+    "detail": "Capacity asks how much simultaneous work a model server can handle within its limits. Test input context length, generated output length and concurrency, the number of requests in progress together. Measure time to first token, the delay until output begins, separately from the speed of later output. Model weights occupy memory, but cached intermediate results and temporary runtime buffers also use it. Start from a representative workload, then measure memory and response-time distributions on the actual setup.",
+    "inputs": ["Hardware", "Model", "Request sizes and simultaneous demand"],
+    "outputs": [
+      "Distribution of request response times",
+      "Completed work per unit of time, or throughput",
+      "Memory use"
+    ],
     "failures": [
       "A short-prompt benchmark hides long-context failures.",
       "A weight-only estimate ignores runtime memory."
@@ -976,10 +1043,13 @@
     "title": "Quantization",
     "parent": "hosting",
     "type": "method",
-    "summary": "Use lower-precision representations to reduce resource needs.",
-    "detail": "A lower-precision artifact can reduce weight memory and may improve speed on supported hardware. Measure task quality after conversion. Precision labels alone do not determine accuracy, runtime support or end-to-end memory use.",
+    "summary": "Reduce model storage or memory use by representing its numerical values with fewer bits.",
+    "detail": "Quantization maps numerical weights to a smaller set of representable values. The resulting approximation can reduce storage and weight memory, and may run faster when the hardware has suitable computation routines, or kernels. Compare task results before and after conversion, including rare but important cases. A label such as four-bit does not by itself establish quality, total server memory use or speed. Ask which format the runtime supports and test that actual artifact.",
     "inputs": ["Model weights", "Quantization method"],
-    "outputs": ["Quantized artifact", "Quality comparison"],
+    "outputs": [
+      "Model artifact with reduced-precision values",
+      "Comparison of task quality before and after conversion"
+    ],
     "failures": [
       "A rare task regresses despite average score stability.",
       "The hardware lacks an efficient kernel for the format."
@@ -1011,8 +1081,8 @@
     "title": "DSPy",
     "parent": "adaptation",
     "type": "framework",
-    "summary": "Optimize a language-model program against an explicit metric.",
-    "detail": "DSPy expresses programs as modules and offers optimizers for instructions, demonstrations and supported weight-training paths. The program, examples and metric define the objective. Keep final evaluation cases outside optimization.",
+    "summary": "Improve a model-based program against a score you define, while preserving an independent test of the result.",
+    "detail": "DSPy expresses a language-model task as modules with defined inputs and outputs. An optimizer searches for better instructions, examples or supported training changes using a metric: the rule that scores success. The examples and metric determine what the search rewards. Start with one task case and check that a clearly wrong output receives a poor score. Keep final evaluation cases out of the search so the candidate is tested beyond the examples that shaped it.",
     "inputs": ["Program", "Training examples", "Metric"],
     "outputs": ["Optimized program", "Measured candidate"],
     "failures": [
@@ -1047,7 +1117,7 @@
     "parent": "adaptation",
     "type": "method",
     "summary": "Search for instructions and examples that improve task results.",
-    "detail": "Optimize prompt instructions or demonstrations while keeping model weights fixed. DSPy MIPROv2 is one implementation. Compare the result on untouched cases and record the search budget; an improved training score alone is insufficient.",
+    "detail": "Prompt optimisation searches for better instructions or demonstrations, examples included in the prompt, while the model’s learned weights stay fixed. DSPy MIPROv2 is one implementation. Record the original prompt, candidate prompt, examples used and search budget, such as the number of candidate trials or model calls. Compare outputs on cases that did not guide the search. A higher score on development examples alone does not show that new requests will improve.",
     "inputs": ["Initial prompt", "Examples", "Metric"],
     "outputs": ["Candidate prompt", "Held-out comparison"],
     "failures": [
@@ -1087,9 +1157,12 @@
     "parent": "adaptation",
     "type": "method",
     "summary": "Train model behavior from input and desired-output examples.",
-    "detail": "SFT updates trainable weights to reduce a training objective on examples. The dataset format and loss masking determine which tokens teach the model. Check task gains and regressions against the original model on held-out data.",
+    "detail": "Supervised fine-tuning (SFT) changes trainable model weights using examples of inputs and desired outputs. Weights are the model’s learned numerical values. A loss function measures prediction error during training. Text is represented as tokens, and loss masking selects which token predictions contribute to that error. Inspect one training record and its selected target tokens before a large run. Compare the trained model with the original on untouched cases, including tasks that could get worse.",
     "inputs": ["Base model", "Labeled examples", "Training configuration"],
-    "outputs": ["Updated weights or adapter", "Evaluation results"],
+    "outputs": [
+      "Updated model weights or a separately stored adapter",
+      "Evaluation results on untouched cases"
+    ],
     "failures": [
       "Train and test cases overlap.",
       "The model learns incorrect or private target text."
@@ -1121,8 +1194,8 @@
     "title": "PEFT",
     "parent": "adaptation",
     "type": "framework",
-    "summary": "Adapt a model while training a subset of parameters.",
-    "detail": "The PEFT library implements parameter-efficient methods and adapter workflows. It can reduce the training and storage burden compared with full fine-tuning. Runtime compatibility and task quality still need validation.",
+    "summary": "Adapt a model with a limited set of trainable values instead of updating all its weights.",
+    "detail": "Parameter-efficient fine-tuning (PEFT) covers methods that train a relatively small set of parameters, the numerical values used by a model. The PEFT library supports these methods and adapter workflows. An adapter stores a task-specific change used with a base model. This can reduce training and storage costs compared with updating every weight. Record the required base revision and runtime support, then test the combined model. Fewer trainable values do not guarantee the required task behavior.",
     "inputs": ["Base model", "Adapter method", "Training data"],
     "outputs": ["Adapter parameters", "Adapted model"],
     "failures": [
@@ -1153,7 +1226,7 @@
     "parent": "adaptation",
     "type": "method",
     "summary": "Learn a low-rank update to selected model weights.",
-    "detail": "LoRA represents an update through smaller matrices while the base weights can remain frozen. Rank controls adaptation capacity and parameter count. Store the base revision with the adapter and evaluate their combination.",
+    "detail": "Low-Rank Adaptation (LoRA) learns a compact change to selected model weights while the original weights can remain frozen, meaning unchanged during training. A matrix is a rectangular table of numbers. LoRA represents the weight change as the product of two smaller matrices, A and B. Their inner dimension is the rank setting r; it limits the update’s rank and controls the number of trainable entries. An adapter stores this learned change. Store the base model revision with the adapter and evaluate that combination. Begin with the small matrix example before interpreting a real training result.",
     "inputs": ["Base weights", "Rank", "Training examples"],
     "outputs": ["Low-rank adapter"],
     "failures": [
@@ -1189,12 +1262,12 @@
     "parent": "adaptation",
     "type": "dataset",
     "summary": "Choose examples that represent the intended behavior.",
-    "detail": "Record provenance, permissions, labels and split membership. Separate related documents or conversations before splitting so near-duplicates do not leak into evaluation. Preserve unknown labels as unknown rather than inventing negatives.",
+    "detail": "A training record needs an input, an appropriate target or label, and permission to use the source. Provenance records where it came from and how it changed. Assign related documents or conversations together before dividing data into training, validation and final-test sets. Training changes the model; validation guides choices; final tests check the chosen version. Near-duplicates across these sets can make a score reward familiarity rather than new-task performance. Keep unknown labels unknown instead of inventing negative examples.",
     "inputs": ["Source examples", "Labeling policy", "Split rules"],
     "outputs": ["Versioned train, validation and test sets"],
     "failures": [
-      "Near-duplicates inflate apparent performance.",
-      "Missing labels become false negative labels."
+      "Nearly identical cases in training and final tests inflate the measured score.",
+      "Unknown labels are incorrectly treated as negative examples."
     ],
     "requirements": ["source-provenance", "adaptation-holdout"],
     "related": [
@@ -1228,7 +1301,7 @@
     "parent": "adaptation",
     "type": "dataset",
     "summary": "Generate candidate examples, then review their quality and coverage.",
-    "detail": "Synthetic examples can expand scenarios and formats. Retain generator and seed-source provenance, verify labels and check duplicates against held-out cases. A generator’s confidence is not independent evidence that its answer is correct.",
+    "detail": "Synthetic examples are generated from scenarios or existing seed material instead of collected directly from users. Record the generator, instructions and seed source for each candidate. Use a review rubric, written rules for accepting or rejecting a candidate. Check its target answer against independent evidence and check whether it duplicates or closely follows a held-out test case. That overlap can contaminate the test by exposing its content during development. A generator’s confidence does not establish a correct label. Inspect accepted and rejected candidates before scaling up generation.",
     "inputs": ["Seed scenarios", "Generator", "Review rubric"],
     "outputs": ["Reviewed candidate examples"],
     "failures": [
@@ -1271,12 +1344,12 @@
     "parent": "adaptation",
     "type": "concept",
     "summary": "Record enough configuration to explain and reproduce a result.",
-    "detail": "Track model revision, tokenizer, prompt, code, dataset, index, adapter and evaluator versions as applicable. A model name alone does not identify the system. Reproduction also depends on runtime and nondeterministic behavior.",
+    "detail": "A system result depends on more than its model name. Record exact revisions of the model, tokenizer that converts text to tokens, prompt, code, dataset, search index, any adapter and the evaluator that scores results. An adapter is a learned change used with a base model. A release manifest collects these references. Compare manifests before comparing scores. Runtime settings and randomness can still prevent identical reruns, so version records explain a configuration without promising deterministic output.",
     "inputs": ["Artifacts", "Configuration", "Run identifiers"],
     "outputs": ["Release manifest", "Comparable evidence"],
     "failures": [
-      "A mutable model tag changes between runs.",
-      "The index or evaluator version is absent."
+      "A model name points to a different revision between runs.",
+      "The search index or scorer revision is missing from the record."
     ],
     "requirements": ["adaptation-holdout", "operational-health"],
     "related": [
@@ -1305,8 +1378,8 @@
     "title": "Haystack",
     "parent": "agents",
     "type": "framework",
-    "summary": "Build search and agent workflows from reusable components.",
-    "detail": "Haystack connects document stores, retrievers, generators and tools through pipelines. Keep each component’s contract and evaluation visible. A pipeline that executes successfully can still select irrelevant evidence or generate an unsupported answer.",
+    "summary": "Connect document search, answer generation and tools in a workflow whose intermediate results you can inspect.",
+    "detail": "Haystack builds pipelines from components such as document stores, retrievers, generators and tools. A retriever selects candidate evidence; a generator uses supplied context to produce output. Write down the input and output expected at each connection. Follow one case through the pipeline and inspect the selected document IDs and resulting claims. A workflow can execute without an error while returning irrelevant evidence or an unsupported answer.",
     "inputs": ["Documents", "Pipeline components", "Task inputs"],
     "outputs": [
       "Retrieval or generation results",
@@ -1339,16 +1412,16 @@
     "title": "Does the metric measure the user need?",
     "parent": "evaluation",
     "type": "concept",
-    "summary": "Construct validity asks whether your chosen measure represents the outcome people actually need.",
-    "detail": "A correctly computed score can measure the wrong thing. Name the user task, the proxy and what the proxy misses. Check negative cases and affected groups against an independent task outcome.\n\nIllustrative: an answer cites its source accurately but omits the exception that determines whether the customer qualifies. Grounding alone does not establish useful advice.\n\nDirector and domain expert define the outcome. The business analyst records its meaning; QA tests disagreements; engineers preserve the observations needed to challenge the metric.",
+    "summary": "Check whether the score measures the benefit the user actually needs.",
+    "detail": "Construct validity asks whether a measure represents its intended concept, such as useful policy advice. A proxy is an indirect measure, such as citation presence, chosen because the real outcome is harder to observe. Name what the proxy misses and compare it with an independent assessment of task success.\n\nIllustrative: an answer cites its source accurately but omits the exception that determines whether the customer qualifies. Grounding, support from the cited text, alone does not establish useful advice.\n\nThe director and domain expert define the outcome. The business analyst records its meaning. Quality assurance (QA) reviewers test cases where the score and useful outcome disagree. Engineers retain the observations needed to investigate those disagreements.",
     "inputs": [
       "User need and measurable proxy",
       "Negative examples and affected groups"
     ],
     "outputs": ["Documented blind spots", "Independent task-success check"],
     "failures": [
-      "Correct arithmetic hides an invalid proxy.",
-      "Aggregate success hides a group’s failures."
+      "Correct arithmetic hides a measure that does not represent the user’s need.",
+      "An overall success rate hides failures for one group."
     ],
     "requirements": ["answer-grounding", "judge-calibration"],
     "related": [
@@ -1386,8 +1459,8 @@
     "title": "When a score becomes a target",
     "parent": "evaluation",
     "type": "concept",
-    "summary": "Goodhart effects occur when stronger optimization of a proxy stops improving the outcome you care about.",
-    "detail": "A useful proxy can become unreliable under noise, changed conditions or strategic behavior. This is a family of failure mechanisms, not a claim that every metric inevitably fails.\n\nIllustrative: rewarding answer rate discourages necessary abstention. Rewarding containment can hide unresolved customer cases. Track the actual outcome alongside the target.\n\nDirectors resolve conflicting incentives. QA keeps independent review and untouched cases. Engineers record coverage and failure slices. A held-out set can expose overfitting; it cannot repair an outcome that the metric never measured.",
+    "summary": "Watch for improvements in a rewarded score that stop improving the result people need.",
+    "detail": "A proxy is an indirect measure of the desired outcome. When that measure becomes a target, people or software may optimize it without improving the underlying task. Changed conditions and measurement noise can also break the relationship. Goodhart effects describe this family of problems, not a rule that every metric must fail.\n\nIllustrative: rewarding answer rate discourages the system from admitting that it lacks evidence. Rewarding containment, the share of cases kept away from human support, can hide unresolved customer problems. Track the actual outcome alongside the target.\n\nDirectors resolve conflicting incentives. Quality assurance (QA) reviewers keep independent checks and untouched evaluation cases. Engineers report results by task group. Untouched cases can expose overfitting, improvement limited to familiar examples; they cannot repair a score that never measured the user outcome.",
     "inputs": [
       "Rewarded metric and intended outcome",
       "Independent cases and reviewer incentives"
@@ -1432,8 +1505,8 @@
     "title": "Answer, ask, or refer",
     "parent": "evaluation",
     "type": "concept",
-    "summary": "Selective prediction evaluates error among answered cases together with how many cases the system answers.",
-    "detail": "A reject option trades coverage against error on accepted predictions. The cited source treats classifiers; applying the pattern to generated answers is a teaching extension. A confidence score is not automatically a calibrated probability. Choose thresholds on development cases and evaluate them on held-out cases.\n\nIllustrative: 80 of 100 cases answered with 8 errors gives 80% coverage and 10% selective error. A stricter threshold answers 60 with 3 errors: 60% coverage and 5% error, with referrals rising from 20 to 40. This improvement is not guaranteed.\n\nDomain experts and QA define error costs. Operations checks reviewer capacity; engineers test the rule. Hard business constraints remain constraints, not costs to trade away.",
+    "summary": "Measure both how often the system answers and how often those answers are wrong when it can also ask or refer.",
+    "detail": "A reject option lets a system decline to make a prediction. Coverage is the share of eligible cases it accepts; selective error is the error rate among those accepted cases. Choosing a stricter score cutoff can reduce errors while sending more work to people. A confidence score is not automatically a calibrated probability, one that matches observed correctness rates. Choose the cutoff on development cases, then test it on untouched cases. The cited research concerns classifiers; applying the pattern to generated answers is a teaching extension.\n\nIllustrative: 80 of 100 cases answered with 8 errors gives 80% coverage and 10% selective error. A stricter threshold answers 60 with 3 errors: 60% coverage and 5% error, with referrals rising from 20 to 40. This improvement is not guaranteed.\n\nDomain experts and quality assurance (QA) reviewers define error costs. Operations checks whether reviewers can handle the referral volume. Engineers test the rule. Required business constraints remain constraints, not costs to trade away.",
     "inputs": [
       "Answered, referred and incorrect counts",
       "Decision costs and reviewer capacity"
@@ -1488,8 +1561,8 @@
     "title": "Agree on a service promise",
     "parent": "operations",
     "type": "concept",
-    "summary": "A user-centered SLO connects service indicators, ownership and recovery decisions to an actual user journey.",
-    "detail": "Define eligible events, what counts as good and the measurement window. Keep response availability separate from answer correctness and task completion. The denominator must include the users the promise covers.\n\nIllustrative: HTTP 200 proves a response arrived, not that the customer received the correct exception. A separate reviewed sample checks that outcome.\n\nThe product owner defines the promise with users; SRE owns measurement and recovery. QA checks quality evidence. Name who may pause, release or roll back. Operational feedback proposes reviewed dataset or rule changes; it does not silently retrain the system.",
+    "summary": "Agree what users can expect from the service, how you will measure it and who responds when it fails.",
+    "detail": "A service level objective (SLO) defines a measurable target over a stated window. Start with the user journey. Define eligible events, the requests covered by the promise, and what counts as good. Keep response availability, answer correctness and task completion distinct. Include affected users in the denominator, the total used to calculate the rate.\n\nIllustrative: HTTP 200 is a successful web-response status; it does not prove the customer received the correct policy exception. A separate reviewed sample checks that outcome.\n\nThe product owner agrees the promise with users. Site reliability engineering (SRE) owns service measurement and recovery; quality assurance (QA) checks behavior. Name who may pause, release or roll back. Feedback can propose reviewed changes to cases or rules; it does not silently retrain the system.",
     "inputs": [
       "User journey and eligible events",
       "Indicators, window and named owners"
@@ -1546,8 +1619,8 @@
     "title": "Cost per useful outcome",
     "parent": "operations",
     "type": "concept",
-    "summary": "Unit economics connects attributable costs to verified outcomes within an explicit scope and measurement window.",
-    "detail": "Define the successful outcome and cost boundary before comparing options. Include model calls, retrieval, retries, human review and operations where attributable. State how shared costs are allocated. Compare alternatives at equivalent quality and disclose uncertainty.\n\nIllustrative: 100 cost units divided by 20 verified successful outcomes gives 5 per outcome. With zero verified successes, the ratio is undefined. Cheap tokens alone cannot establish useful value.\n\nDirector and finance set decision criteria. The product manager defines the outcome; engineers record usage; QA qualifies successes. Revisit definitions when the service or user population changes.",
+    "summary": "Calculate what the service costs for each verified useful result, not just for each model call.",
+    "detail": "Define a successful outcome and a common measurement window before comparing options. Attributable costs are costs assigned to that work. Include model calls, search, retries, human review and operations where they belong in the agreed scope. Explain how shared expenses are allocated. Compare alternatives at equivalent quality and report uncertainty in the outcome counts.\n\nIllustrative: 100 cost units divided by 20 verified successful outcomes gives 5 per outcome. With zero verified successes, the ratio is undefined. Cheap tokens alone cannot establish useful value.\n\nFinance and the accountable business owner set the decision criteria. The product manager defines the outcome; engineers record usage; quality assurance (QA) reviewers check which results qualify. Revisit these definitions when the service or its users change.",
     "inputs": [
       "Attributable costs in one window",
       "Verified successes and allocation policy"
@@ -1557,8 +1630,8 @@
       "Decision owner and comparable alternatives"
     ],
     "failures": [
-      "Retries or human work disappear from the cost boundary.",
-      "Easy cases inflate the success denominator."
+      "Retries or human work are omitted from the agreed costs.",
+      "A disproportionate share of easy cases inflates the count of successful outcomes."
     ],
     "requirements": ["operational-health", "statistical-comparison"],
     "related": [

@@ -4,12 +4,13 @@ type Context = { topics: string[]; reason: string };
 export const guideContexts: Record<string, Context> = {
   outcome: {
     topics: ["x-construct-validity", "x-unit-economics", "a-user-slo"],
-    reason: "Connect the intended benefit to something a user can demonstrate.",
+    reason:
+      "Describe a task the user should be able to complete and how to check it.",
   },
   success: {
     topics: ["x-construct-validity", "a-user-slo", "golden-dataset"],
     reason:
-      "Define evidence for this success criterion before choosing a target.",
+      "Decide what to measure and where the results will come from before setting a target.",
   },
   need: {
     topics: [
@@ -18,25 +19,27 @@ export const guideContexts: Record<string, Context> = {
       "x-selective-prediction",
     ],
     reason:
-      "Turn the user's task into an observable outcome and its exceptions.",
+      "Describe what success looks like for this task and when the person needs help.",
   },
   acceptance: {
     topics: ["golden-dataset", "annotation-rubric", "x-held-out"],
-    reason: "Use concrete passing and failing cases to explain acceptance.",
+    reason:
+      "Write one example you would accept and one you would reject, with a reason for each.",
   },
   rule: {
     topics: ["x-selective-prediction", "a-authorization", "x-mutation"],
     reason:
-      "Specify the decision boundary and what happens when the rule cannot settle it.",
+      "Say when this rule applies and who to ask when it cannot settle the question.",
   },
   source: {
     topics: ["data", "x-pinning", "a-authorization"],
-    reason: "Establish source authority, revision and permitted use.",
+    reason:
+      "Record who confirms this source, which version applies and who may use it.",
   },
   capabilities: {
     topics: ["api-contract", "data", "a-tool-contract"],
     reason:
-      "Choose component responsibilities from the requirements and their boundaries.",
+      "Choose the job each part must do, using the user needs and business rules.",
   },
   "component:ui": {
     topics: ["api-contract", "x-selective-prediction", "a-user-slo"],
@@ -45,7 +48,8 @@ export const guideContexts: Record<string, Context> = {
   },
   "component:service": {
     topics: ["api-contract", "a-authorization", "a-tracing"],
-    reason: "Define what this service accepts, authorizes and returns.",
+    reason:
+      "State which requests this service accepts, who may make them and what it returns.",
   },
   "component:database": {
     topics: ["data", "a-authorization", "p-moderation-pii"],
@@ -55,56 +59,57 @@ export const guideContexts: Record<string, Context> = {
   "component:source": {
     topics: ["data", "x-pinning", "a-authorization"],
     reason:
-      "Keep the source's authority, version and access boundary explicit.",
+      "Name who confirms the source, which version applies and who may read it.",
   },
   "component:retrieval": {
     topics: ["search", "x-retrieval-recall", "p-chunking"],
     reason:
-      "Check whether this component finds the permitted evidence the task needs.",
+      "Check that this part finds relevant information and excludes documents the user must not read.",
   },
   "component:model": {
     topics: ["x-support-checking", "generation", "x-selective-prediction"],
-    reason: "Define what supports an answer and when the model must defer.",
+    reason:
+      "Say which evidence supports an answer and when the model must ask a person for help.",
   },
   "component:queue": {
     topics: ["a-idempotency", "a-retry", "a-cancel"],
     reason:
-      "Specify duplicate delivery, retry limits and cancellation for queued work.",
+      "Say what happens if a waiting job arrives twice, fails and runs again, or is cancelled.",
   },
   "component:worker": {
     topics: ["a-retry", "a-idempotency", "a-cancel"],
     reason:
-      "Define how interrupted work resumes without repeating its effects.",
+      "Check that work can continue after an interruption without doing the same action twice.",
   },
   "component:human": {
     topics: ["x-selective-prediction", "a-authorization", "a-cancel"],
     reason:
-      "Name the reviewer, permitted decisions and behaviour when no decision arrives.",
+      "Name the reviewer, what they may approve and what happens if they do not reply.",
   },
   "component:router": {
     topics: ["p-classifier", "a-authorization", "x-precision-recall"],
     reason:
-      "Check route selection separately from permission to use the destination.",
+      "Check that the system chooses the correct destination and that the user may access it.",
   },
   "component:policy": {
     topics: ["a-authorization", "a-tool-contract", "x-mutation"],
     reason:
-      "Make the policy enforceable at the action boundary and test a denied case.",
+      "Check the policy before the action happens, including a request the system must refuse.",
   },
   "data-field": {
     topics: ["api-contract", "p-moderation-pii", "data"],
     reason:
-      "Define presence, type and sensitivity for the data this component handles.",
+      "Say whether this field is required, what kind of value it holds and who may see it.",
   },
   process: {
     topics: ["a-tool-contract", "a-authorization", "a-cancel"],
     reason:
-      "Make each step's inputs, authority and failure behaviour explicit.",
+      "Say what each step needs, who may perform it and what happens if it fails.",
   },
   connection: {
     topics: ["api-contract", "a-idempotency", "a-cancel"],
     reason:
-      "Describe the exchanged data and what the receiver does after failure.",
+      "Describe the information sent between these parts and what the receiver does if it cannot complete the request.",
   },
 };
 
@@ -149,7 +154,7 @@ const cues: { pattern: RegExp; id: string; reason: string }[] = [
     pattern: /\b(timeout\w*|latency|availability)\b/i,
     id: "a-user-slo",
     reason:
-      "This input mentions a service behaviour that needs a measurable promise.",
+      "This input mentions response time or availability. Define what users can expect and how to measure it.",
   },
   {
     pattern: /\b(rollback|roll back|release)\b/i,

@@ -17,7 +17,7 @@ function contracts(): Record<string, Partial<Component>> {
   return {
     ui: {
       description:
-        "Collect a general policy question and explicit division/product. Show citations, clarification, denied or unresolved states; prepare an internal draft without sending it to a customer.",
+        "Collect a general policy question and the selected division and product. Display the source references or explain that a detail is missing, access is denied or a specialist must review the question. Prepare an internal draft without sending it to a customer.",
       needIds: ["need-policy", "need-escalation", "need-minimise"],
       ruleIds: ["rule-privacy", "rule-review"],
       fields: [
@@ -42,7 +42,7 @@ function contracts(): Record<string, Partial<Component>> {
     },
     service: {
       description:
-        "For G-12, accept Retail/Everyday with a server-authenticated identity, then route to RE-7. Return unresolved and referral-required because the question asks for a second pause within 12 months. Deny unauthorized scope before retrieval; keep raw text out of traces.",
+        "G-12 asks for a second pause within 12 months. Check the signed-in adviser’s Retail/Everyday permissions, then search handbook RE-7. Return unresolved with label referral-required, meaning a specialist must review it. Deny unauthorized access before searching, and keep the original question out of processing logs.",
       needIds: [
         "need-policy",
         "need-escalation",
@@ -66,13 +66,13 @@ function contracts(): Record<string, Partial<Component>> {
       steps: [
         {
           id: "service-input",
-          name: "Validate shape and reject detected identifiers",
+          name: "Check required fields and block detected customer identifiers",
           kind: "input",
           ruleIds: ["rule-privacy"],
         },
         {
           id: "service-authorize",
-          name: "Check identity permissions and resolve the requested scope",
+          name: "Check identity permissions for the selected division and product",
           kind: "rule",
           ruleIds: ["rule-access", "rule-scope"],
         },
@@ -90,7 +90,7 @@ function contracts(): Record<string, Partial<Component>> {
         },
         {
           id: "service-output",
-          name: "Return the draft or explicit unresolved outcome without raw-text traces",
+          name: "Return the draft or unresolved reason without logging the original question",
           kind: "output",
           ruleIds: ["rule-privacy", "rule-review"],
         },
@@ -98,7 +98,7 @@ function contracts(): Record<string, Partial<Component>> {
     },
     router: {
       description:
-        "Resolve explicit division and product inside the application service. Emit a permitted source scope only after the service has checked identity permissions; ambiguous input returns clarify.",
+        "Inside the application service, use the selected division and product to choose handbooks. First check that the adviser may read them. If the selection is missing or ambiguous, return clarify and ask for the detail before searching.",
       needIds: ["need-policy", "need-access"],
       ruleIds: ["rule-scope"],
       fields: [field("division", "internal"), field("product", "internal")],
@@ -113,7 +113,7 @@ function contracts(): Record<string, Partial<Component>> {
     },
     retrieval: {
       description:
-        "Accept an authorised scope and general policy question. Return relevant passages with source ID and applicable revision, or a missing/conflicting-evidence outcome. Never broaden the scope to fill an empty result.",
+        "Search only the handbooks the adviser is permitted to read for the selected division and product. Return relevant passages with their source and version IDs, or report missing or conflicting evidence. Finding nothing must not trigger a search of otherwise forbidden handbooks.",
       needIds: ["need-policy", "need-access", "need-revision"],
       ruleIds: ["rule-scope", "rule-authority"],
       fields: [
@@ -124,7 +124,7 @@ function contracts(): Record<string, Partial<Component>> {
       steps: [
         {
           id: "retrieve-filter",
-          name: "Filter by permitted scope and confirmed effective revision",
+          name: "Keep permitted handbooks and the policy version confirmed to apply",
           kind: "rule",
           ruleIds: ["rule-scope", "rule-authority"],
         },
@@ -163,7 +163,7 @@ function contracts(): Record<string, Partial<Component>> {
     },
     human: {
       description:
-        "In G-12, Maya prepares the referral and Leila checks the one-pause clause. The policy owner resolves the dataset label to referral-required; that label grants no customer approval. These are fictional roles, with no real reviewer assigned.",
+        "In example G-12, adviser Maya prepares the referral and policy specialist Leila checks the one-pause clause. The policy owner sets the test case’s expected category to referral-required, meaning it needs specialist review. That category grants no customer approval. These fictional characters are not assigned reviewers in your project.",
       needIds: ["need-escalation", "need-revision"],
       ruleIds: ["rule-review", "rule-authority", "rule-privacy"],
       fields: [
@@ -198,10 +198,11 @@ export function enrichExampleArchitecture(project: Project): void {
   const labels: Record<string, string> = {
     "edge-ui-service-request": "General question + selected division/product",
     "edge-service-router-request": "Authorised division/product context",
-    "edge-router-retrieval-data": "Permitted source scope",
+    "edge-router-retrieval-data": "Handbooks this adviser may read",
     "edge-retrieval-model-data": "Passages + source and revision IDs",
     "edge-model-service-data": "Cited draft or unresolved reason",
-    "edge-service-human-review": "Minimal referral + evidence conflict",
+    "edge-service-human-review":
+      "Question for review + conflicting source passages",
     "edge-human-service-review":
       "Reviewed policy outcome; no automatic commitment",
   };

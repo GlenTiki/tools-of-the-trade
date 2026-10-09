@@ -12,17 +12,17 @@
             "Azure API Management AI gateway capabilities",
             "Microsoft Foundry Models"
           ],
-          "role": "Govern model/API traffic and access supported foundation models.",
+          "role": "Control requests sent to models and APIs, the interfaces used by software, and access supported foundation models, which are pre-trained models used for different tasks.",
           "sources": [
             "https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities",
             "https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview"
           ],
-          "limit": "The separate AI Gateway tier is public preview; do not conflate it with existing API Management gateway capabilities or assume all tiers support the same policies."
+          "limit": "The separate AI Gateway tier is public preview. It is distinct from the existing API Management gateway capabilities; do not assume each tier supports the same traffic rules."
         },
         {
           "kind": "retrieval",
           "products": ["Azure AI Search"],
-          "role": "Vector, keyword and hybrid retrieval.",
+          "role": "Find source passages with keyword search (matching words), vector search (matching numerical representations of meaning) or hybrid search (combining both).",
           "sources": [
             "https://learn.microsoft.com/en-us/azure/search/vector-search-overview"
           ]
@@ -30,16 +30,16 @@
         {
           "kind": "orchestration",
           "products": ["Microsoft Foundry Agent Service"],
-          "role": "Managed agent runtime, prompt agents, hosted agents and tools.",
+          "role": "Run agents in a managed environment, including prompt agents, hosted agents and their tools. An agent requests actions; a tool is an operation it can call.",
           "sources": [
             "https://learn.microsoft.com/en-us/azure/foundry/agents/overview"
           ],
-          "limit": "Managed orchestration and hosting your own agent code are distinct paths."
+          "limit": "Using managed orchestration to coordinate agent steps and hosting your own agent code are different paths."
         },
         {
           "kind": "custom_training_hosting",
           "products": ["Azure Machine Learning"],
-          "role": "Custom training scripts and managed model inference endpoints.",
+          "role": "Run custom model-training scripts and publish managed inference endpoints, the addresses applications call to request model outputs.",
           "sources": [
             "https://learn.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-machine-learning?view=azureml-api-2"
           ]
@@ -47,7 +47,7 @@
         {
           "kind": "evaluation_observability",
           "products": ["Microsoft Foundry evaluation", "Application Insights"],
-          "role": "Evaluate models, agents, datasets or captured traces; inspect agent telemetry.",
+          "role": "Evaluate models, agents, datasets or captured traces. A trace records steps within a request; telemetry is the recorded activity used to inspect what the agent did.",
           "sources": [
             "https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluate-generative-ai-app",
             "https://learn.microsoft.com/en-us/azure/foundry/agents/overview"
@@ -68,35 +68,35 @@
             "Amazon Bedrock Converse API",
             "Amazon Bedrock AgentCore Gateway"
           ],
-          "role": "Converse supplies a consistent message interface for supported Bedrock models; AgentCore Gateway exposes agent-facing capabilities.",
+          "role": "Converse gives applications a consistent way to send messages to supported Bedrock models. AgentCore Gateway exposes capabilities that an agent can call.",
           "sources": [
             "https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html",
             "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html"
           ],
-          "limit": "The Bedrock inference endpoint and AgentCore Gateway have different jobs; model-specific features remain."
+          "limit": "The Bedrock inference endpoint receives model requests; AgentCore Gateway has a different job. Individual models still have their own features."
         },
         {
           "kind": "retrieval",
           "products": ["Amazon Bedrock Knowledge Bases"],
-          "role": "Managed retrieval and retrieval-augmented generation over configured data sources.",
+          "role": "Manage retrieval, the search for relevant source passages, and retrieval-augmented generation, which supplies those passages to a model when it answers.",
           "sources": [
             "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html"
           ],
-          "limit": "Vector backend and ingestion configuration remain architecture choices."
+          "limit": "The team still chooses the vector backend, which stores searchable numerical representations, and how source documents are prepared and loaded."
         },
         {
           "kind": "orchestration",
           "products": ["Amazon Bedrock AgentCore Runtime"],
-          "role": "Host agent applications and connect agent infrastructure services.",
+          "role": "Host agent applications and connect the infrastructure services they use. Hosting supplies the environment in which the agent code runs.",
           "sources": [
             "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html"
           ],
-          "limit": "A runtime hosts an agent; it does not make arbitrary custom application code a correct tool loop."
+          "limit": "A runtime provides an environment to run an agent. The application still needs a correct tool loop: choosing an action, checking its result and deciding what happens next."
         },
         {
           "kind": "custom_training_hosting",
           "products": ["Amazon SageMaker AI"],
-          "role": "Train custom models and deploy inference endpoints.",
+          "role": "Train custom models and deploy inference endpoints, the addresses applications call to request model outputs.",
           "sources": [
             "https://docs.aws.amazon.com/sagemaker/latest/dg/train-model.html",
             "https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints-deploy-models.html"
@@ -109,12 +109,12 @@
             "AgentCore Observability",
             "Amazon CloudWatch"
           ],
-          "role": "Evaluate agent behavior and inspect instrumented sessions, traces and metrics.",
+          "role": "Evaluate agent behaviour and inspect recorded sessions, traces and metrics. A trace records request steps; metrics are measured counts or values.",
           "sources": [
             "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations-types.html",
             "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html"
           ],
-          "limit": "Dataset evaluation runner is documented as public preview; distinguish it from the wider evaluation service.",
+          "limit": "The dataset evaluation runner is documented as public preview. That status applies to this runner, not automatically to the wider evaluation service.",
           "preview_source": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/dataset-evaluations.html"
         }
       ],
@@ -125,31 +125,31 @@
       "id": "gcp",
       "label": "Google Cloud",
       "umbrella": "Gemini Enterprise Agent Platform",
-      "name_note": "The checked Vertex AI Agent Engine, Model Garden, Vector Search, training and evaluation documentation URLs redirect to Gemini Enterprise Agent Platform. Preserve Vertex AI / Agent Engine as discovery aliases, not assumed current page titles.",
+      "name_note": "In the recorded documentation check, the Vertex AI Agent Engine, Model Garden, Vector Search, training and evaluation URLs redirected to Gemini Enterprise Agent Platform. Keep Vertex AI and Agent Engine as search aliases, so readers can find the older names; do not assume those are the current page titles.",
       "capabilities": [
         {
           "kind": "gateway_model_access",
           "products": ["Model Garden", "Agent Gateway"],
-          "role": "Access managed or self-deployed models; govern configured agent connectivity.",
+          "role": "Access models managed by the provider or deployed by your team, and govern configured connections used by agents.",
           "sources": [
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/model-garden/explore-models",
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale"
           ],
-          "limit": "Agent Gateway connectivity and Model Garden model access are distinct roles, not one interchangeable inference API."
+          "limit": "Agent Gateway controls agent connections; Model Garden provides model access. They do different jobs and are not interchangeable interfaces for model requests."
         },
         {
           "kind": "retrieval",
           "products": ["Vector Search"],
-          "role": "Managed vector similarity search.",
+          "role": "Run managed vector similarity search: compare numerical representations to find similar items.",
           "sources": [
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/vector-search/overview"
           ],
-          "limit": "Do not conflate this page with the separately named Agent Retrieval product, formerly Vector Search 2.0."
+          "limit": "This Vector Search page is distinct from the separately named Agent Retrieval product, formerly Vector Search 2.0."
         },
         {
           "kind": "orchestration",
           "products": ["Agent Runtime", "Agent Development Kit (ADK)"],
-          "role": "Runtime hosts agents; ADK supplies agent and workflow building blocks.",
+          "role": "Agent Runtime provides the environment that runs an agent. Agent Development Kit (ADK) provides software building blocks for agents and their sequences of steps.",
           "sources": [
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale",
             "https://adk.dev/agents/"
@@ -161,7 +161,7 @@
             "Agent Platform custom model training",
             "Model Garden self-deployed models"
           ],
-          "role": "Custom training and deployment of model weights on cloud compute.",
+          "role": "Train custom models and deploy their weights, the learned numerical parameters, on cloud computing resources.",
           "sources": [
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview",
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/model-garden/explore-models"
@@ -175,7 +175,7 @@
             "Cloud Logging",
             "Cloud Monitoring"
           ],
-          "role": "Evaluate outputs and inspect agent execution traces, logs and metrics.",
+          "role": "Evaluate outputs and inspect request traces, logs and metrics. Traces show the steps of an agent request; logs record events; metrics measure counts or values.",
           "sources": [
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-overview",
             "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale"
@@ -197,15 +197,15 @@
         {
           "kind": "gateway_model_access",
           "products": ["Vercel AI Gateway"],
-          "role": "Access and route requests to supported model providers.",
+          "role": "Send and route model requests to supported model providers.",
           "sources": ["https://vercel.com/docs/ai-gateway"]
         },
         {
           "kind": "retrieval",
           "products": ["Marketplace storage integrations"],
-          "role": "Connect external providers such as Upstash Vector or MongoDB Atlas for vector retrieval.",
+          "role": "Connect external providers such as Upstash Vector or MongoDB Atlas to retrieve similar items using numerical representations.",
           "sources": ["https://vercel.com/docs/marketplace-storage"],
-          "limit": "These are provider integrations, not a Vercel-owned vector database. Provider regions, access and retention need separate review."
+          "limit": "These are connections to external providers, not a Vercel-owned vector database. Review each provider’s regions, access permissions and data-retention rules separately."
         },
         {
           "kind": "orchestration",
@@ -214,12 +214,12 @@
             "Workflow SDK",
             "Vercel Functions"
           ],
-          "role": "Application-level tool loops, durable workflows and deployed application code.",
+          "role": "Run application code that coordinates tool calls and durable workflows, which retain progress across interruptions. Deploy that application code using the listed products.",
           "sources": [
             "https://ai-sdk.dev/docs/agents/overview",
             "https://vercel.com/kb/guide/ai-gateway-and-ai-sdk"
           ],
-          "limit": "AI SDK is an application library; it is not itself a hosted model or cloud runtime."
+          "limit": "AI SDK is a library included in an application. It does not itself supply a hosted model or the cloud environment that runs the code."
         },
         {
           "kind": "custom_training_hosting",
@@ -227,12 +227,12 @@
             "Vercel Functions for application code",
             "External model providers"
           ],
-          "role": "Host the application and connect a model-serving or training service.",
+          "role": "Host application code and connect it to a service that runs or trains models.",
           "sources": [
             "https://vercel.com/docs/functions/limitations",
             "https://vercel.com/docs/ai-gateway"
           ],
-          "limit": "No general managed GPU training service was established by the reviewed docs. Do not draw a SageMaker/custom-training equivalent or a categorical impossibility claim."
+          "limit": "The reviewed documentation did not establish a general managed GPU training service. A GPU is a processor commonly used for model training. This is not evidence of a SageMaker-equivalent training service or a claim that every form of training is impossible."
         },
         {
           "kind": "evaluation_observability",
@@ -241,13 +241,13 @@
             "Vercel Observability",
             "AI SDK telemetry"
           ],
-          "role": "Inspect model calls, spend and application execution; connect telemetry and a chosen evaluation pipeline.",
+          "role": "Inspect model requests, spend and application execution. Connect telemetry, the recorded activity, to a chosen evaluation process.",
           "sources": [
             "https://vercel.com/docs/ai-gateway/observability-and-spend/observability",
             "https://vercel.com/docs/observability",
             "https://ai-sdk.dev/docs/ai-sdk-core/telemetry"
           ],
-          "limit": "Request telemetry and spend are not answer-quality scores. Current AI SDK docs include experimental evaluation callbacks; this review does not establish a managed golden-dataset evaluation service equivalent."
+          "limit": "Request records and spend do not score answer quality. The checked AI SDK documentation includes experimental evaluation callbacks, functions called during evaluation. This review does not establish an equivalent managed service for evaluation against a golden dataset, a reviewed set of reference cases."
         }
       ],
       "title": "Vercel",

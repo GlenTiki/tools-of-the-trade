@@ -36,7 +36,7 @@ function CheckEditor({
           multiline
           value={check.method}
           onChange={(v) => set("method", v)}
-          hint="For example: client walkthrough, options review, reconciliation or a software test."
+          hint="Write the steps the reviewer will follow. For example, give a coordinator a request, ask which team owns it, and compare the answer with the agreed service map."
         />
         <Field
           label="Test cases or review material"
@@ -44,7 +44,7 @@ function CheckEditor({
           multiline
           value={check.dataset}
           onChange={(v) => set("dataset", v)}
-          hint="Identify the reviewed material, its version and relevant groups. A model evaluation may also need a held-out dataset."
+          hint="Name the documents or examples to review, their versions and the people or tasks they represent. A held-out dataset is a set of cases reserved for testing and not used to train or tune the model."
         />
         <Field
           label="Measure or review criterion"
@@ -54,12 +54,14 @@ function CheckEditor({
         />
         <Field
           label="Expected result or acceptance threshold"
+          hint="State what counts as success. A threshold is a cut-off, such as all 10 urgent requests having a named owner. Agree it before you see the result."
           value={check.expected}
           onChange={(v) => set("expected", v)}
           placeholder="Fictional example: Proposed: all 10 urgent walkthrough cases have an owner; any unassigned urgent case rejects the map. Client service owner must confirm."
         />
         <Field
           label="Evidence owner"
+          hint="Name the person who will collect the results and make them available for review."
           value={check.owner}
           onChange={(v) => set("owner", v)}
         />
@@ -152,8 +154,9 @@ export default function Evaluation({ project, update }: EditorProps) {
           <p className="eyebrow">Evaluation plan</p>
           <h1>What evidence would change your mind?</h1>
           <p>
-            Test user outcomes, business rules and the components that enforce
-            them.
+            A check compares what happened with what you expected. Start with a
+            user task or rule, then write the steps, expected result and
+            reviewer.
           </p>
         </div>
         <button
@@ -166,8 +169,8 @@ export default function Evaluation({ project, update }: EditorProps) {
       {showDataset && <GoldenDataset />}
       <div className="notice">
         <strong>Plan first. Measure next.</strong> Suggested checks are drafts.
-        Agree the expected result, owner and review material before marking
-        evidence.
+        Agree what should happen, who will check it and which examples they will
+        use. Record what actually happened after the check.
       </div>
       <Panel
         title={`${project.checks.length} checks in this plan`}
@@ -236,7 +239,8 @@ export default function Evaluation({ project, update }: EditorProps) {
                           n.steps.some((s) => s.ruleIds.includes(rule.id)),
                       )
                       .map((n) => n.label)
-                      .join(", ") || "No implementation linked"}
+                      .join(", ") ||
+                      "No component linked to carry out this rule"}
                   </span>
                   <span aria-hidden>→</span>
                   <span>

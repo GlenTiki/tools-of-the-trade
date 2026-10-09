@@ -29,7 +29,7 @@ type Point = { x: number; y: number };
 
 function ArchitectureChoices({ project, update }: Props) {
   const choices: [keyof Project["choices"], string][] = [
-    ["persistence", "Persistence"],
+    ["persistence", "Persistence (save data for later use)"],
     ["documents", "AI answers from document evidence"],
     ["divisionRouting", "Division and product routing"],
     ["longRunning", "Background software jobs"],
@@ -45,8 +45,9 @@ function ArchitectureChoices({ project, update }: Props) {
   return (
     <Panel title="Start with the requirements">
       <p>
-        Choose the capabilities your requirements need, then add a suggested
-        starting design. Existing edits stay in place.
+        Select what the system must do, then choose Add suggested components. A
+        component is one part with a clear job, such as a screen or a data
+        store. The suggestions add a draft diagram and keep your existing edits.
       </p>
       <div className="architecture-choices">
         {choices.map(([key, label]) => (
@@ -80,7 +81,8 @@ function ArchitectureChoices({ project, update }: Props) {
       </button>
       <p className="architecture-hint">
         Changing a choice does not remove components. Suggestions are design
-        drafts; review their boundaries and links.
+        drafts; check what each part does and what information passes between
+        parts.
       </p>
     </Panel>
   );
@@ -281,7 +283,7 @@ function ConnectionFields({
           />
         }
         label="Connection label"
-        placeholder="Fictional example: Send tenant ID, product ID and question; return passages with source revisions."
+        placeholder="Fictional example: Send the customer organisation ID, product ID and question; return document passages with their source versions."
         value={connection.label}
         onChange={(label) => change({ ...connection, label })}
       />
@@ -295,10 +297,12 @@ function ConnectionFields({
         }
         label="Connection kind"
         value={connection.kind}
-        options={["request", "data", "async", "review"].map((value) => ({
-          value,
-          label: value,
-        }))}
+        options={[
+          ["request", "Request: ask another part to do work"],
+          ["data", "Data: pass information"],
+          ["async", "Async: send work without waiting for it to finish"],
+          ["review", "Review: ask a person for a decision"],
+        ].map(([value, label]) => ({ value, label }))}
         onChange={(kind) =>
           change({ ...connection, kind: kind as Connection["kind"] })
         }
@@ -393,8 +397,10 @@ function Connections({
   return (
     <Panel title="Connections">
       <p>
-        Connect components through these forms or drag between their canvas
-        handles. Connections across levels remain listed here.
+        A connection shows information or work passed from one component to
+        another. Choose the sending and receiving components in these forms, or
+        drag between the dots on the diagram. Connections between levels stay
+        listed here.
       </p>
       {selectedId && (
         <label className="architecture-checkbox">
@@ -438,8 +444,9 @@ function ArchitectureHeading({
             : "System architecture"}
         </h1>
         <p>
-          Explore one level at a time. Select a component to inspect its
-          contracts.
+          This diagram shows the system’s parts and their connections. Select a
+          part to describe the data it receives, the steps it takes and the
+          result it returns.
         </p>
       </div>
       {parent && (
