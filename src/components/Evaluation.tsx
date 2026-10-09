@@ -1,3 +1,4 @@
+import GoldenDataset from "./GoldenDataset";
 import { useState } from "react";
 import { deriveChecks, type Check } from "../domain";
 import { newId } from "../workspace/files";
@@ -24,12 +25,14 @@ function CheckEditor({
       </summary>
       <Field
         label="What claim does this check test?"
+        placeholder="Fictional example: Every urgent walkthrough request has an accountable owner."
         value={check.title}
         onChange={(v) => set("title", v)}
       />
       <div className="form-grid">
         <Field
           label="Method"
+          placeholder="Fictional example: Give coordinator Q-17 (locked entrance); ask who owns it using service map v1; record their answer."
           multiline
           value={check.method}
           onChange={(v) => set("method", v)}
@@ -37,6 +40,7 @@ function CheckEditor({
         />
         <Field
           label="Test cases or review material"
+          placeholder="Fictional example: Service map v1; Q-17 locked entrance → Facilities; Q-18 room booking → booking coordinator."
           multiline
           value={check.dataset}
           onChange={(v) => set("dataset", v)}
@@ -46,13 +50,13 @@ function CheckEditor({
           label="Measure or review criterion"
           value={check.metric}
           onChange={(v) => set("metric", v)}
-          placeholder="Options address each agreed constraint; record exceptions"
+          placeholder="Fictional example: Count urgent cases with a named accountable responder / all urgent cases reviewed."
         />
         <Field
           label="Expected result or acceptance threshold"
           value={check.expected}
           onChange={(v) => set("expected", v)}
-          placeholder="Agree with the outcome owner before evaluating"
+          placeholder="Fictional example: Proposed: all 10 urgent walkthrough cases have an owner; any unassigned urgent case rejects the map. Client service owner must confirm."
         />
         <Field
           label="Evidence owner"
@@ -79,6 +83,7 @@ function CheckEditor({
       </div>
       <Field
         label="Evidence, observed result or exclusion reason"
+        placeholder="Fictional example: Walkthrough W1, service map v1: 9/10 cases assigned; Q-17 unassigned. Client service owner records failed criterion and requests revision."
         multiline
         value={check.evidence}
         onChange={(v) => set("evidence", v)}
@@ -114,72 +119,6 @@ function CheckEditor({
         Remove check
       </button>
     </details>
-  );
-}
-
-function DatasetGuide() {
-  return (
-    <Panel title="Build a golden dataset people can defend">
-      <p>
-        A golden dataset is a reviewed set of examples with expected results. It
-        needs provenance and a maintenance owner.
-      </p>
-      <ol className="teaching-list">
-        <li>
-          <strong>Collect the work.</strong> Start with real task types, allowed
-          data and documented consent. Include ambiguous cases and failures.
-        </li>
-        <li>
-          <strong>Define what good means.</strong> Write the expected result and
-          the rule behind it. Use subject experts; record disagreements.
-        </li>
-        <li>
-          <strong>Separate development from proof.</strong> Keep a held-out set
-          outside prompt optimization and training. Split related records
-          together to prevent leakage.
-        </li>
-        <li>
-          <strong>Cover the important slices.</strong> Include each division,
-          product, source version, language, permission boundary and uncommon
-          high-cost error.
-        </li>
-        <li>
-          <strong>Measure uncertainty.</strong> Record the denominator and
-          intervals. A few successful examples do not establish a low failure
-          rate.
-        </li>
-        <li>
-          <strong>Version and maintain.</strong> Record rule changes, review
-          dates and production incidents. Preserve old failures for regression
-          tests.
-        </li>
-      </ol>
-      <details>
-        <summary>A candidate case, ready for expert review</summary>
-        <pre>
-          {JSON.stringify(
-            {
-              id: "division-routing-001",
-              input: {
-                question: "Which terms apply?",
-                division: "Business",
-                product: "Standard",
-              },
-              expected: {
-                sourceDivision: "Business",
-                onMissingCurrentSource: "ask-for-review",
-              },
-              ruleId: "correct-division",
-              split: "unassigned",
-              provenance: "Fictional draft; requires expert review",
-              reviewedBy: null,
-            },
-            null,
-            2,
-          )}
-        </pre>
-      </details>
-    </Panel>
   );
 }
 
@@ -224,7 +163,7 @@ export default function Evaluation({ project, update }: EditorProps) {
           Optional: golden datasets for model evaluation
         </button>
       </div>
-      {showDataset && <DatasetGuide />}
+      {showDataset && <GoldenDataset />}
       <div className="notice">
         <strong>Plan first. Measure next.</strong> Suggested checks are drafts.
         Agree the expected result, owner and review material before marking

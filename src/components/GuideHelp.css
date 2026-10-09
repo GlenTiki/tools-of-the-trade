@@ -1,0 +1,66 @@
+.guide-help {
+  margin: 6px 0 12px;
+  min-width: 0;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+.guide-help > summary {
+  color: #795000;
+  font-weight: 600;
+  padding: 6px 0;
+}
+.guide-help > article {
+  padding: 14px;
+  margin: 10px 0;
+  background: #fffaf0;
+  border: 1px solid #e5d3af;
+  border-radius: 8px;
+}
+.guide-help h3 {
+  font-size: 0.94rem;
+  margin: 0 0 8px;
+}
+.guide-help p {
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.guide-help-intro,
+.guide-help-reason {
+  color: var(--muted);
+}
+.guide-help button {
+  text-align: left;
+  white-space: normal;
+}
+dialog.field-guide-dialog {
+  width: 1160px;
+  max-width: calc(100vw - 32px);
+  overflow: auto;
+}
+.field-guide-dialog .learn-detail-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.field-guide-dialog .learn-layout {
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 24px;
+}
+@media (max-width: 850px) {
+  .field-guide-dialog .learn-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media print {
+  .guide-help {
+    display: none;
+  }
+}
+
+.guide-help-example {
+  margin: 12px 0;
+}
+.guide-help-example summary {
+  font-weight: 600;
+}
+.guide-help-example p {
+  white-space: pre-wrap;
+}

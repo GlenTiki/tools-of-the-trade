@@ -1,3 +1,4 @@
+import GuideHelp from "./GuideHelp";
 import type { Component, Field, ProcessStep, Project } from "../domain";
 import { Field as TextField, LinksPicker, Panel, Select } from "./Controls";
 import { newId } from "../workspace/files";
@@ -23,7 +24,15 @@ function FieldEditor({
     <fieldset className="architecture-record">
       <legend>{field.name || "New field"}</legend>
       <TextField
+        help={
+          <GuideHelp
+            context="data-field"
+            label="Data contract"
+            value={field.name}
+          />
+        }
         label="Field name"
+        placeholder="productId"
         value={field.name}
         onChange={(name) => change({ ...field, name })}
       />
@@ -36,6 +45,13 @@ function FieldEditor({
         onChange={(type) => change({ ...field, type: type as Field["type"] })}
       />
       <Select
+        help={
+          <GuideHelp
+            context="data-field"
+            label="Data classification"
+            value={field.classification}
+          />
+        }
         label="Classification"
         value={field.classification}
         options={["public", "internal", "sensitive"].map((value) => ({
@@ -85,7 +101,11 @@ function StepEditor({
     <fieldset className="architecture-record">
       <legend>{step.name || "New step"}</legend>
       <TextField
+        help={
+          <GuideHelp context="process" label="Process step" value={step.name} />
+        }
         label="Step name"
+        placeholder="Check tenant membership before retrieving ticket passages"
         value={step.name}
         onChange={(name) => change({ ...step, name })}
       />
@@ -306,12 +326,27 @@ export default function ComponentInspector({
           onChange={(label) => onChange({ ...component, label })}
         />
         <TextField
+          help={
+            <GuideHelp
+              context={`component:${component.kind}`}
+              label="Component design"
+              value={component.description}
+            />
+          }
           label="Description"
+          placeholder="Fictional example: Accept tenant ID, product ID and question; return approved passages for that tenant/product or an explicit no-evidence result."
           value={component.description}
           multiline
           onChange={(description) => onChange({ ...component, description })}
         />
         <Select
+          help={
+            <GuideHelp
+              context={`component:${component.kind}`}
+              label="Component kind"
+              value={component.kind}
+            />
+          }
           label="Component kind"
           value={component.kind}
           options={[
@@ -333,6 +368,7 @@ export default function ComponentInspector({
         />
         <TextField
           label="Domain or responsibility"
+          placeholder="Product-support evidence retrieval"
           value={component.domain}
           onChange={(domain) => onChange({ ...component, domain })}
         />

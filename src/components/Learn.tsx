@@ -17,8 +17,14 @@ import {
 import type { Concept } from "../content/catalogue";
 import { confusion, cosine, parseVector, wilson } from "../domain/calculators";
 import "./Learn.css";
+import WorkedExamples from "./WorkedExamples";
+import GoldenDataset from "./GoldenDataset";
+import examples from "../content/worked-examples";
 
-type LearnProps = { onUseConcept?: (id: string) => void };
+type LearnProps = {
+  onUseConcept?: (id: string) => void;
+  initialConcept?: string;
+};
 type Navigate = (id: string) => void;
 type View = { kind: "topics" | "journeys"; id: string };
 const areas = concepts.filter((concept) => concept.parent === "home");
@@ -47,6 +53,17 @@ function findConcepts(query: string) {
       concept.detail,
       concept.formula,
       ...(concept.tags ?? []),
+      ...examples
+        .filter((example) => example.topics.includes(concept.id))
+        .flatMap((example) => [
+          example.title,
+          example.situation,
+          example.input,
+          example.expected,
+          example.decision,
+          example.failure,
+          example.evidence,
+        ]),
     ]
       .join(" ")
       .toLowerCase();
@@ -54,8 +71,14 @@ function findConcepts(query: string) {
   });
 }
 
-export default function Learn({ onUseConcept }: LearnProps) {
-  const [view, setView] = useState<View>({ kind: "topics", id: "home" });
+export default function Learn({
+  onUseConcept,
+  initialConcept = "home",
+}: LearnProps) {
+  const [view, setView] = useState<View>({
+    kind: "topics",
+    id: conceptById.has(initialConcept) ? initialConcept : "home",
+  });
   const [history, setHistory] = useState<View[]>([]);
   const [query, setQuery] = useState("");
   const [platform, setPlatform] = useState("all");
@@ -339,8 +362,8 @@ function SearchResults({
         {matches.length} {matches.length === 1 ? "result" : "results"}
       </h1>
       <p className="learn-lede" role="status">
-        For “{query}”. Search includes explanations, formulas and alternative
-        names.
+        For “{query}”. Search includes explanations, worked examples, formulas
+        and alternative names.
       </p>
       {matches.length ? (
         <Cards items={matches} navigate={navigate} />
@@ -504,6 +527,8 @@ function Topic({
               </div>
             </details>
           </section>
+          {concept.id === "golden-dataset" && <GoldenDataset />}
+          <WorkedExamples topic={concept.id} />
           <FailureNotes failures={concept.failures} />
           <CodeExamples concept={concept} />
           <PlatformLens platform={platform} area={path[1]?.id ?? "home"} />

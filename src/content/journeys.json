@@ -7,31 +7,31 @@
     "steps": [
       {
         "node": "api",
-        "task": "Write the user outcome and response contract."
+        "task": "Write the user outcome and response contract. Fictional example: For “reset HH2”, accept productId=HH2 and return answer plus source IDs; absent productId returns needs_product."
       },
       {
         "node": "data",
-        "task": "Identify source ownership and allowed use."
+        "task": "Identify source ownership and allowed use. Fictional example: Use approved HH2-r3; exclude revoked HH2-r2 and tickets outside the signed-in tenant."
       },
       {
         "node": "search",
-        "task": "Retrieve evidence before you generate."
+        "task": "Retrieve evidence before you generate. Fictional example: Search “reset HH2”; expect HH2-r3:s4 before asking a model to answer."
       },
       {
         "node": "golden-dataset",
-        "task": "Label real questions and relevant sources."
+        "task": "Label real questions and relevant sources. Fictional example: Label Q1 relevant to HH2-r3:s4; label Q2 “refund policy” unanswerable from the reset manual."
       },
       {
         "node": "generation",
-        "task": "Require supported answers and explicit abstention."
+        "task": "Require supported answers and explicit abstention. Fictional example: HH2-r3 says 10 seconds: answer 10 and cite s4; no evidence means “I cannot establish that from this manual”."
       },
       {
         "node": "evaluation-baseline",
-        "task": "Measure a simple baseline before adding complexity."
+        "task": "Measure a simple baseline before adding complexity. Fictional example: On the same 10 questions, keyword search hits 7 relevant sources; record 7/10 before trying hybrid search."
       },
       {
         "node": "operations",
-        "task": "Observe failures and prepare a rollback."
+        "task": "Observe failures and prepare a rollback. Fictional example: On one confirmed cross-tenant disclosure, disable private retrieval and route to support."
       }
     ]
   },
@@ -43,27 +43,27 @@
     "steps": [
       {
         "node": "api",
-        "task": "Specify the task and what success changes."
+        "task": "Specify the task and what success changes. Fictional example: Task: prepare replacement HH2 at address A; success is an approved order O17, not a plausible message."
       },
       {
         "node": "agents",
-        "task": "Separate the agent loop from its integrations."
+        "task": "Separate the agent loop from its integrations. Fictional example: The agent proposes createOrder; the integration verifies account, approval revision and idempotency key before it writes."
       },
       {
         "node": "p-orchestration",
-        "task": "Define the workflow and failure states."
+        "task": "Define the workflow and failure states. Fictional example: Draft r3 → approved r3 → submitted K17 → created O17; timeout after submission enters status lookup."
       },
       {
         "node": "evaluation",
-        "task": "Test outputs and the sequence of actions."
+        "task": "Test outputs and the sequence of actions. Fictional example: Retry K17 after timeout: expect O17 and exactly one stored order; no second create action."
       },
       {
         "node": "annotation-rubric",
-        "task": "Agree how people judge success."
+        "task": "Agree how people judge success. Fictional example: A pass requires the approved item/address and one order; a friendly reply without the order fails."
       },
       {
         "node": "operations",
-        "task": "Make decisions and failures inspectable."
+        "task": "Make decisions and failures inspectable. Fictional example: Record K17, draft r3 and O17; show the request stopped before submission if approval is missing."
       }
     ]
   },
@@ -75,31 +75,31 @@
     "steps": [
       {
         "node": "evaluation",
-        "task": "Define the consequence of a wrong answer."
+        "task": "Define the consequence of a wrong answer. Fictional example: Wrong duration for HH2 can cause a failed reset; cross-tenant disclosure is a separate release-blocking defect."
       },
       {
         "node": "golden-dataset",
-        "task": "Capture representative and difficult cases."
+        "task": "Capture representative and difficult cases. Fictional example: Q1 asks reset HH2 (10 seconds); Q2 has no product (clarify); Q3 asks another tenant’s ticket (deny)."
       },
       {
         "node": "data-splits",
-        "task": "Protect independent evaluation data."
+        "task": "Protect independent evaluation data. Fictional example: Keep all messages from ticket T1 in development; leave T2 and its replies in held-out evaluation."
       },
       {
         "node": "annotation-rubric",
-        "task": "Agree an observable success rubric."
+        "task": "Agree an observable success rubric. Fictional example: “Hold Reset 10 seconds” is supported by HH2-r3:s4; “5 seconds” fails even with the same citation."
       },
       {
         "node": "p-llm-judge",
-        "task": "Calibrate automated judging against people."
+        "task": "Calibrate automated judging against people. Fictional example: For 10 answers, 2 judge-supported answers are human-unsupported; inspect those false positives before accepting judge scores."
       },
       {
         "node": "x-bootstrap",
-        "task": "Compare paired outcomes with uncertainty."
+        "task": "Compare paired outcomes with uncertainty. Fictional example: A wins 80/100 and B 84/100 on paired cases; 10 B-only wins and 6 A-only wins give +4 points, with uncertainty still required."
       },
       {
         "node": "operations",
-        "task": "Choose release and rollback criteria."
+        "task": "Choose release and rollback criteria. Fictional example: Proposed gate: no observed tenant disclosure; any confirmed disclosure after release disables private retrieval."
       }
     ]
   },
@@ -111,27 +111,27 @@
     "steps": [
       {
         "node": "evaluation-baseline",
-        "task": "Record quality, cost and latency today."
+        "task": "Record quality, cost and latency today. Fictional example: Illustrative baseline: 80/100 correct, EUR 4 per 100 requests and p95 latency 2 seconds."
       },
       {
         "node": "adaptation",
-        "task": "Choose what you want optimization to change."
+        "task": "Choose what you want optimization to change. Fictional example: Improve unsupported-answer errors; keep the same 100-case comparison and reject a change that adds tenant leaks."
       },
       {
         "node": "data-splits",
-        "task": "Keep training and test evidence separate."
+        "task": "Keep training and test evidence separate. Fictional example: Train on tickets T1–T20, develop on T21–T25 and hold out T26–T30; keep each ticket’s replies with it."
       },
       {
         "node": "synthetic-eval-risks",
-        "task": "Check what generated data cannot tell you."
+        "task": "Check what generated data cannot tell you. Fictional example: If generated HH2 answers all say 5 seconds, independent HH2-r3 evidence exposes the shared error: expected 10."
       },
       {
         "node": "hosting",
-        "task": "Plan capacity and operational ownership."
+        "task": "Plan capacity and operational ownership. Fictional example: At concurrency 10 with 1000-token prompts, proposed p95 first-token limit is 2 seconds; name the on-call owner before exposure."
       },
       {
         "node": "x-cost-quality",
-        "task": "Compare practical gains and service costs."
+        "task": "Compare practical gains and service costs. Fictional example: Illustrative candidate reduces failures 20→16 per 100 requests but raises cost EUR 4→8; compare EUR 4 extra against the agreed value of four corrected outcomes."
       }
     ]
   }

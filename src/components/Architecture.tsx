@@ -1,3 +1,4 @@
+import GuideHelp from "./GuideHelp";
 /// <reference types="vite/client" />
 import { useState } from "react";
 import {
@@ -34,6 +35,13 @@ function ArchitectureChoices({ project, update }: Props) {
     ["longRunning", "Background software jobs"],
     ["humanApproval", "Human approval"],
   ];
+  const choiceContexts = {
+    persistence: "component:database",
+    documents: "component:retrieval",
+    divisionRouting: "component:router",
+    longRunning: "component:queue",
+    humanApproval: "component:human",
+  };
   return (
     <Panel title="Start with the requirements">
       <p>
@@ -42,19 +50,25 @@ function ArchitectureChoices({ project, update }: Props) {
       </p>
       <div className="architecture-choices">
         {choices.map(([key, label]) => (
-          <label className="architecture-checkbox" key={key}>
-            <input
-              type="checkbox"
-              checked={project.choices[key]}
-              onChange={(event) =>
-                update({
-                  ...project,
-                  choices: { ...project.choices, [key]: event.target.checked },
-                })
-              }
-            />
-            {label}
-          </label>
+          <div key={key}>
+            <label className="architecture-checkbox">
+              <input
+                type="checkbox"
+                checked={project.choices[key]}
+                onChange={(event) =>
+                  update({
+                    ...project,
+                    choices: {
+                      ...project.choices,
+                      [key]: event.target.checked,
+                    },
+                  })
+                }
+              />
+              {label}
+            </label>
+            <GuideHelp context={choiceContexts[key]} label={label} />
+          </div>
         ))}
       </div>
       <button
@@ -259,11 +273,26 @@ function ConnectionFields({
         onChange={(target) => change({ ...connection, target })}
       />
       <Field
+        help={
+          <GuideHelp
+            context="connection"
+            label="Connection contract"
+            value={connection.label}
+          />
+        }
         label="Connection label"
+        placeholder="Fictional example: Send tenant ID, product ID and question; return passages with source revisions."
         value={connection.label}
         onChange={(label) => change({ ...connection, label })}
       />
       <Select
+        help={
+          <GuideHelp
+            context="connection"
+            label="Connection behaviour"
+            value={connection.kind}
+          />
+        }
         label="Connection kind"
         value={connection.kind}
         options={["request", "data", "async", "review"].map((value) => ({

@@ -5,7 +5,7 @@
       "title": "Director",
       "summary": "Set the outcome, acceptable risk and accountable owner.",
       "contribution": "Choose the service boundary and the conditions for further investment. Leave unresolved decisions visible.",
-      "artifact": "Outcome brief with scope, risk owner and decision criteria.",
+      "artifact": "Outcome brief with scope, risk owner and decision criteria. Fictional example: Mandate: select a venue for 15 people within 500 units. Option A has 12 seats at 400; B has 20 at 700. Neither qualifies; the director must change the constraints or request more options.",
       "questions": [
         "Which user outcome justifies this investment?",
         "Which consequence must remain under human control?"
@@ -28,7 +28,7 @@
       "title": "Project manager / delivery lead",
       "summary": "Connect client outcomes, commitments and delivery decisions.",
       "contribution": "Hold scope, phases, client responsibilities, commercial changes and acceptance together. Work with the technical lead on design, evidence and operating consequences.",
-      "artifact": "Engagement plan with deliverables, milestones, dependencies, decision owners and commercial boundaries.",
+      "artifact": "Engagement plan with deliverables, milestones, dependencies, decision owners and commercial boundaries. Fictional example: Phase record: service map v1 assigns Q-17 (locked entrance) to Facilities. Client coordinator supplies the request log; the sponsor reviews the options memo before any pilot commitment.",
       "questions": [
         "What has the client agreed to receive, and what remains a proposal?",
         "Which client dependency or decision controls the next useful milestone?"
@@ -52,7 +52,7 @@
       "title": "Business analyst",
       "summary": "Make the rules and information sources precise enough to test.",
       "contribution": "Translate interviews and documents into traceable rules, examples and open questions.",
-      "artifact": "Rule register linked to sources and acceptance examples.",
+      "artifact": "Rule register linked to sources and acceptance examples. Fictional example: Rule R1: bulletin B7 supersedes manual M2 section 4; a burning-smell report routes to staffed safety support, even if the reset guide matches.",
       "questions": [
         "Which source authorizes this rule?",
         "What happens when two sources disagree?"
@@ -75,7 +75,7 @@
       "title": "Domain expert",
       "summary": "Explain the exceptions and judgments that experienced staff use.",
       "contribution": "Provide real task patterns and fictionalized examples that expose undocumented rules.",
-      "artifact": "Reviewed examples with exceptions, source authority and unresolved interpretations.",
+      "artifact": "Reviewed examples with exceptions, source authority and unresolved interpretations. Fictional example: Counterexample: “My Hub is warm, with no smell” remains unresolved pending the safety owner’s distinction; “I smell burning” must skip reset advice.",
       "questions": [
         "Which unwritten exception would a new colleague miss?",
         "What would make a plausible answer wrong here?"
@@ -98,7 +98,7 @@
       "title": "Product and service designer",
       "summary": "Make the service understandable when it answers, asks or fails.",
       "contribution": "Define the user journey, accessible controls and recovery from ambiguous or partial outcomes.",
-      "artifact": "Interaction flow with examples of normal, uncertain and failed states.",
+      "artifact": "Interaction flow with examples of normal, uncertain and failed states. Fictional example: Interaction: “Order draft ready” appears before approval; after request O-17 succeeds, show “Order O-17 created”; a lost acknowledgement shows “Checking order status”.",
       "questions": [
         "What does the user need to know before accepting this action?",
         "How can the user correct a mistaken assumption?"
@@ -122,7 +122,7 @@
       "title": "Technical lead / engineer",
       "summary": "Connect client needs to a defensible approach and its operating consequences.",
       "contribution": "Compare options, expose technical and delivery risks, and define evidence. Partner with the PM on scope, capacity, commercial implications and client decisions; software is one possible outcome.",
-      "artifact": "Options and design record with acceptance evidence, implementation boundaries and operating ownership.",
+      "artifact": "Options and design record with acceptance evidence, implementation boundaries and operating ownership. Fictional example: Options record: an ownership guide identifies Facilities for Q-17 but leaves the request unassigned. The existing form can record Facilities as owner. Compare that change before proposing a new portal; test whether staff can assign Q-17.",
       "questions": [
         "Could advice, a process change or an existing system meet the need?",
         "What technical, human or operating dependency could invalidate this plan?"
@@ -146,7 +146,7 @@
       "title": "Junior engineer",
       "summary": "Make one small part of the design concrete and reviewable.",
       "contribution": "Trace a worked example through the system, implement a bounded change and explain the evidence to a reviewer.",
-      "artifact": "Small implementation task with input, expected result and failing-first test.",
+      "artifact": "Small implementation task with input, expected result and failing-first test. Fictional example: First task: submit a request without productId; expect needs_product and no retrieval call. A test fails if the service guesses Home Hub.",
       "questions": [
         "Which rule does this task implement?",
         "Which uncertainty should I bring to my reviewer before I code?"
@@ -170,7 +170,7 @@
       "title": "QA and test engineer",
       "summary": "Find evidence that can disprove a claim about the system.",
       "contribution": "Define risk slices, boundary cases and independent expectations for deterministic and model-based behavior.",
-      "artifact": "Evaluation plan with case lineage, thresholds and regression evidence.",
+      "artifact": "Evaluation plan with case lineage, thresholds and regression evidence. Fictional example: Boundary test: tenant A requests ticket B-17; expect denied and no ticket text. A controlled missing tenant filter must make the test fail.",
       "questions": [
         "What result would show that this rule is broken?",
         "Which cases must remain outside optimization?"
@@ -193,7 +193,7 @@
       "title": "DevOps engineer",
       "summary": "Make builds and deployments repeatable within the agreed boundary.",
       "contribution": "Specify artifact versions, configuration, access controls and the path to restore a known release.",
-      "artifact": "Deployment plan with reproducible artifacts and recovery checks.",
+      "artifact": "Deployment plan with reproducible artifacts and recovery checks. Fictional example: Release manifest: app r7, prompt p3, corpus c4, rules r2. Restore all four together and repeat the denied cross-tenant request before reopening traffic.",
       "questions": [
         "Which configuration belongs to each environment?",
         "How will we restore a compatible application and data version?"
@@ -216,7 +216,7 @@
       "title": "Site reliability engineer",
       "summary": "Connect service objectives to observable user outcomes and recovery.",
       "contribution": "Define service signals, alert ownership, incident actions and feedback from production.",
-      "artifact": "Operating plan with service objectives, runbook and rollback triggers.",
+      "artifact": "Operating plan with service objectives, runbook and rollback triggers. Fictional example: Runbook: any confirmed cross-tenant disclosure disables private retrieval; on-call owns containment and the support manager owns customer handling.",
       "questions": [
         "Which failure would users notice before our alerts?",
         "What evidence tells the responder to stop automatic actions?"
@@ -240,7 +240,7 @@
       "title": "Finance and commercial partner",
       "summary": "Test whether the proposed outcome is worth its complete operating cost.",
       "contribution": "Make volume, review effort, failure costs and commercial assumptions explicit.",
-      "artifact": "Cost model with a defined successful outcome and sensitivity cases.",
+      "artifact": "Cost model with a defined successful outcome and sensitivity cases. Fictional example: Illustrative budget: EUR 400 total pilot cost / 800 successful procedures = EUR 0.50 per success; EUR 100 extra review cost raises it to EUR 0.625.",
       "questions": [
         "What counts as a successful outcome in the cost denominator?",
         "Which cost grows when the service abstains or retries?"
@@ -265,7 +265,7 @@
       "title": "Frame the engagement",
       "lesson": "Agree the client mandate and the user or business change worth pursuing. Start with the boundary, not a tool.",
       "prompt": "What result would make this engagement worthwhile?",
-      "example": "A community organisation wants service requests to reach an accountable person. The first phase delivers a service map and options memo, not software.",
+      "example": "Fictional service-map engagement: request Q-17 says “The public entrance is locked”. The current desk has no owner recorded. Deliver a service map that assigns Q-17 to the facilities duty lead; leave software procurement outside scope. The client service director will accept the map only if every urgent walkthrough case has an owner. The historical unassigned rate remains unknown.",
       "doneWhen": "A client acceptor, deliverable, scope boundary and baseline or explicit unknown are recorded."
     },
     {
@@ -273,7 +273,7 @@
       "title": "Understand users and the work",
       "lesson": "Capture the people, tasks, dependencies and exceptions that shape the engagement.",
       "prompt": "Which task or decision needs to improve?",
-      "example": "A staff member needs to identify who can resolve an unusual request. Interviews and a walkthrough will test the proposed ownership process.",
+      "example": "Request Q-17 says “The public entrance is locked”. A service coordinator must find the facilities duty lead without forwarding the request to three teams. Expected: one named accountable role and its contact route. “Send to general enquiries” fails the walkthrough because nobody accepts responsibility.",
       "doneWhen": "Each priority need has an owner, an observable result and an acceptance example."
     },
     {
@@ -281,7 +281,7 @@
       "title": "Agree constraints and decisions",
       "lesson": "Make client policy, source authority, risks and decision rights explicit. Record unknowns for review.",
       "prompt": "Which constraint or decision controls the proposed change?",
-      "example": "Only the service owner can reassign an urgent request. The current operating procedure and its owner establish the rule; conflicting advice stays unresolved.",
+      "example": "Procedure P3 says only the duty lead may reassign an urgent request. Given urgent Q-17 owned by Facilities and a coordinator requesting reassignment to Security, expected: keep Facilities accountable and ask the duty lead. Silently changing the owner fails the rule.",
       "doneWhen": "Rules and decisions have owners, sources and exception outcomes. Sector-specific routing is optional."
     },
     {
@@ -289,7 +289,7 @@
       "title": "Design an appropriate approach",
       "lesson": "Compare options and record boundaries. Use the software canvas only when software design is part of the engagement.",
       "prompt": "What is the smallest approach that meets the need?",
-      "example": "The team compares a clearer ownership guide with changes to an existing form. Advisory work can hand over that comparison without inventing an application.",
+      "example": "For Q-17, compare an ownership guide with a change to the existing request form. The guide identifies Facilities but leaves the request unassigned; the form records Facilities as owner and exposes its contact route. Recommend the form change if the walkthrough confirms staff can use it; no new application is proposed.",
       "doneWhen": "The chosen approach has a reason and reviewable assumptions. Software components are optional and are proposals, not implemented assets."
     },
     {
@@ -297,7 +297,7 @@
       "title": "Plan acceptance evidence",
       "lesson": "Choose evidence that could show the recommendation or deliverable is wrong. Scale it to the task and consequence.",
       "prompt": "What would the client need to see before accepting this work?",
-      "example": "Staff walk through normal and exceptional requests; the service owner reviews whether each case reaches an accountable person. No model dataset is needed.",
+      "example": "Walk through Q-17 (locked entrance) and Q-18 (ordinary room booking) against service map v1. Expected: Facilities owns Q-17; the booking coordinator owns Q-18. A blank owner or a handoff with no receiving role rejects the map. The client service owner records each actual result; these are proposed cases, not completed evidence.",
       "doneWhen": "Acceptance cases, evidence owners and rejection conditions are explicit. Use specialist evaluation only when it applies."
     },
     {
@@ -305,7 +305,7 @@
       "title": "Plan delivery and client decisions",
       "lesson": "Agree phases, responsibilities, capacity, commercial boundaries, adoption and operating ownership. Revisit the plan as evidence changes.",
       "prompt": "What must be delivered and decided before the next phase?",
-      "example": "The options memo needs client feedback before a pilot can be proposed. The PM records access dependencies and unagreed dates; the technical lead explains support implications.",
+      "example": "Milestone 1 delivers service map v1 and options memo v1. The client coordinator must supply the request log. Without that log, the memo labels request-volume findings unknown. The client sponsor then chooses whether to fund a form-change pilot; that later phase is not committed.",
       "doneWhen": "Milestone outputs, dependency owners, change decisions and handover conditions are recorded. A later phase is not silently committed."
     },
     {
@@ -313,7 +313,7 @@
       "title": "Hand over and review impact",
       "lesson": "Share the agreed deliverables, evidence and remaining decisions with the people responsible for what follows.",
       "prompt": "What can the recipient act on, and what still needs a decision?",
-      "example": "The client receives the service map, options memo and decision record. Operations owns the next review; implementation needs a separate scope decision.",
+      "example": "Handoff package: service map v1, options memo v1, Q-17/Q-18 walkthrough results and open decision D-2 (fund the form pilot). Client operations owns the map; the sponsor owns D-2. Acceptance remains pending until the client records its decision. Do not describe the pilot as delivered.",
       "doneWhen": "The recipient can identify the deliverable version, acceptance evidence, limitations and next owner. Completion of fields is not verified approval."
     }
   ],
@@ -331,7 +331,7 @@
           "id": "impact",
           "label": "What user and business result does the client need?",
           "hint": "Connect an observable user benefit to a business consequence. Record unknown baselines.",
-          "example": "Staff can find the owner of a service request; fewer requests wait without a named responder."
+          "example": "Illustrative goal: request Q-17 (locked public entrance) reaches the facilities duty lead; the proposed walkthrough rejects any urgent case with no accountable responder. The historical unassigned rate is unknown."
         },
         {
           "id": "deliverables",
@@ -505,13 +505,13 @@
           "id": "tradeoff",
           "label": "What tradeoff determines the recommendation?",
           "hint": "Compare impact, accessibility, delivery effort, operating burden and client constraints.",
-          "example": "Improve the existing form if it meets staff access needs without a new support burden."
+          "example": "The ownership guide identifies Facilities but does not assign Q-17. The existing form can record Facilities as owner. Prefer the form change if the walkthrough confirms staff can complete that step; no new support service is proposed."
         },
         {
           "id": "evidence",
           "label": "What evidence will test the recommendation?",
           "hint": "Choose evidence suited to the engagement; interviews, reconciliations and walkthroughs need no model dataset.",
-          "example": "Staff walkthroughs of ordinary and exceptional requests, plus a review of the options memo."
+          "example": "Walk through Q-17 (locked entrance → Facilities) and Q-18 (room booking → booking coordinator) using service map v1. Record actual owner and any unassigned case for the client service owner."
         },
         {
           "id": "acceptance",
@@ -544,25 +544,25 @@
           "id": "request",
           "label": "What change is being requested?",
           "hint": "Identify the source and reason; separate a request from an approved commitment.",
-          "example": "Client asks to add another business process to the assessment."
+          "example": "The client requests a visitor-booking assessment alongside the agreed entrance-routing map."
         },
         {
           "id": "impact",
           "label": "What changes in scope, cost, timing or risk?",
           "hint": "Record the assessed impact and uncertainty before agreement.",
-          "example": "Additional interviews and analysis are needed; supplier lead will assess capacity before proposing terms."
+          "example": "The PM identifies a booking coordinator interview and booking-log review as additional work. The supplier lead must price this work before proposing terms."
         },
         {
           "id": "choice",
           "label": "What decision is required from the client?",
           "hint": "Offer concrete options and name the authorised decision owner.",
-          "example": "Sponsor chooses to exchange an existing deliverable, revise the budget or defer the request."
+          "example": "The sponsor must approve a priced visitor-booking change, exchange an existing deliverable or defer the request."
         },
         {
           "id": "record",
           "label": "Where is the agreed change recorded?",
           "hint": "Record agreement by authorised client and supplier owners for scope, fee or timing changes, or say that it is still pending.",
-          "example": "Change proposal awaits sponsor review; original scope remains the delivery baseline."
+          "example": "Change C-2 remains pending sponsor review. The original entrance-routing scope still governs delivery."
         }
       ],
       "outputs": [
@@ -634,7 +634,7 @@
           "id": "signals",
           "label": "Which signals will show service health and user impact?",
           "hint": "Use actionable measures; availability alone does not establish usefulness.",
-          "example": "Unassigned requests, rework, completion time and staff-reported access problems."
+          "example": "Count urgent requests with no owner; Q-17 without an owner is one failure and triggers the duty-lead response. Track ordinary request completion separately; its target is not agreed."
         },
         {
           "id": "response",
@@ -667,7 +667,7 @@
           "id": "impact",
           "label": "What changed for users and the client?",
           "hint": "Compare observed results with the baseline; separate evidence from attribution claims.",
-          "example": "Staff can name request owners in walkthroughs; sustained changes in response time have not yet been measured."
+          "example": "Illustrative walkthrough result: all 8 participants named Facilities for Q-17; 3 could not do so before viewing the map. This small exercise does not establish a sustained change in response time."
         },
         {
           "id": "review",
@@ -1026,7 +1026,7 @@
           "id": "case",
           "label": "Which reviewed example tests this rule?",
           "hint": "Specify the input, expected outcome and source revision.",
-          "example": "For a Home Hub v2 request, only the approved v2 manual may support the reset answer."
+          "example": "Question: “How do I reset Home Hub v2?” Manual HH2-r3 section 4 says hold Reset for 10 seconds; HH1-r2 says 5. Expected: cite HH2-r3 section 4 and say 10 seconds. The 5-second answer fails."
         },
         {
           "id": "slices",
@@ -1038,13 +1038,13 @@
           "id": "split",
           "label": "Which examples remain held out?",
           "hint": "Keep optimization, regression and final comparison roles explicit.",
-          "example": "Develop prompts on the development set; reserve an independently reviewed set for the release comparison."
+          "example": "Fictional IDs D01–D06 develop the prompt; R01–R04 retain known regressions; H01–H10 remain unseen until the release comparison. Keep requests about the same ticket in one group."
         },
         {
           "id": "measure",
           "label": "What does the score count?",
           "hint": "Name numerator, denominator and treatment of ineligible cases.",
-          "example": "Retrieval hit rate counts eligible questions with at least one relevant top-five passage; it is not passage recall."
+          "example": "At k=5, 8 of 10 eligible questions retrieve at least one reviewed relevant passage: hit@5 = 8/10 = 80%. For Q1 with 2 relevant passages and only 1 retrieved, recall@5 = 1/2 = 50%."
         },
         {
           "id": "threshold",
@@ -1056,7 +1056,7 @@
           "id": "judge",
           "label": "How will automated judgments be checked?",
           "hint": "Define independent labels and a process for disagreement.",
-          "example": "Domain reviewers adjudicate a calibration set and audit disagreements before judge scores influence release decisions."
+          "example": "For answer A1 (“hold Reset 5 seconds”), HH2-r3 says 10 seconds. Domain reviewers label A1 unsupported. If the judge labels it supported, retain that disagreement and exclude its uncalibrated score from the release decision."
         }
       ],
       "outputs": [
@@ -1078,7 +1078,7 @@
           "id": "success",
           "label": "What counts as a successful outcome?",
           "hint": "Use a user result rather than tokens, responses or closed tickets alone.",
-          "example": "A customer completes the correct procedure without a later correction within the declared observation window."
+          "example": "Count a success only when the customer completes the correct reset and reports no correction within the fictional 24-hour observation window; a generated reply alone does not count."
         },
         {
           "id": "costs",
@@ -1102,7 +1102,7 @@
           "id": "sensitivity",
           "label": "Which uncertain input could change the decision?",
           "hint": "Test a different review or failure rate rather than one precise forecast.",
-          "example": "Recalculate if the fraction of cases needing staff review doubles."
+          "example": "Illustrative scenario: 100 staff reviews at EUR 1 each plus EUR 300 other cost gives EUR 400/800 = EUR 0.50 per success. At 200 reviews with 800 successes unchanged, EUR 500/800 = EUR 0.625."
         },
         {
           "id": "budget-owner",
@@ -1228,7 +1228,7 @@
           "id": "sample",
           "label": "Which production cases will be reviewed?",
           "hint": "Define the sample and distinguish representative monitoring from targeted investigation.",
-          "example": "Sample ordinary requests separately from flagged safety and source-conflict cases."
+          "example": "Illustrative monitoring sample: randomly select 20 ordinary requests from the agreed period, then review every flagged safety or source-conflict case separately. Report each denominator; targeted cases do not estimate the ordinary failure rate."
         },
         {
           "id": "signal",
@@ -1240,7 +1240,7 @@
           "id": "change",
           "label": "What change is proposed in response?",
           "hint": "State the hypothesis before editing the rule or prompt.",
-          "example": "Add explicit model confirmation before retrieval and compare incorrect-routing outcomes."
+          "example": "For “reset my Hub”, require a product choice before search. Expected for Business Hub: retrieve Business manual B2, never Home manual H2. Compare incorrect-product counts before and after the change."
         },
         {
           "id": "dataset",
@@ -1258,7 +1258,7 @@
           "id": "value",
           "label": "What result would justify keeping the change?",
           "hint": "Connect quality to user effort and operating cost.",
-          "example": "Keep confirmation if routing errors fall enough to justify the extra interaction and support effort under the agreed criteria."
+          "example": "Illustrative proposed gate: on the same 100 cases, incorrect routing falls from 8 to at most 2; no safety case regresses. Record added confirmation steps and review cost before the product owner accepts the tradeoff."
         }
       ],
       "outputs": [
@@ -1275,331 +1275,331 @@
       "roles": ["director", "pm"],
       "title": "Choose the first release",
       "question": "Which bounded release demonstrates the intended outcome without committing to the whole roadmap?",
-      "artifact": "Pilot scope with a director-owned investment decision."
+      "artifact": "Pilot scope with a director-owned investment decision. Fictional example: Discovery delivers service map v1 and options memo v1. Request Q-17 must name Facilities as owner; software build and support are excluded until the sponsor makes a further decision."
     },
     {
       "roles": ["director", "ba"],
       "title": "Expose policy gaps",
       "question": "Which missing policy decision prevents the analyst from writing an enforceable rule?",
-      "artifact": "Policy decision log with unresolved source-authority questions."
+      "artifact": "Policy decision log with unresolved source-authority questions. Fictional example: Purchase rule P1 sends requests above 1000 units to Finance. Open decision D-1 asks whether urgent replacements are exempt; until Finance decides, a 1200-unit request still routes to Finance."
     },
     {
       "roles": ["director", "domain"],
       "title": "Set the consequence boundary",
       "question": "Which domain mistake would make this service unacceptable even if average accuracy improves?",
-      "artifact": "Named high-consequence scenarios and a risk decision owner."
+      "artifact": "Named high-consequence scenarios and a risk decision owner. Fictional example: Any answer containing another tenant’s ticket text blocks release, even if overall task success improves."
     },
     {
       "roles": ["director", "designer"],
       "title": "Make the service promise honest",
       "question": "Which promise will a customer infer from the interface that the organization cannot yet support?",
-      "artifact": "Reviewed service promise with visible limitations and fallback language."
+      "artifact": "Reviewed service promise with visible limitations and fallback language. Fictional example: An unsubmitted membership form says “Draft saved”; it must not say “Membership confirmed” before the registrar accepts the application."
     },
     {
       "roles": ["director", "engineer"],
       "title": "Choose a defensible system boundary",
       "question": "Which requirement justifies the proposed level of automation?",
-      "artifact": "Automation boundary with accountable human decisions and technical constraints."
+      "artifact": "Automation boundary with accountable human decisions and technical constraints. Fictional example: A 1200-unit urgent replacement routes to Finance. The portal may collect the request; only Finance can authorize the exception, so no purchase is submitted automatically."
     },
     {
       "roles": ["director", "junior"],
       "title": "Explain the purpose of a small task",
       "question": "How does the junior engineer's proposed check protect the outcome the director cares about?",
-      "artifact": "Plain-language task rationale tied to one business consequence."
+      "artifact": "Plain-language task rationale tied to one business consequence. Fictional example: The missing-product test prevents a Business customer receiving a Home reset procedure."
     },
     {
       "roles": ["director", "qa"],
       "title": "Define sufficient release evidence",
       "question": "Which evidence must the director see before accepting the remaining uncertainty?",
-      "artifact": "Release evidence agreement with explicit pending decisions."
+      "artifact": "Release evidence agreement with explicit pending decisions. Fictional example: Candidate r7 needs held-out slice results and a passing tenant-boundary test; a pending safety-owner decision still blocks procedural advice."
     },
     {
       "roles": ["director", "devops"],
       "title": "Own the deployment boundary",
       "question": "Which environments and distribution channels are authorized for the first release?",
-      "artifact": "Environment authorization record with a release owner."
+      "artifact": "Environment authorization record with a release owner. Fictional example: Authorize the internal volunteer pilot only; public release and production customer data remain outside this decision."
     },
     {
       "roles": ["director", "sre"],
       "title": "Give operators authority to stop",
       "question": "Under which observable condition may the operator disable automatic actions?",
-      "artifact": "Operational stop authority and escalation agreement."
+      "artifact": "Operational stop authority and escalation agreement. Fictional example: On confirmed cross-tenant disclosure, on-call may disable private retrieval immediately and page the support owner."
     },
     {
       "roles": ["director", "finance"],
       "title": "Test the investment case",
       "question": "Which improvement in successful outcomes would justify the complete service cost?",
-      "artifact": "Investment comparison with assumptions and a decision boundary."
+      "artifact": "Investment comparison with assumptions and a decision boundary. Fictional example: Illustrative EUR 400 monthly cost / 800 successful resets = EUR 0.50 per success; compare with the agreed human-service baseline."
     },
     {
       "roles": ["pm", "ba"],
       "title": "Turn scope into traceable needs",
       "question": "Which requested behavior belongs in this release rather than an unowned future assumption?",
-      "artifact": "Prioritized need register with explicit exclusions."
+      "artifact": "Prioritized need register with explicit exclusions. Fictional example: Include the ownership map for Q-17 (locked entrance → Facilities). Exclude a new visitor portal from the discovery deliverable."
     },
     {
       "roles": ["pm", "domain"],
       "title": "Schedule the hard decisions",
       "question": "Which exception needs expert review before the team can finish the next delivery slice?",
-      "artifact": "Expert-review queue tied to delivery dependencies."
+      "artifact": "Expert-review queue tied to delivery dependencies. Fictional example: The safety owner must decide the “warm but no smell” case before the reset-flow review."
     },
     {
       "roles": ["pm", "designer"],
       "title": "Keep the journey useful",
       "question": "Which user step can the first release complete without forcing the customer to restart elsewhere?",
-      "artifact": "First-release journey with a supported handoff point."
+      "artifact": "First-release journey with a supported handoff point. Fictional example: A member corrects an address in draft M17 and resumes at the review page; they do not restart the membership form."
     },
     {
       "roles": ["pm", "engineer"],
       "title": "One engagement plan, shared delivery judgement",
       "question": "Do the client mandate, technical approach, evidence, capacity, commercial boundary and operating responsibilities support the same next milestone?",
-      "artifact": "Joint phase plan with options, dependencies, acceptance evidence and client decisions."
+      "artifact": "Joint phase plan with options, dependencies, acceptance evidence and client decisions. Fictional example: The next milestone is options memo v1; client coordinator supplies the request log; PM owns access and technical lead compares the form-change option."
     },
     {
       "roles": ["pm", "junior"],
       "title": "Make the task safe to pick up",
       "question": "Which unresolved assumption should the junior engineer escalate rather than fill in?",
-      "artifact": "Starter task with a named reviewer and explicit stop questions."
+      "artifact": "Starter task with a named reviewer and explicit stop questions. Fictional example: If the safety distinction is absent, stop the reset-rule task and ask the named domain reviewer; do not invent a temperature limit."
     },
     {
       "roles": ["pm", "qa"],
       "title": "Plan evidence alongside delivery",
       "question": "Which acceptance cases must exist before the feature can be called complete?",
-      "artifact": "Delivery checklist linked to test and evidence owners."
+      "artifact": "Delivery checklist linked to test and evidence owners. Fictional example: A missing productId returns needs_product with zero retrieval calls before the slice is complete."
     },
     {
       "roles": ["pm", "devops"],
       "title": "Prepare a releasable slice",
       "question": "Which configuration or environment dependency could prevent this slice from reaching the pilot?",
-      "artifact": "Release dependency plan with environment readiness evidence."
+      "artifact": "Release dependency plan with environment readiness evidence. Fictional example: Pilot release waits for the approved staging corpus c4; a developer’s local corpus is not the release input."
     },
     {
       "roles": ["pm", "sre"],
       "title": "Include operating work in scope",
       "question": "Which support obligation does this release create that the delivery plan has not funded?",
-      "artifact": "Operating handoff with alert, review-queue and runbook ownership."
+      "artifact": "Operating handoff with alert, review-queue and runbook ownership. Fictional example: The pilot needs a staffed unresolved-product queue; support-manager ownership is still pending, so expansion is blocked."
     },
     {
       "roles": ["pm", "finance"],
       "title": "Set a measurable pilot budget",
       "question": "What spending cap buys enough evidence to decide whether the pilot should expand?",
-      "artifact": "Pilot budget with an evidence objective and pause condition."
+      "artifact": "Pilot budget with an evidence objective and pause condition. Fictional example: Proposed assessment fee cap: 5000 units for the service map and options memo. A request to add visitor-portal design needs a separate priced change; it is not absorbed silently."
     },
     {
       "roles": ["ba", "domain"],
       "title": "Capture the unwritten rule",
       "question": "Which condition changes the expected answer even though the current procedure does not mention it?",
-      "artifact": "Tacit-rule example awaiting approval from its policy owner."
+      "artifact": "Tacit-rule example awaiting approval from its policy owner. Fictional example: A 1200-unit urgent replacement exceeds P1’s 1000-unit limit. The requester’s approveException=true field does not confer Finance authority; route it for Finance review."
     },
     {
       "roles": ["ba", "designer"],
       "title": "Translate rules into interactions",
       "question": "Which clarification question distinguishes the rule branches without asking for unnecessary data?",
-      "artifact": "Rule-to-interaction mapping with example customer wording."
+      "artifact": "Rule-to-interaction mapping with example customer wording. Fictional example: Ask “Is this request for a room booking or building access?” Room booking routes to the coordinator; a locked entrance routes to Facilities."
     },
     {
       "roles": ["ba", "engineer"],
       "title": "Define the contract precisely",
       "question": "Which rule distinction would disappear if absent, empty and unknown values shared one representation?",
-      "artifact": "Field contract with explicit missing-value semantics."
+      "artifact": "Field contract with explicit missing-value semantics. Fictional example: productId absent means ask for the model; productId=\"\" means invalid supplied input; productId=\"HH2\" selects Home Hub v2."
     },
     {
       "roles": ["ba", "junior"],
       "title": "Trace a rule through an example",
       "question": "Can the junior engineer follow this example from source clause to expected output without inventing a condition?",
-      "artifact": "Annotated source-to-test walkthrough for one rule."
+      "artifact": "Annotated source-to-test walkthrough for one rule. Fictional example: Purchase rule P1 routes amount >1000 to Finance. Input 1200 from a team lead produces route=Finance and exceptionApproved=false; no purchase is submitted."
     },
     {
       "roles": ["ba", "qa"],
       "title": "Challenge rule boundaries",
       "question": "Which neighboring input should produce a different result under this decision table?",
-      "artifact": "Boundary-case table with independently stated expectations."
+      "artifact": "Boundary-case table with independently stated expectations. Fictional example: Under P1, a 1000-unit purchase stays on the ordinary path; 1001 routes to Finance. A requester-supplied exception flag cannot bypass either check."
     },
     {
       "roles": ["ba", "devops"],
       "title": "Preserve policy by environment",
       "question": "Which policy settings must be promoted together to keep the released rule consistent?",
-      "artifact": "Rule configuration manifest with environment-specific values."
+      "artifact": "Rule configuration manifest with environment-specific values. Fictional example: Promote rules r2 with prompt p3; staging’s test-only source whitelist must not enter production."
     },
     {
       "roles": ["ba", "sre"],
       "title": "Make policy failures observable",
       "question": "Which result code would let operations distinguish missing evidence from a source conflict?",
-      "artifact": "Rule outcome taxonomy linked to operational signals."
+      "artifact": "Rule outcome taxonomy linked to operational signals. Fictional example: Result no_evidence means no relevant passage; source_conflict means two applicable approved revisions disagree."
     },
     {
       "roles": ["ba", "finance"],
       "title": "Specify chargeable outcomes",
       "question": "Which contractual definition changes whether a completed response counts as a successful service outcome?",
-      "artifact": "Commercial-rule mapping with a cost denominator definition."
+      "artifact": "Commercial-rule mapping with a cost denominator definition. Fictional example: A reply counts only after the correct procedure is completed without correction in the declared window; drafts do not enter the success denominator."
     },
     {
       "roles": ["domain", "designer"],
       "title": "Make exceptions understandable",
       "question": "How should the assistant explain a safety escalation without implying that it has diagnosed the product?",
-      "artifact": "Domain-reviewed exception message and next action."
+      "artifact": "Domain-reviewed exception message and next action. Fictional example: “I cannot give reset instructions for this report. Contact the product safety team.” makes no diagnosis and names the next action."
     },
     {
       "roles": ["domain", "engineer"],
       "title": "Resolve source precedence",
       "question": "Which source wins when an approved manual and an applicable superseding bulletin disagree?",
-      "artifact": "Precedence contract with conflict and supersession examples."
+      "artifact": "Precedence contract with conflict and supersession examples. Fictional example: Bulletin B7 explicitly supersedes manual M2 section 4: cite B7; if neither document supersedes the other, return source_conflict."
     },
     {
       "roles": ["domain", "junior"],
       "title": "Teach the misleading case",
       "question": "Which plausible answer should the junior engineer deliberately make a test reject?",
-      "artifact": "Expert-reviewed counterexample for a first regression test."
+      "artifact": "Expert-reviewed counterexample for a first regression test. Fictional example: A fluent 5-second answer for HH2 must fail because approved HH2-r3 says 10 seconds."
     },
     {
       "roles": ["domain", "qa"],
       "title": "Calibrate human judgments",
       "question": "Which disputed answer should reviewers examine to agree what adequate support means?",
-      "artifact": "Adjudicated rubric example with the original disagreement retained."
+      "artifact": "Adjudicated rubric example with the original disagreement retained. Fictional example: Reviewer A accepts a citation to section 4; reviewer B rejects the 5-second claim. Reading HH2-r3 resolves it as unsupported."
     },
     {
       "roles": ["domain", "devops"],
       "title": "Keep sources current",
       "question": "What event tells the deployment process that a product document must replace or revoke an indexed revision?",
-      "artifact": "Document publication and revocation handoff."
+      "artifact": "Document publication and revocation handoff. Fictional example: Revocation event HH2-r2 removes its chunks and invalidates answer caches keyed to HH2-r2."
     },
     {
       "roles": ["domain", "sre"],
       "title": "Recognize harmful drift",
       "question": "Which new product behavior would make yesterday's acceptable answers unsafe today?",
-      "artifact": "Domain drift trigger with an operational escalation owner."
+      "artifact": "Domain drift trigger with an operational escalation owner. Fictional example: New bulletin B7 withdraws the old reset sequence; stop old procedural answers until retrieval confirms the approved revision."
     },
     {
       "roles": ["domain", "finance"],
       "title": "Price the exception workload",
       "question": "Which complex cases require specialist time that an average handling-cost estimate would hide?",
-      "artifact": "Exception categories with measured or unknown review effort."
+      "artifact": "Exception categories with measured or unknown review effort. Fictional example: Illustrative ordinary review costs EUR 1; an exception takes EUR 8 specialist effort. Keep these categories separate in the pilot cost model."
     },
     {
       "roles": ["designer", "engineer"],
       "title": "Keep approval attached to the action",
       "question": "How will the interface and API prevent an edited draft from reusing an earlier approval?",
-      "artifact": "Approval-state contract with revision-binding examples."
+      "artifact": "Approval-state contract with revision-binding examples. Fictional example: Customer approves draft r3 for item HH2 at address A; changing to address B creates r4 and requires new approval."
     },
     {
       "roles": ["designer", "junior"],
       "title": "Implement accessible recovery",
       "question": "How can a keyboard user correct the selected product and return to the same task?",
-      "artifact": "Accessible recovery scenario with a focused implementation task."
+      "artifact": "Accessible recovery scenario with a focused implementation task. Fictional example: After keyboard selection changes HH1 to HH2, return focus to the question and retain “How do I reset it?”."
     },
     {
       "roles": ["designer", "qa"],
       "title": "Test comprehension after failure",
       "question": "Can a user tell whether an interrupted action changed external state?",
-      "artifact": "Usability test for draft, submitted and partially completed outcomes."
+      "artifact": "Usability test for draft, submitted and partially completed outcomes. Fictional example: If order O-17 exists but acknowledgement was lost, show “Checking order O-17” rather than inviting a second order."
     },
     {
       "roles": ["designer", "devops"],
       "title": "Design the deployment interruption",
       "question": "What should customers see while an incompatible release or maintenance step prevents service?",
-      "artifact": "Maintenance and degraded-service interaction contract."
+      "artifact": "Maintenance and degraded-service interaction contract. Fictional example: During incompatible maintenance, show “Requests are paused; contact support”; preserve the draft locally."
     },
     {
       "roles": ["designer", "sre"],
       "title": "Show useful progress",
       "question": "Which progress state can the interface truthfully display while a request waits for human review?",
-      "artifact": "User-visible state map linked to measured queue events."
+      "artifact": "User-visible state map linked to measured queue events. Fictional example: Only show “Awaiting specialist review” after queue acknowledgement Q-17; an unsubmitted draft is “Not sent”."
     },
     {
       "roles": ["designer", "finance"],
       "title": "Account for user effort",
       "question": "Which cheaper technical option creates extra customer steps or support rework?",
-      "artifact": "Cost comparison that includes interaction effort and recovery work."
+      "artifact": "Cost comparison that includes interaction effort and recovery work. Fictional example: Illustrative form A costs 20 units less to host but sends 100 extra address corrections to staff at 1 unit each. Its complete cost is 80 units higher."
     },
     {
       "roles": ["engineer", "junior"],
       "title": "Review a small change together",
       "question": "Which boundary test demonstrates that the junior engineer's change implements the intended rule?",
-      "artifact": "Reviewable change with a failing-first test and explanation."
+      "artifact": "Reviewable change with a failing-first test and explanation. Fictional example: For purchase P1, test amount=1001 and requesterRole=team-lead: route=Finance, exceptionApproved=false and submittedPurchases=0."
     },
     {
       "roles": ["engineer", "qa"],
       "title": "Make the verifier independent",
       "question": "Which expected result comes from the rule rather than copying the implementation logic?",
-      "artifact": "Independent contract oracle with a controlled failing case."
+      "artifact": "Independent contract oracle with a controlled failing case. Fictional example: Expected reset duration comes from HH2-r3 (10 seconds), not from the function’s returned value."
     },
     {
       "roles": ["engineer", "devops"],
       "title": "Reproduce the released system",
       "question": "Which artifact and configuration versions must travel together for a compatible deployment?",
-      "artifact": "Build-to-release manifest with a restore procedure."
+      "artifact": "Build-to-release manifest with a restore procedure. Fictional example: Restore app r6, prompt p2, corpus c3 and rules r1 together; repeat the tenant-access check."
     },
     {
       "roles": ["engineer", "sre"],
       "title": "Handle uncertain side effects",
       "question": "How will the service recover when a tool changes state but its response is lost?",
-      "artifact": "Idempotency and partial-failure state machine with trace identifiers."
+      "artifact": "Idempotency and partial-failure state machine with trace identifiers. Fictional example: Request K-17 created O-17 before timeout; retry K-17 returns O-17 and order count remains one."
     },
     {
       "roles": ["engineer", "finance"],
       "title": "Compare complete architectures",
       "question": "Which measured workload would justify a larger model or separate service?",
-      "artifact": "Architecture cost comparison with quality and capacity constraints."
+      "artifact": "Architecture cost comparison with quality and capacity constraints. Fictional example: Illustrative candidate saves 2 quality failures per 100 cases but doubles cost; retain the smaller model unless the agreed error-cost criterion justifies expansion."
     },
     {
       "roles": ["junior", "qa"],
       "title": "Prove the test detects the defect",
       "question": "What small controlled defect should make this check fail for the expected reason?",
-      "artifact": "Mutation demonstration with the failure output preserved."
+      "artifact": "Mutation demonstration with the failure output preserved. Fictional example: Temporarily remove P1’s amount check. A 1200-unit team-lead request now submits a purchase; the expected no-submission assertion must fail."
     },
     {
       "roles": ["junior", "devops"],
       "title": "Run the example in a clean environment",
       "question": "Which setup assumption prevents another contributor from reproducing the junior engineer's result?",
-      "artifact": "Reproducible setup instructions with configuration names and no credentials."
+      "artifact": "Reproducible setup instructions with configuration names and no credentials. Fictional example: Use the documented corpus fixture c4 with mock model calls; a developer’s unstated local index cannot be required."
     },
     {
       "roles": ["junior", "sre"],
       "title": "Read a trace without guessing",
       "question": "Which trace field identifies where this request first departed from the expected outcome?",
-      "artifact": "Annotated synthetic incident trace with an escalation question."
+      "artifact": "Annotated synthetic incident trace with an escalation question. Fictional example: Trace request R17: product=Business, retrievedSource=HH2-r3. Escalate the first incorrect retrieval scope, before answer generation."
     },
     {
       "roles": ["junior", "finance"],
       "title": "Measure the cost of one path",
       "question": "Which repeated call or retry in this task changes the cost per successful outcome?",
-      "artifact": "Worked request-cost example with units and unknown inputs."
+      "artifact": "Worked request-cost example with units and unknown inputs. Fictional example: Illustrative 3 calls at EUR 0.01 each cost EUR 0.03 per request; 2 successful requests out of 3 give EUR 0.09/2 = EUR 0.045 per success."
     },
     {
       "roles": ["qa", "devops"],
       "title": "Keep release evidence attached",
       "question": "How will the release process reject a candidate whose required test evidence belongs to an older artifact?",
-      "artifact": "Artifact-bound quality gate with a stale-evidence test."
+      "artifact": "Artifact-bound quality gate with a stale-evidence test. Fictional example: Results for app r6 cannot satisfy app r7’s release gate; require an evidence record whose artifact digest matches r7."
     },
     {
       "roles": ["qa", "sre"],
       "title": "Turn incidents into regression evidence",
       "question": "Which production failure becomes a regression case without being mislabeled as untouched evaluation data?",
-      "artifact": "Incident-to-regression record with a separate holdout plan."
+      "artifact": "Incident-to-regression record with a separate holdout plan. Fictional example: Incident I17 becomes regression R17; it does not enter untouched H01–H10 after the team has inspected it."
     },
     {
       "roles": ["qa", "finance"],
       "title": "Interpret an apparent quality saving",
       "question": "Does the cheaper design still meet the agreed task threshold once uncertainty and difficult cases are included?",
-      "artifact": "Paired quality-and-cost comparison with slice results."
+      "artifact": "Paired quality-and-cost comparison with slice results. Fictional example: Cheaper B passes 88/100 vs A 90/100; inspect paired failures and uncertainty before declaring the cost saving acceptable."
     },
     {
       "roles": ["devops", "sre"],
       "title": "Rehearse rollback together",
       "question": "Can the operator restore a compatible release without losing required state or access restrictions?",
-      "artifact": "Rollback rehearsal record with restoration checks and ownership."
+      "artifact": "Rollback rehearsal record with restoration checks and ownership. Fictional example: Restore r6/c3, deny tenant A access to B-17, and confirm existing order O-17 remains queryable."
     },
     {
       "roles": ["devops", "finance"],
       "title": "Explain infrastructure commitments",
       "question": "Which infrastructure cost persists when request volume is lower than forecast?",
-      "artifact": "Fixed and variable infrastructure cost register."
+      "artifact": "Fixed and variable infrastructure cost register. Fictional example: An illustrative EUR 100 monthly instance fee remains payable at zero requests; per-call charges fall with volume."
     },
     {
       "roles": ["sre", "finance"],
       "title": "Fund the operating promise",
       "question": "Which service objective becomes unaffordable under the observed review, retry and incident workload?",
-      "artifact": "Service-objective cost scenario with a renegotiation decision owner."
+      "artifact": "Service-objective cost scenario with a renegotiation decision owner. Fictional example: Illustrative review load doubles from 100 to 200 cases at EUR 1 each; the service owner and finance revisit the EUR 500 cap."
     }
   ]
 }

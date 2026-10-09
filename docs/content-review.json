@@ -1,0 +1,4693 @@
+{
+  "reviewed_at": "2026-10-09T11:50:55Z",
+  "baseline": "147a75c33ad713b3b86eb746ef90b14ec21bf18d",
+  "scope": "All 116 field-guide topics and 561 planning/UI content items. Initial findings are retained; resolution refers to integrated cases or rewritten content. UI IDs include historical line positions, not current source citations.",
+  "field_guide_counts": {
+    "needs-example": 92,
+    "concrete-enough": 23,
+    "needs-rewrite": 1
+  },
+  "planning_counts": {
+    "needs-example": 140,
+    "needs-rewrite": 17,
+    "concrete-enough": 404
+  },
+  "field_guide": [
+    {
+      "id": "home",
+      "initial": "needs-example",
+      "resolution": ["core-request-boundaries"],
+      "finding": "The overview has only abstract boundaries. Walk one question, Retail Everyday fee, through authenticated request, permitted passage, cited draft and review result; identify each artifact by ID."
+    },
+    {
+      "id": "api",
+      "initial": "needs-example",
+      "resolution": ["core-request-boundaries"],
+      "finding": "Show one POST body, authenticated identity, HTTP status and response body; contrast a 200 unresolved result with transport failure and denied scope."
+    },
+    {
+      "id": "api-contract",
+      "initial": "needs-example",
+      "resolution": [
+        "explicit-request-outcomes",
+        "scope-before-retrieval",
+        "business-rule-exception"
+      ],
+      "finding": "Provide exact valid, missing-product and denied request/response payloads. Existing advice names outcomes without showing the schema or values that distinguish them."
+    },
+    {
+      "id": "gateway-routing",
+      "initial": "needs-example",
+      "resolution": ["core-gateway-budget"],
+      "finding": "Show a fictional route table with model revision, allowed region, remaining token budget and fallback outcome. Include a fallback rejected for disallowed region rather than silently selected."
+    },
+    {
+      "id": "p-chunking",
+      "initial": "needs-example",
+      "resolution": ["keep-rule-and-exception-together"],
+      "finding": "Existing shed example does not contain the rule text or actual boundary. Show a short source with a numeric height limit and protected-area exception, bad split, repaired chunks and resulting answer."
+    },
+    {
+      "id": "p-embedding",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "The live cosine calculator supplies vectors (1,2,0) and (2,3,1), a computed score and invalid-vector handling. Keep the text's paraphrase-versus-ward failure; mark vectors as toy values rather than outputs of a named model."
+    },
+    {
+      "id": "p-vector-index",
+      "initial": "needs-example",
+      "resolution": ["core-vector-neighbours"],
+      "finding": "Show a query vector, three passage vectors, exact neighbour IDs and one approximate omission. Compute recall against the exact list under an explicit access filter; current example merely says compare."
+    },
+    {
+      "id": "p-keyword-search",
+      "initial": "needs-example",
+      "resolution": ["core-lexical-rerank"],
+      "finding": "PL-104 is a concrete query but there is no corpus or returned result. Supply PL-104 and PL-140 passage text and the expected exact-code match, plus a paraphrase lexical search misses."
+    },
+    {
+      "id": "p-hybrid-search",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Runtime-tested fusion code supplies two explicit rankings, reciprocal-rank arithmetic and a deterministic tie assertion. Preserve this worked example; optionally add a unequal-ranking case to make the ranking change visible."
+    },
+    {
+      "id": "p-reranker",
+      "initial": "needs-example",
+      "resolution": ["retrieval-before-generation", "core-lexical-rerank"],
+      "finding": "The fifty-to-five funnel is a workload count, not a worked rerank. Show a three-document shortlist, initial order, reranker order and relevant ID; contrast with that ID missing from all candidates."
+    },
+    {
+      "id": "p-llm",
+      "initial": "needs-example",
+      "resolution": ["core-generation-judge"],
+      "finding": "Monday source versus Friday output is a concrete failure only. Show the exact question, supplied sentence, correct cited output and incorrect output so readers can apply the support check."
+    },
+    {
+      "id": "p-llm-judge",
+      "initial": "needs-example",
+      "resolution": ["core-generation-judge"],
+      "finding": "Give one source, two candidate answers and a fact-level rubric. Show human and judge labels with reasons, including the verbose unsupported answer incorrectly preferred by the judge."
+    },
+    {
+      "id": "p-classifier",
+      "initial": "needs-example",
+      "resolution": ["referral-classifier-counts"],
+      "finding": "The all-positive failure is understandable but lacks labelled cases. Supply a small answerable/unanswerable table, predicted routes and confusion counts; include a missing-policy question that must refer."
+    },
+    {
+      "id": "p-support-checker",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "The student-fee source and universal-waiver claim are specific inputs with the required distinction stated. Preserve this counterexample; a three-label table would deepen it but is not needed to make this existing example concrete."
+    },
+    {
+      "id": "p-moderation-pii",
+      "initial": "needs-example",
+      "resolution": ["identifiers-at-every-boundary"],
+      "finding": "Use an invented identifier in the exact input and show the blocked outbound request plus sanitized trace. Current phone-number narrative does not show transformed values or the detector miss case."
+    },
+    {
+      "id": "p-agentic-rag",
+      "initial": "needs-example",
+      "resolution": ["core-agentic-search"],
+      "finding": "Show the original holiday collection question, first query/result, targeted second query/result and final supported answer. Add the precise stop outcome after repeated empty results."
+    },
+    {
+      "id": "p-corrective-rag",
+      "initial": "needs-example",
+      "resolution": ["core-corrective-search"],
+      "finding": "Show initial irrelevant passage, quality verdict, rewritten query and replacement evidence; include a useful passage incorrectly rejected. Current example only names the procedure."
+    },
+    {
+      "id": "p-self-rag",
+      "initial": "needs-example",
+      "resolution": ["core-generation-judge"],
+      "finding": "Use an explicit source date, generated different date and self-check verdict versus reviewed verdict. If showing trained Self-RAG tokens, verify that method; otherwise label the example a generic self-check, as current text correctly distinguishes."
+    },
+    {
+      "id": "p-adaptive-rag",
+      "initial": "needs-example",
+      "resolution": ["core-adaptive-routes"],
+      "finding": "Show two exact questions, selected routes, required evidence IDs and outcomes. Include a holiday question misrouted to one-source lookup and a fixed-long-path comparison on the same cases."
+    },
+    {
+      "id": "p-graphrag",
+      "initial": "needs-example",
+      "resolution": ["core-graph-join"],
+      "finding": "Show two short source sentences, extracted entity-relation triples and a question that joins them. Trace the answer to both sources; delete one relation and show stale-summary failure."
+    },
+    {
+      "id": "p-late-chunking",
+      "initial": "needs-example",
+      "resolution": ["core-late-pooling"],
+      "finding": "Provide the complete heading and pronoun-dependent passage, then identify token spans pooled after contextual encoding. Show how this differs from independently embedding a chunk; do not invent measured model vectors."
+    },
+    {
+      "id": "p-contextual-retrieval",
+      "initial": "needs-example",
+      "resolution": ["core-context-prefix"],
+      "finding": "Show original passage and exact added context sentence as separate fields. Contrast a correct North ward prefix with an invented South ward prefix and the resulting wrong-scope retrieval."
+    },
+    {
+      "id": "p-multi-vector",
+      "initial": "needs-example",
+      "resolution": ["core-late-interaction"],
+      "finding": "Show a small query-token/document-token similarity matrix and max-per-query-token aggregation, with actual score arithmetic. An exact form-code story alone does not demonstrate late interaction."
+    },
+    {
+      "id": "p-hyde",
+      "initial": "needs-example",
+      "resolution": ["core-hypothetical-query"],
+      "finding": "Show original query, hypothetical answer, retrieved real passage and final source-backed answer. Give conflicting fictional and real dates to demonstrate why the hypothetical answer is not evidence."
+    },
+    {
+      "id": "p-query-rewriting",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "The actual compound collection/missed-collection question is decomposed into two distinct searches, with a concrete missing-half failure. Preserve this; explicitly writing both rewritten strings would improve presentation."
+    },
+    {
+      "id": "p-parent-document",
+      "initial": "needs-example",
+      "resolution": ["core-parent-expansion"],
+      "finding": "Show child and parent IDs with exact rule and exception text. Trace child match to parent expansion and final qualified answer; include the context-budget consequence with explicit counts."
+    },
+    {
+      "id": "p-semantic-cache",
+      "initial": "needs-example",
+      "resolution": ["core-cache-keys"],
+      "finding": "Give the North and South questions, distinct actual days, cached scope/revision and hit-or-miss decisions. Existing strings expose a risk but do not show valid and invalid reuse outcomes."
+    },
+    {
+      "id": "p-model-size",
+      "initial": "needs-example",
+      "resolution": ["core-model-tradeoffs"],
+      "finding": "Provide an explicitly illustrative comparison table on identical routine/exception cases with quality, latency and cost. Show a route that saves cost but fails an exception; avoid inferring price from parameter count."
+    },
+    {
+      "id": "p-caching",
+      "initial": "needs-example",
+      "resolution": ["core-cache-keys"],
+      "finding": "Show exact cache key fields, source-v1 Monday result, source-v2 Tuesday result and expected miss after revision. Current narrative does not expose the key or state transition."
+    },
+    {
+      "id": "p-batching",
+      "initial": "needs-example",
+      "resolution": ["core-complete-run"],
+      "finding": "Replace only-count illustration with input IDs [A,B,C] and returned IDs [A,A,C]; show duplicate A, missing B and unresolved run. Keep the larger-count warning as context."
+    },
+    {
+      "id": "p-local-models",
+      "initial": "needs-example",
+      "resolution": ["core-local-boundaries"],
+      "finding": "Show a concrete request destination and surrounding exporter destination, identifying which payload leaves the host. Add an all-local alternative and an observable verification artifact without claiming a real deployment."
+    },
+    {
+      "id": "p-orchestration",
+      "initial": "needs-example",
+      "resolution": ["core-workflow-resume"],
+      "finding": "Show three named stages and typed outputs, then an automatic retry after an already-completed referral. Show the stored operation ID that prevents a second effect."
+    },
+    {
+      "id": "p-structured-output",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "The supplied Python schema and actual Friday/north answer demonstrate shape and citation-ID checks passing while factual support may fail. Preserve this concrete code; its syntax-checked status is accurately limited."
+    },
+    {
+      "id": "p-doc-parsing",
+      "initial": "needs-example",
+      "resolution": ["core-parse-table"],
+      "finding": "Supply a two-row/two-column source table and the erroneous flattened extraction, then correct records with page references. The current wrong-ward narrative omits the values needed to see the layout error."
+    },
+    {
+      "id": "p-eval-framework",
+      "initial": "needs-example",
+      "resolution": ["core-complete-run"],
+      "finding": "Show input case IDs and runner output with one missing/error row, then gate failure after an injected wrong result. Generic instructions to verify completeness do not demonstrate that check."
+    },
+    {
+      "id": "p-tracing",
+      "initial": "needs-example",
+      "resolution": ["core-safe-trace"],
+      "finding": "Give a small request/span table with parent IDs, source IDs and status. Show the missing retrieval span and corrected safe trace; raw passage capture should not be treated as required."
+    },
+    {
+      "id": "x-wilson",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "16/20 maps to approximately 0.584-0.919 in prose, executable code and interactive calculator. Inputs, output, arithmetic and sampling limits are concrete."
+    },
+    {
+      "id": "x-rule-of-three",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Zero failures in 60 maps to approximate 5% and exact 4.87% upper bounds, with independence and common-probability assumptions. Preserve the numerical example."
+    },
+    {
+      "id": "x-precision-recall",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "8 TP,4 FP,2 FN,6 TN yield 67% precision,80% recall,40% FPR, with formulas and interactive calculator. Concrete denominators and zero-denominator handling already exist."
+    },
+    {
+      "id": "x-retrieval-recall",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Executable case expects rule and exception but returns rule, producing hit rate 1 and recall 0.5. This directly demonstrates the distinction; retain it."
+    },
+    {
+      "id": "x-compounding",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Five independent 0.95 stages produce 0.95^5 approximately 77.4%, alongside correct conditional-probability qualification. Concrete arithmetic is already present."
+    },
+    {
+      "id": "x-noise-band",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Five actual scores 81,84,80,83,82 produce mean 82 and range 80-84. The explicit warning that range is not a significance test supplies the interpretation boundary."
+    },
+    {
+      "id": "x-agreement",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Observed 0.85 and expected 0.65 agreement produce kappa 0.571 with shown substitution. A reviewer contingency table could explain expected agreement further, but this is already concrete arithmetic."
+    },
+    {
+      "id": "x-held-out",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "96/100 development versus 82/100 untouched evaluation provides actual labelled denominators and separate outcomes. Preserve it; a case-lineage example would address split mechanics rather than replace this example."
+    },
+    {
+      "id": "x-pinning",
+      "initial": "needs-example",
+      "resolution": [
+        "policy-source-revision",
+        "withdraw-a-policy-release",
+        "core-cache-keys"
+      ],
+      "finding": "Show a small run manifest with actual fictional dataset, model, prompt and rubric revisions. Compare two runs and identify the one changed field; distinguish recorded settings from determinism."
+    },
+    {
+      "id": "x-digest",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Runtime-tested bytes North ward Monday versus Friday produce different SHA-256 digests. The exact input bytes, check and output exist, with the correct limit that hashes do not establish truth."
+    },
+    {
+      "id": "x-mutation",
+      "initial": "needs-example",
+      "resolution": ["make-the-guard-test-fail"],
+      "finding": "Name a fixture value, expected gate result, deliberate changed value and exact failed assertion. Current alter-a-known-result wording gives no reproducible mutation or output."
+    },
+    {
+      "id": "x-bootstrap",
+      "initial": "needs-example",
+      "resolution": ["core-paired-bootstrap"],
+      "finding": "Supply paired A/B scores for several question IDs, one resampled ID sequence, corresponding mean difference and a seeded resampling interval. Keep pairs together and state interval method; no observations or interval are currently shown."
+    },
+    {
+      "id": "x-power-analysis",
+      "initial": "needs-example",
+      "resolution": ["core-power-design"],
+      "finding": "Work one prespecified design with actual baseline/variance, meaningful effect, alpha, power and computed sample requirement. Distinguish paired and independent designs; do not add a universal five-point sample count."
+    },
+    {
+      "id": "x-krippendorff",
+      "initial": "needs-example",
+      "resolution": ["core-nominal-alpha"],
+      "finding": "Show an item-by-reviewer rating table with a missing rating, declared nominal or ordinal distance and computed observed/expected disagreement. Verify the alpha result independently; formula alone does not teach its inputs."
+    },
+    {
+      "id": "x-calibration",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "100 predictions at 90% with 70 correct explicitly yields 70% observed frequency. The event, denominator, output and uncertainty caveat are concrete."
+    },
+    {
+      "id": "x-drift",
+      "initial": "needs-example",
+      "resolution": ["core-traffic-drift"],
+      "finding": "Give two traffic windows with task counts and per-task error counts. Show changed traffic without changed within-task performance, then a true within-task degradation, so readers can distinguish them."
+    },
+    {
+      "id": "x-bandits",
+      "initial": "needs-example",
+      "resolution": ["core-bandit-log"],
+      "finding": "Show a short allocation log with arm, selection probability and reward at each step, plus the policy update. Contrast adaptive rewards with a naive fixed-arm mean; current text supplies no actual allocation."
+    },
+    {
+      "id": "x-sequential-testing",
+      "initial": "needs-example",
+      "resolution": ["core-scheduled-looks"],
+      "finding": "Show a fixed-sample plan, several interim looks and the invalid early stop. Contrast a prespecified permitted look rule or valid sequential output; do not imply ordinary 95% intervals permit unlimited looks."
+    },
+    {
+      "id": "x-causal",
+      "initial": "needs-example",
+      "resolution": ["core-matched-comparison"],
+      "finding": "Give matched question IDs and A/B results, then a confounded comparison using different easy/hard task mixes. Demonstrate why the aggregate improvement does not identify a component effect."
+    },
+    {
+      "id": "x-self-consistency",
+      "initial": "needs-example",
+      "resolution": ["core-generation-judge"],
+      "finding": "Show three actual answers that disagree on day, and three identically wrong answers. Distinguish wording changes from fact changes and compare against a stated source sentence."
+    },
+    {
+      "id": "x-support-checking",
+      "initial": "needs-example",
+      "resolution": ["claims-follow-evidence"],
+      "finding": "Six-of-eight counts are concrete but do not show the claims being classified. Supply a source sentence and supported/contradicted/unresolved claim table with reasons so readers can perform the check."
+    },
+    {
+      "id": "x-semantic-similarity",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Live calculator has explicit vectors, cosine output and invalid-input handling. Preserve it and the negation/number limitation; the toy vectors are not a factual-equivalence measure."
+    },
+    {
+      "id": "x-bias-benchmark",
+      "initial": "needs-example",
+      "resolution": ["core-controlled-bias-pair"],
+      "finding": "Define one concrete harmful outcome and a controlled pair of otherwise equivalent cases. Show subgroup denominators and results; distinguish an illustrative scoped disparity from a universal fairness conclusion."
+    },
+    {
+      "id": "x-cost-quality",
+      "initial": "needs-example",
+      "resolution": ["core-model-tradeoffs"],
+      "finding": "Give three fictional configurations with comparable cost, quality and latency values. Identify the dominated option and non-dominated alternatives, with a safety constraint that excludes an otherwise cheap option."
+    },
+    {
+      "id": "x-red-teaming",
+      "initial": "needs-example",
+      "resolution": ["core-malicious-source"],
+      "finding": "Provide a synthetic malicious document instruction, permitted task, attempted forbidden tool call and observed denial/no-effect result. Record one regression case without calling attack-set success a population rate."
+    },
+    {
+      "id": "data",
+      "initial": "needs-example",
+      "resolution": [
+        "policy-source-revision",
+        "identifiers-at-every-boundary",
+        "core-parse-table"
+      ],
+      "finding": "Show an actual short calendar record with source ID/revision, derived question and reviewed expected answer. Label source data and evaluation case separately; existing description only names the distinction."
+    },
+    {
+      "id": "search",
+      "initial": "needs-example",
+      "resolution": ["retrieval-before-generation", "core-lexical-rerank"],
+      "finding": "Give one question, relevant source ID, actual ranked result IDs and the wrong-ward result to reject. The top-level topic currently offers only a relevant-topic caution."
+    },
+    {
+      "id": "generation",
+      "initial": "needs-example",
+      "resolution": ["claims-follow-evidence"],
+      "finding": "Show exact source, prompt input and a good versus fabricated JSON answer, including unresolved output when evidence is absent. Current valid-JSON warning has no actual payload."
+    },
+    {
+      "id": "evaluation",
+      "initial": "needs-example",
+      "resolution": ["core-complete-run"],
+      "finding": "Show a compact evaluation report with named cases, outcomes, one error, one missing output and the resulting release decision. Explain why the same mean score can conceal a blocked critical case."
+    },
+    {
+      "id": "math",
+      "initial": "needs-example",
+      "resolution": ["core-paired-bootstrap"],
+      "finding": "Use one small observation table to choose a proportion interval versus a paired comparison. Show the question, denominator and relevant calculation; a navigation list of methods is insufficient."
+    },
+    {
+      "id": "golden-dataset",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Actual North ward/green-bin/Monday case dictionary provides ID, question, required facts, source ID, answerability and split. Concrete absent-holiday failure complements it."
+    },
+    {
+      "id": "annotation-rubric",
+      "initial": "needs-example",
+      "resolution": [
+        "reviewed-acceptance-cases",
+        "advice-with-explicit-limits"
+      ],
+      "finding": "Give two actual candidate answers and a row-by-row rubric for ward, colour, day and invented exception. Record reviewer labels and one resolved disagreement, not only instructions to calibrate."
+    },
+    {
+      "id": "data-splits",
+      "initial": "needs-example",
+      "resolution": ["advisory-held-out-set"],
+      "finding": "Show case IDs grouped by originating document/conversation, proposed leaky split and corrected grouped split. Name which examples can guide prompts and which remain untouched."
+    },
+    {
+      "id": "synthetic-eval-risks",
+      "initial": "needs-example",
+      "resolution": ["reviewed-acceptance-cases", "core-synthetic-lineage"],
+      "finding": "Show an original question, two generated paraphrases and their shared source lineage. Mark the duplicate or leakage rejection and one independently reviewed accepted case."
+    },
+    {
+      "id": "evaluation-baseline",
+      "initial": "needs-example",
+      "resolution": [
+        "outcome-over-answer-count",
+        "advisory-held-out-set",
+        "core-complete-run"
+      ],
+      "finding": "Supply two small run manifests and matched per-case outputs including a failure and missing response. Compute a comparison while preserving every input ID; current text only describes the workflow."
+    },
+    {
+      "id": "confidence",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Wilson calculator supplies 16/20 and actual interval output, alongside the prediction-probability versus sample-uncertainty distinction. The topic is not wholly abstract; preserve the existing interactive evidence."
+    },
+    {
+      "id": "agents",
+      "initial": "needs-example",
+      "resolution": ["advanced-bounded-tool-loop"],
+      "finding": "Walk an actual user task through proposed tool arguments, application authorization, execution result and final answer. Show a tool failure that must remain failure despite a fluent final message."
+    },
+    {
+      "id": "operations",
+      "initial": "needs-example",
+      "resolution": ["advanced-safe-linked-spans"],
+      "finding": "Show one request with healthy HTTP delivery but wrong-source answer, its trace/source revision and resulting incident action. This should visibly distinguish service health from answer quality."
+    },
+    {
+      "id": "hosting",
+      "initial": "needs-example",
+      "resolution": ["advanced-capacity-budget"],
+      "finding": "Provide a fictional workload table with context/output lengths, concurrency, measured memory and latency. Show a configuration that loads but fails the stated request budget under load."
+    },
+    {
+      "id": "adaptation",
+      "initial": "needs-example",
+      "resolution": ["advanced-prompt-program-comparison"],
+      "finding": "Use one input/desired output to contrast changing prompt text and changing trainable weights, with a common held-out comparison. Current distinction is accurate but has no visible transformation."
+    },
+    {
+      "id": "a-tool-loop",
+      "initial": "needs-example",
+      "resolution": ["cancel-stale-draft", "advanced-bounded-tool-loop"],
+      "finding": "Show an exact proposed call, validated tool result and next model turn, plus a bounded stop after a failed call. Include application authority separate from the model proposal."
+    },
+    {
+      "id": "a-tool-contract",
+      "initial": "needs-example",
+      "resolution": [
+        "explicit-request-outcomes",
+        "retry-without-duplicate-referral"
+      ],
+      "finding": "Give literal argument/result/error payloads with caller/resource IDs and stated side effect. Show schema-valid arguments denied because resource ownership differs."
+    },
+    {
+      "id": "a-acp",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "An actual JSON-RPC session/cancel notification with a session ID is already shown. Preserve this concrete wire example; a negotiated session sequence would deepen capability/resume teaching without claiming this snippet has no input."
+    },
+    {
+      "id": "a-mcp",
+      "initial": "needs-example",
+      "resolution": ["advanced-discovery-is-not-authority"],
+      "finding": "Show capability discovery, a concrete tools/call request and typed result, then the host authorization decision. Distinguish an advertised tool from permission to execute it."
+    },
+    {
+      "id": "a-chap",
+      "initial": "needs-example",
+      "resolution": ["advanced-review-the-submitted-artifact"],
+      "finding": "Show a fictional task, artifact revision and reviewer decision with a stale-revision rejection. Use verified current protocol schema if showing wire fields; do not invent CHAP field names."
+    },
+    {
+      "id": "a-authorization",
+      "initial": "needs-example",
+      "resolution": [
+        "scope-before-retrieval",
+        "cancel-stale-draft",
+        "business-rule-exception"
+      ],
+      "finding": "Supply a caller with Retail scope, Business resource ID, concrete allow/deny decision and proof no retrieval/effect occurred. A UI confirmation should not change that outcome."
+    },
+    {
+      "id": "a-retry",
+      "initial": "needs-example",
+      "resolution": [
+        "retry-without-duplicate-referral",
+        "advanced-bounded-retry-decisions"
+      ],
+      "finding": "Show attempt numbers and fixed example delay/deadline, acknowledgement loss after a stored referral, then a retry returning the same ID. Contrast non-retryable denial."
+    },
+    {
+      "id": "a-idempotency",
+      "initial": "needs-example",
+      "resolution": ["retry-without-duplicate-referral"],
+      "finding": "Show exact operation key, referral body, stored result ID, replay response and conflict for changed body. The mechanism is currently described without the state/values a reader could test."
+    },
+    {
+      "id": "a-cancel",
+      "initial": "needs-example",
+      "resolution": ["cancel-stale-draft"],
+      "finding": "Show request r1 cancelled, r2 created, then r1 result/approval arriving and being rejected. Include a completed external effect reported as completed rather than undone."
+    },
+    {
+      "id": "a-prompt-injection",
+      "initial": "needs-example",
+      "resolution": ["scope-before-retrieval", "advanced-document-injection"],
+      "finding": "Provide the untrusted instruction text and attempted unauthorized action, then the application denial and unchanged effect count. Generic warnings do not demonstrate the trust boundary."
+    },
+    {
+      "id": "a-langgraph",
+      "initial": "needs-example",
+      "resolution": ["advanced-checkpoint-and-effect"],
+      "finding": "Show a small named-node state transition and interrupt/resume record, with an already-completed side effect on replay. Any library-specific API example needs a verified version; conceptual records must be labelled illustrative."
+    },
+    {
+      "id": "a-llamaindex",
+      "initial": "needs-example",
+      "resolution": ["advanced-source-through-query-engine"],
+      "finding": "Show a document ID, retrieved node/source relation and resulting answer citation through a small query workflow. Include a provenance-loss failure rather than linking generic retrieval advice only."
+    },
+    {
+      "id": "a-tracing",
+      "initial": "needs-example",
+      "resolution": [
+        "identifiers-at-every-boundary",
+        "advanced-safe-linked-spans"
+      ],
+      "finding": "Show literal safe span records with request/parent IDs, source revision and error category. Include the raw question omitted from trace and demonstrate locating a retrieval error."
+    },
+    {
+      "id": "a-otel",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Runtime-tested in-memory exporter code emits a retrieve span with example.result_count=2 and asserts the captured attributes. Concrete local input/output already exists; preserve it."
+    },
+    {
+      "id": "a-monitoring",
+      "initial": "needs-example",
+      "resolution": ["advanced-actionable-latency-alert"],
+      "finding": "Give an explicit latency/event sample and alert threshold, show which window triggers, and name the owner/action. Contrast a satisfactory average with a slow tail."
+    },
+    {
+      "id": "a-slo",
+      "initial": "needs-example",
+      "resolution": ["promise-for-a-useful-outcome"],
+      "finding": "Compute good/eligible rate and remaining bad-event budget from actual fictional counts, target and window. Show how excluding failed requests corrupts the denominator; the formula alone is not worked."
+    },
+    {
+      "id": "a-incidents",
+      "initial": "needs-example",
+      "resolution": ["withdraw-a-policy-release", "advanced-incident-record"],
+      "finding": "Give a synthetic alert, affected release IDs, containment action and concise incident timeline with preserved evidence IDs. Distinguish rollback action from root-cause conclusion."
+    },
+    {
+      "id": "a-rollback",
+      "initial": "needs-example",
+      "resolution": ["withdraw-a-policy-release"],
+      "finding": "Show before/after release manifests for code, prompt, model and index, then a restored lookup result. Include a stale cache or completed external write that code rollback does not undo."
+    },
+    {
+      "id": "a-langfuse",
+      "initial": "needs-example",
+      "resolution": ["advanced-trace-to-evaluation"],
+      "finding": "Show a fictional trace-to-dataset-to-evaluation record with actual IDs, reviewed label and scored result. Explain a score dispute through the visible rubric; avoid pretending a generic trace example demonstrates this tool's workflow."
+    },
+    {
+      "id": "a-mlflow",
+      "initial": "needs-example",
+      "resolution": ["advanced-comparable-experiment-runs"],
+      "finding": "Show two experiment runs with concrete parameter, dataset/artifact versions and result records. Identify an invalid comparison when the datasets differ; use verified APIs only if presenting runnable code."
+    },
+    {
+      "id": "a-eval-tools",
+      "initial": "needs-example",
+      "resolution": ["advanced-one-case-explicit-scorer"],
+      "finding": "Show one common case and explicit expected assertion, then a case-level pass/fail report. Distinguish tool responsibilities with that case instead of only listing vendor names."
+    },
+    {
+      "id": "a-vllm",
+      "initial": "needs-example",
+      "resolution": ["advanced-capacity-budget"],
+      "finding": "Show a labelled fictional serving benchmark with prompt/output sizes, concurrency and latency/throughput. Include overload or authentication boundary failure; avoid unverified flags or claimed hardware measurements."
+    },
+    {
+      "id": "a-llamacpp",
+      "initial": "needs-example",
+      "resolution": ["advanced-explicit-local-destination"],
+      "finding": "Show a compatible artifact identifier, loopback endpoint and a concrete request/response, with a network-bind failure example. Verify any command flags against the selected release."
+    },
+    {
+      "id": "a-ollama",
+      "initial": "needs-example",
+      "resolution": ["advanced-explicit-local-destination"],
+      "finding": "Show explicit local server URL, model revision/tag resolution and request/response payload. Contrast an alternate configured host to explain why installed locally does not prove execution locality."
+    },
+    {
+      "id": "a-capacity",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "Runtime-tested calculation maps 8B parameters at 4 bits to 4 GB of ideal weights only. It correctly excludes runtime memory; add workload evidence later without discarding this concrete calculation."
+    },
+    {
+      "id": "a-quantization",
+      "initial": "needs-example",
+      "resolution": ["advanced-toy-quantization"],
+      "finding": "Show a toy quantization/dequantization value or explicitly illustrative same-task before/after artifact comparison with memory and task outcomes. Precision labels alone currently have no concrete transformation."
+    },
+    {
+      "id": "a-dspy",
+      "initial": "needs-example",
+      "resolution": ["advanced-prompt-program-comparison"],
+      "finding": "Show a task signature, one training example, metric decision and candidate output before/after optimization. Ensure held-out IDs are absent from optimization; tool capability nouns are not a worked program."
+    },
+    {
+      "id": "a-prompt-optimization",
+      "initial": "needs-rewrite",
+      "resolution": ["advanced-prompt-program-comparison"],
+      "finding": "The illustrative code references undefined task_metric, program and train_cases and shows no candidate or result. Replace it or pair it with concrete definitions, before/after prompt text and untouched-case output; retain its illustrative status unless executed."
+    },
+    {
+      "id": "a-sft",
+      "initial": "needs-example",
+      "resolution": ["advanced-completion-tokens"],
+      "finding": "Show one training input/target record and which tokens contribute loss, then a held-out prompt and before/after output. Clarify synthetic examples are not measured training gains."
+    },
+    {
+      "id": "a-peft",
+      "initial": "needs-example",
+      "resolution": ["advanced-rank-one-adapter"],
+      "finding": "Give a base revision, adapter ID, trainable versus frozen parameter counts and load compatibility outcome. Show rejection for a different base; generic smaller-subset language leaves the artifact relationship invisible."
+    },
+    {
+      "id": "a-lora",
+      "initial": "needs-example",
+      "resolution": ["advanced-rank-one-adapter"],
+      "finding": "Provide small actual W,A,B matrices with rank r, multiply B by A and show W plus the update. Count trainable adapter parameters and distinguish the toy arithmetic from quality evidence."
+    },
+    {
+      "id": "a-training-data",
+      "initial": "needs-example",
+      "resolution": ["advanced-lineage-and-unknown-label"],
+      "finding": "Show a few records with source permission, labels including null/unknown and conversation-group IDs. Produce the grouped train/validation/test allocation without converting unknown to negative."
+    },
+    {
+      "id": "a-synthetic-data",
+      "initial": "needs-example",
+      "resolution": ["advanced-lineage-and-unknown-label"],
+      "finding": "Show a seed record, generated candidate, independent source check and accepted/rejected labels. Include a held-out near-duplicate rejected for contamination."
+    },
+    {
+      "id": "a-versioning",
+      "initial": "needs-example",
+      "resolution": [
+        "policy-source-revision",
+        "advanced-comparable-experiment-runs"
+      ],
+      "finding": "Provide an actual illustrative release manifest tying model/tokenizer/prompt/index/adapter/evaluator IDs together. Show a missing-index or mutable-tag change that prevents a valid comparison."
+    },
+    {
+      "id": "a-haystack",
+      "initial": "needs-example",
+      "resolution": ["advanced-pipeline-values"],
+      "finding": "Show a small pipeline with concrete document input, retriever output IDs and generator answer; then inspect a wrong-source success. Label framework APIs/version if used rather than mapping a generic retrieval paragraph."
+    },
+    {
+      "id": "x-construct-validity",
+      "initial": "needs-example",
+      "resolution": [
+        "outcome-over-answer-count",
+        "advice-with-explicit-limits"
+      ],
+      "finding": "Use an actual qualified policy sentence and two answers with equal citation success but different eligibility correctness. Show proxy score versus user-task verdict so the missing construct is visible."
+    },
+    {
+      "id": "x-goodhart",
+      "initial": "needs-example",
+      "resolution": ["outcome-over-answer-count"],
+      "finding": "Show before/after counts for answer rate and correctly resolved/referral outcomes. Demonstrate a rewarded answer-rate increase with more unsupported answers rather than only asserting the incentive."
+    },
+    {
+      "id": "x-selective-prediction",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "100 eligible,80 answered,8 wrong yields 80% coverage/10% error;60 answered,3 wrong yields60%/5% with explicit referral change. Concrete tradeoff and zero-denominator limits already exist."
+    },
+    {
+      "id": "a-user-slo",
+      "initial": "needs-example",
+      "resolution": ["promise-for-a-useful-outcome"],
+      "finding": "Write an actual fictional user journey, event definition, counted window, target and owner response. Distinguish HTTP arrival, correct answer and completed task with separate observed results."
+    },
+    {
+      "id": "x-unit-economics",
+      "initial": "concrete-enough",
+      "resolution": ["retained"],
+      "finding": "100 cost units divided by20 verified outcomes equals5, with explicit undefined zero-success case and scoped cost boundary. Preserve concrete arithmetic; a cost-item breakdown would deepen it."
+    }
+  ],
+  "planning_columns": [
+    "group",
+    "source",
+    "snapshot_id",
+    "initial",
+    "resolution"
+  ],
+  "planning": [
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "director",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "pm",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "ba",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "domain",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "designer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-profile",
+      "src/content/design-guidance.json",
+      "finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "outcome",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "needs",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "rules",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "architecture",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "evaluation",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "delivery",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "tutorial",
+      "src/content/design-guidance.json",
+      "handoff",
+      "needs-rewrite",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-mandate",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-mandate/impact",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-mandate/deliverables",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-mandate/exclusions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-mandate/sponsor",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-mandate/boundary",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-working",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-working/responsibilities",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-working/inputs",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-working/cadence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-working/escalation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-governance",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-governance/risk",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-governance/data",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-governance/authority",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-governance/response",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-roadmap",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-roadmap/phases",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-roadmap/milestone",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-roadmap/dependencies",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-roadmap/capacity",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-roadmap/sequence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-design",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-design/options",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-design/tradeoff",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-design/evidence",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-design/acceptance",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-design/review",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-change",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-change/request",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-change/impact",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-change/choice",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-change/record",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-handover",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-handover/deliverable",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-handover/evidence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-handover/decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-handover/adoption",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-handover/handover",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-operation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-operation/ownership",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-operation/signals",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-operation/response",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-operation/transition",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "engagement-benefits",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-benefits/impact",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-benefits/review",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-benefits/learning",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "engagement-benefits/closure",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "outcome-scope",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "outcome-scope/outcome",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "outcome-scope/boundary",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "outcome-scope/owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "outcome-scope/baseline",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "outcome-scope/budget",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "source-authority",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "source-authority/sources",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "source-authority/precedence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "source-authority/conflict",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "source-authority/version",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "source-authority/unknown",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "division-routing",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "division-routing/division",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "division-routing/identifier",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "division-routing/ambiguous",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "division-routing/fallback",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "division-routing/check",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "data-boundary",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "data-boundary/access",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "data-boundary/freshness",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "data-boundary/stale",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "data-boundary/removal",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "data-boundary/retention",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "rule-exceptions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "rule-exceptions/rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "rule-exceptions/tacit",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "rule-exceptions/no-answer",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "rule-exceptions/boundary-case",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "rule-exceptions/authority",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "action-approval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "action-approval/effect",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "action-approval/approval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "action-approval/binding",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "action-approval/duplicate",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "action-approval/cancel",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "component-contracts",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "component-contracts/purpose",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "component-contracts/input",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "component-contracts/output",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "component-contracts/failure",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "component-contracts/dependency",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "evaluation-design",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/case",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/slices",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/split",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/measure",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/threshold",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "evaluation-design/judge",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "cost-outcomes",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/success",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/costs",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/volume",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/calculation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/sensitivity",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "cost-outcomes/budget-owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "release-evidence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/revision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/evidence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/open",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/rollback",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "release-evidence/rollout",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "incident-response",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "incident-response/trigger",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "incident-response/lead",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "incident-response/contain",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "incident-response/record",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "incident-response/restore",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint",
+      "src/content/design-guidance.json",
+      "production-learning",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/sample",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/signal",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/change",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/dataset",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "checkpoint-question",
+      "src/content/design-guidance.json",
+      "production-learning/value",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+pm",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+ba",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+domain",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+designer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "director+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+ba",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+domain",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+designer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "pm+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+domain",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+designer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "ba+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+designer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "domain+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+engineer",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "designer+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "engineer+junior",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "engineer+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "engineer+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "engineer+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "engineer+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "junior+qa",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "junior+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "junior+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "junior+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "qa+devops",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "qa+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "qa+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "devops+sre",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "devops+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "role-collaboration",
+      "src/content/design-guidance.json",
+      "sre+finance",
+      "needs-example",
+      "src/content/design-guidance.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "api-contract",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "source-provenance",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "retrieval-relevance",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "answer-grounding",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "tool-safety",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "judge-calibration",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "statistical-comparison",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "operational-health",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "hosting-capacity",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "adaptation-holdout",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "requirement",
+      "src/content/requirements.json",
+      "synthetic-review",
+      "needs-example",
+      "src/content/requirements.json"
+    ],
+    [
+      "journey",
+      "src/content/journeys.json",
+      "first-api",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/1:api",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/2:data",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/3:search",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/4:golden-dataset",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/5:generation",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/6:evaluation-baseline",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "first-api/7:operations",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey",
+      "src/content/journeys.json",
+      "agent",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/1:api",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/2:agents",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/3:p-orchestration",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/4:evaluation",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/5:annotation-rubric",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "agent/6:operations",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey",
+      "src/content/journeys.json",
+      "quality",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/1:evaluation",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/2:golden-dataset",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/3:data-splits",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/4:annotation-rubric",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/5:p-llm-judge",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/6:x-bootstrap",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "quality/7:operations",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey",
+      "src/content/journeys.json",
+      "adapt",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/1:evaluation-baseline",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/2:adaptation",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/3:data-splits",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/4:synthetic-eval-risks",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/5:hosting",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "journey-step",
+      "src/content/journeys.json",
+      "adapt/6:x-cost-quality",
+      "needs-example",
+      "src/content/journeys.json"
+    ],
+    [
+      "platform",
+      "src/content/platforms.json",
+      "azure",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "azure/gateway_model_access",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "azure/retrieval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "azure/orchestration",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "azure/custom_training_hosting",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "azure/evaluation_observability",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform",
+      "src/content/platforms.json",
+      "aws",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "aws/gateway_model_access",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "aws/retrieval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "aws/orchestration",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "aws/custom_training_hosting",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "aws/evaluation_observability",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform",
+      "src/content/platforms.json",
+      "gcp",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "gcp/gateway_model_access",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "gcp/retrieval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "gcp/orchestration",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "gcp/custom_training_hosting",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "gcp/evaluation_observability",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform",
+      "src/content/platforms.json",
+      "vercel",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "vercel/gateway_model_access",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "vercel/retrieval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "vercel/orchestration",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "vercel/custom_training_hosting",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "platform-capability",
+      "src/content/platforms.json",
+      "vercel/evaluation_observability",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:16:What should improve for someone?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:19:Project name",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:22:Client service improvement",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:25:Who is this for?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:28:Staff and clients who need a clear service respons",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:35:Intended outcome",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:39:The outcome we want",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:43:Help staff route requests to an accountable owner ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:50:Current baseline",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:54:What happens today?",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:58:Describe the current task and its cost. Leave meas",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:64:Success criteria",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:68:How would we recognise success?",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:72:Describe a measurable user benefit and the errors ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:76:Who owns this outcome?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:79:A named business owner or a role to confirm",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:99:A user task",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:101:Remove need",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:106:Who needs this?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:109:Service coordinator",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:113:User task",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:115:What do they need to do?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:118:Find the person responsible for an unusual request",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:122:Why does this matter?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:130:Acceptance examples",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:134:A result they would accept",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:138:Give a concrete example: question, context and exp",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:141:Who can confirm this need?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:167:Make the work concrete",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:168:Add a user need",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:171:Describe a task before choosing a model or a platf",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:175:Start with one user and one task. More detail can ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:207:A business rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:209:Rule name",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:212:Confirm ownership before making a commitment",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:216:When this is true…",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:225:Required behaviour",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:229:The system must…",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:239:Exceptions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:243:Exceptions or missing information",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:246:Say when to ask a person, refuse, or choose a diff",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:253:Passing example",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:257:An example that should pass",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:266:Failing example",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:270:An example that should fail",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:276:Where does this rule come from?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:281:Who can confirm it?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:288:Has the owner confirmed it?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:294:Unconfirmed — needs a conversation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:296:Confirmed by the owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:300:Remove rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:320:A document or data source",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:323:Source name",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:328:Division (optional unless routing applies)",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:333:Product or scope (optional unless routing applies)",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:338:Source owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:346:Source authority",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:350:Authority when sources disagree",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:358:Source revisions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:362:How often does it change?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:371:Permitted use",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:375:Who may use it, and for what?",
+      "needs-example",
+      "src/components/ProjectForms.tsx"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:381:Remove source",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:427:Turn experience into explicit rules",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:428:Add a business rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:431:A dataset rarely tells the whole story. Capture th",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:435:Capture one rule with a passing and failing exampl",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:452:Know which sources to trust",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:453:Add a source",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ProjectForms.tsx",
+      "ProjectForms:457:List documents, databases or people the system rel",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:35:Your role & your collaborators",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:38:Choose your current responsibility. The same perso",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Guide.tsx",
+      "Guide:43:I am contributing as…",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Guide.tsx",
+      "Guide:52:I am working with…",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:62::",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:71:Your contribution:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:74:Pay particular attention to:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:78:.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:85:Create together:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:90:Review with a peer",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:107:Loading the architecture editor…",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:135:Your guided plan",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:137:From client mandate to useful outcomes.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:139:Seven connected conversations about the engagement",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:142:Open engagement checkpoints",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:157:Explore a specialist AI example",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:160:Optional: a fictional AI support assistant. Its ro",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:167:Step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:167:of 7 · Engagement plan",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:174:The question to answer",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:178:Show a worked example",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:181:Useful progress:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:197:Previous step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:200:Drafts and unknowns are welcome. You can return to",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Guide.tsx",
+      "Guide:204:Next:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:33:AI answers from document evidence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:34:Division and product routing",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:35:Background software jobs",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:36:Human approval",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:46:Start with the requirements",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:48:Choose the capabilities your requirements need, th",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:79:Add suggested components",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:82:Changing a choice does not remove components. Sugg",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:108:Unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:112:Unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:164:Component list",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:166:Select a component to edit it, or explore its inte",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:171:No components at this level. Add a component to de",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:182:Unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:188:unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:190:Explore inside",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:237:New component name",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:239:Add component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Architecture.tsx",
+      "Architecture:255:Choose a component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:258:Unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:264:Source component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:270:Target component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:279:Connection contract",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:283:Connection label",
+      "needs-example",
+      "src/components/Architecture.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:291:Connection behaviour",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:295:Connection kind",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:323:Unnamed connection",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:338:Delete connection",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:366:New connection",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:373:Add connection",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:393:Connections",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:395:Connect components through these forms or drag bet",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:405:Show connections for all components",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:416:No connections in this view.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:436:unnamed component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:437:System architecture",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:440:Explore one level at a time. Select a component to",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:447:Up one level",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:450:Back to top",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:453:Inspect this container",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Architecture.tsx",
+      "Architecture:503:this component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:522:Architecture diagram",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Architecture.tsx",
+      "Architecture:578:Component inspector",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Architecture.tsx",
+      "Architecture:580:Select a component in the diagram or list to edit ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:25:New field",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:30:Data contract",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:34:Field name",
+      "needs-example",
+      "src/components/ComponentInspector.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:39:Field type",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:50:Data classification",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:54:Classification",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:75:Required field",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:78:Remove field",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:101:New step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:104:Process step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:106:Step name",
+      "needs-example",
+      "src/components/ComponentInspector.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:111:Step kind",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:122:Rules used by this step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:126:Unnamed rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:137:Earlier",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:145:Later",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:148:Remove step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:184:Data fields (",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:184:)",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:185:Describe the data this component owns or accepts.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:207:Add field",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:228:Process steps (",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:228:)",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:230:List the intended sequence. These steps describe t",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:273:Add process step",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:292:Position in the project",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:295:Horizontal position",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:295:Vertical position",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:320:Component inspector",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:322:Component name",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:330:Component design",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:334:Description",
+      "needs-example",
+      "src/components/ComponentInspector.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:343:Component kind",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:347:Component kind",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:367:Domain or responsibility",
+      "needs-example",
+      "src/components/ComponentInspector.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:372:Linked needs",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:376:Unnamed need",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:381:Linked rules",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:385:Unnamed rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:398:Explore inside (",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:398:)",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:401:Delete component",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/ComponentInspector.tsx",
+      "ComponentInspector:405:Deleting a component also removes its children and",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:22:Untitled evaluation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:26:What claim does this check test?",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:32:Method",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:36:For example: client walkthrough, options review, r",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:39:Test cases or review material",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:43:Identify the reviewed material, its version and re",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:46:Measure or review criterion",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:49:Options address each agreed constraint; record exc",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:52:Expected result or acceptance threshold",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:55:Agree with the outcome owner before evaluating",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:58:Evidence owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:63:Evidence status",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Evaluation.tsx",
+      "Evaluation:69:Unresolved — still an open question",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Evaluation.tsx",
+      "Evaluation:71:Defined — ready to run",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Evaluation.tsx",
+      "Evaluation:74:Evidence recorded — review the result",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Evaluation.tsx",
+      "Evaluation:76:Excluded — explain why below",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:81:Evidence, observed result or exclusion reason",
+      "needs-example",
+      "src/components/Evaluation.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:85:Record the run, version, sample size, failures and",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:89:User needs",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:94:Untitled need",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:98:Business rules",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:103:Untitled rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:107:System components",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:114:Remove check",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:122:Build a golden dataset people can defend",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:124:A golden dataset is a reviewed set of examples wit",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:129:Collect the work.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:129:Start with real task types, allowed data and docum",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:133:Define what good means.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:133:Write the expected result and the rule behind it. ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:137:Separate development from proof.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:137:Keep a held-out set outside prompt optimization an",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:142:Cover the important slices.",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:142:Include each division, product, source version, la",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:147:Measure uncertainty.",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:147:Record the denominator and intervals. A few succes",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:152:Version and maintain.",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:152:Record rule changes, review dates and production i",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:158:A candidate case, ready for expert review",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:164:Which terms apply?",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-option",
+      "src/components/Evaluation.tsx",
+      "Evaluation:174:Fictional draft; requires expert review",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:213:Evaluation plan",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:214:What evidence would change your mind?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:216:Test user outcomes, business rules and the compone",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:224:Optional: golden datasets for model evaluation",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:229:Plan first. Measure next.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:229:Suggested checks are drafts. Agree the expected re",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:242:Suggest missing checks",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:245:Add a check",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:252:Add needs and rules, then suggest checks. You can ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Evaluation.tsx",
+      "Evaluation:279:Follow a rule through the design",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Evaluation.tsx",
+      "Evaluation:282:Your rules will appear here with their components ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:288:Untitled rule",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:300:,",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:300:No implementation linked",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:307:Untitled check",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:309:;",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Evaluation.tsx",
+      "Evaluation:309:No check linked",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:9:Discover and design",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:10:Plan and deliver",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:11:Accept and hand over",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:12:Operate and review",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Delivery.tsx",
+      "Delivery:35:Untitled decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:41:Decision title",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:46:Accountable owner",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:51:Lifecycle",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:57:Decision status",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:61:Open — still needs a decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:64:Accepted — record owner and evidence",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:66:Revisit — assumptions have changed",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:92:This retained field is not in the current template",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:102:Decision and unresolved questions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:108:Evidence and review record",
+      "needs-example",
+      "src/components/Delivery.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:112:Record who reviewed what, when, and the conditions",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:115:Take away:",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:118:Remove decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:145:Delivery & operations",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:146:Plan the engagement and its next decision.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:148:Start with the client mandate, phases and responsi",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:155:Lifecycle stage",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:167:Checkpoint topics",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:171:Core engagement checkpoints",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Delivery.tsx",
+      "Delivery:172:Optional specialist topics",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-dynamic",
+      "src/components/Delivery.tsx",
+      "Delivery:185:+",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:191:Use this checkpoint",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:197:Decisions and review records",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:198:Add a decision",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:201:All saved records remain below, across phases and ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:207:Choose a relevant checkpoint above or add your own",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Delivery.tsx",
+      "Delivery:233:Close the feedback loop",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:235:Compare the observed result with the client mandat",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Delivery.tsx",
+      "Delivery:241:This workspace records your plan and evidence link",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-option",
+      "src/components/Handoff.tsx",
+      "Handoff:17:Candidate acceptance cases; review against the agr",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Handoff.tsx",
+      "Handoff:21:A specification someone can act on",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:23:Export the engagement decisions, deliverables and ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:37:Download project JSON",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:44:Download implementation brief",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:54:Download candidate cases",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:56:Print this plan",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Handoff.tsx",
+      "Handoff:59:Assumptions to carry into the next phase",
+      "needs-example",
+      "src/components/Handoff.tsx"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Handoff.tsx",
+      "Handoff:65:One assumption per line. Unknowns belong in the ha",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:70:This is a list of missing information, not a readi",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:85:The recorded fields are complete. Review the evide",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-attribute",
+      "src/components/Handoff.tsx",
+      "Handoff:90:Bring an existing specification into the map",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:92:Use the local companion with your existing Claude ",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-literal",
+      "src/components/Handoff.tsx",
+      "Handoff:98:git clone https://github.com/GlenTiki/tools-of-the",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:103:Then use",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:103:Import project",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:103:in this app. Review the map before asking an agent",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:107:The website has no model credentials. The local co",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:108:--prompt-only",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:108:to inspect the prompt without a model call.",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:116:Why these visual languages and tools?",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-copy",
+      "src/components/Handoff.tsx",
+      "Handoff:120:Read the complete implementation brief",
+      "concrete-enough",
+      "retained"
+    ],
+    [
+      "ui-data-example",
+      "src/components/Evaluation.tsx",
+      "DatasetGuide/candidate-record",
+      "needs-rewrite",
+      "src/content/golden-lifecycle.json"
+    ],
+    [
+      "ui-choice-set",
+      "src/components/Architecture.tsx",
+      "ArchitectureChoices/choices",
+      "concrete-enough",
+      "retained"
+    ]
+  ],
+  "corrections": [
+    "Removed undefined prompt-optimization pseudocode; supplied explicit prompt/input/output.",
+    "Exact cache keys include the question; semantic matches retain exact scope/version boundaries.",
+    "Invented hosting timings are explicitly illustrative.",
+    "Scope change C-2 names the visitor-booking work and leaves original scope in force."
+  ]
+}

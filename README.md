@@ -18,7 +18,13 @@ The role guide covers directors, project managers and delivery leads, business a
 
 The nine core engagement checkpoints cover mandate, client working agreements, governance, phases, design/evidence, commercial change, acceptance/adoption, operation and benefits/closure. Twelve specialist templates remain available. Saved decisions stay visible across topic and phase selection. See [engagement scope](docs/engagement-planning.md).
 
-The field guide includes connected topics, four learning journeys, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
+The field guide includes connected topics, four learning journeys, seventy worked cases, Azure/AWS/GCP/Vercel perspectives, runnable Python examples and calculators for cosine similarity, Wilson intervals and classification metrics. Select a topic to add its evidence prompts to the project.
+
+Open **Field guide** beside a plan input, architecture choice or component contract for related topics and a short example. Suggestions use the current input and bundled topic mappings locally. Read the full topic in a dialog, then close it to return to your draft. Reading this help does not add checks or edit the project.
+
+Open **Evaluation → Show golden dataset guide**, or the **Build a golden dataset** topic, to follow case G-12 through eight states. Each state shows who acts, how the record changes, what permits the next state, and what blocks it. The guide preserves reviewer disagreement, separates regression cases from an unseen holdout, and keeps frozen versions when policy changes.
+
+The optional fictional support example includes five user needs, five draft rules, source authority, data fields, process steps, evaluation cases and decisions across the delivery lifecycle. Role owners are placeholders; its checks have no evidence and its decisions remain open. Loading the example still requires confirmation before it replaces the current project.
 
 ## Run locally
 

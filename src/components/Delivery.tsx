@@ -106,6 +106,7 @@ function DecisionEditor({
       />
       <Field
         label="Evidence and review record"
+        placeholder="Fictional example: Client service owner reviewed service map v1 against Q-17/Q-18; Q-17 remained unassigned, so acceptance is pending. Reopen after ownership is added."
         multiline
         value={decision.evidence}
         onChange={(v) => set("evidence", v)}

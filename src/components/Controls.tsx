@@ -5,6 +5,7 @@ export function Field({
   value,
   onChange,
   hint,
+  help,
   multiline = false,
   placeholder = "",
 }: {
@@ -12,6 +13,7 @@ export function Field({
   value: string;
   onChange: (value: string) => void;
   hint?: string;
+  help?: ReactNode;
   multiline?: boolean;
   placeholder?: string;
 }) {
@@ -30,6 +32,7 @@ export function Field({
       <label htmlFor={id}>{label}</label>
       {multiline ? <textarea {...props} rows={3} /> : <input {...props} />}{" "}
       {hint && <small id={`${id}-hint`}>{hint}</small>}
+      {help}
     </div>
   );
 }
@@ -39,11 +42,13 @@ export function Select({
   value,
   onChange,
   options,
+  help,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
+  help?: ReactNode;
 }) {
   const id = useId();
   return (
@@ -56,6 +61,7 @@ export function Select({
           </option>
         ))}
       </select>
+      {help}
     </div>
   );
 }
@@ -84,10 +90,12 @@ export function Modal({
   title,
   children,
   onClose,
+  className,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
@@ -101,6 +109,7 @@ export function Modal({
   return (
     <dialog
       ref={ref}
+      className={className}
       aria-labelledby={id}
       onCancel={(e) => {
         e.preventDefault();

@@ -1,0 +1,204 @@
+[
+  {
+    "id": "outcome-over-answer-count",
+    "topics": ["x-construct-validity", "x-goodhart", "evaluation-baseline"],
+    "title": "Eight replies can contain fewer useful outcomes than six",
+    "situation": "In this fictional trial, support manager Nia compares a manual workflow and an assistant on the same ten policy questions. A correct referral counts as a useful outcome.",
+    "decision": "Use correct answers plus correct referrals as the numerator, with all ten assigned tasks in the denominator. The assistant has three wrong answers; the manual workflow has two.",
+    "failure": "Wrong conclusion: \"The assistant improved performance because it answered 8 questions instead of 6.\" That counts three wrong assistant answers as successes.",
+    "evidence": "Check each of the ten task labels against the answer or referral rubric. Assert manualUseful = 8, assistantUseful = 6, and neither wrong answers nor abandonment enter the numerator.",
+    "input": "Manual: 6 correct answers, 2 correct referrals, 2 wrong answers. Assistant: 8 answers, of which 5 are correct, plus 1 correct referral and 1 abandoned request.",
+    "expected": "Manual useful outcomes: (6 + 2) / 10 = 80%. Assistant useful outcomes: (5 + 1) / 10 = 60%, despite producing more answers."
+  },
+  {
+    "id": "reviewed-acceptance-cases",
+    "topics": ["golden-dataset", "annotation-rubric", "synthetic-eval-risks"],
+    "title": "A second pause must become a referral",
+    "situation": "In this fictional golden-dataset review, adviser Maya and policy specialist Leila independently label case G-12. Handbook RE-7 says: \"One pause per 12 months; maximum 30 days; an adviser must confirm eligibility.\"",
+    "decision": "Leila points to the one-pause rule; Maya had treated 30 days as a reusable balance. Applying the stated rubric resolves G-12 to referral-required; save both original labels and that reason with the case.",
+    "failure": "Wrong draft: \"Yes. You used 20 of your 30 days, so you have 10 days left.\" Wrong dataset action: silently keep Maya’s answer-yes label or erase the disagreement.",
+    "evidence": "Assert G-12 retains Maya = answer-yes, Leila = referral-required and resolved = referral-required with the one-pause reason. Score the draft for the 12-month limit, four-month fact, RE-7 citation and absence of approval; an answer based only on 20 + 10 = 30 fails.",
+    "input": "G-12 question: \"I used a 20-day pause four months ago. Can I take another 10 days now?\" Source: RE-7 as quoted above. Maya labels it answer-yes; Leila labels it referral-required. Rubric: a request outside any policy limit requires referral and must not promise approval.",
+    "expected": "Resolved label: referral-required. Expected draft: \"RE-7 allows one pause per 12 months. Your earlier pause was four months ago, so another pause is outside this rule. An adviser must review your eligibility; I cannot approve a second pause.\""
+  },
+  {
+    "id": "advisory-held-out-set",
+    "topics": ["x-held-out", "data-splits", "evaluation-baseline"],
+    "title": "Split consultation families before changing the prompt",
+    "situation": "Fictional adviser Jo has consultation notes A1, A2, B1 and C1. A1 is a transcript; A2 is a summary of that same consultation.",
+    "decision": "A1 and A2 share facts and the expected recommendation. Keeping the whole A family together prevents the held-out result from rewarding exposure to the same consultation.",
+    "failure": "Wrong claim: \"A2 is held out because its filename differs from A1.\" The text format changed, but the underlying case did not.",
+    "evidence": "Attach consultation IDs A, A, B and C to the four records. Assert that the intersection of consultation IDs across the two final sets is empty; do not treat the single C case as broad validation.",
+    "input": "Proposed split: development = [A1, B1]; held-out = [A2, C1]. Jo adjusts the summary prompt after reading A1 and its expected recommendation.",
+    "expected": "Reject that split. Use development = [A1, A2, B1] and held-out = [C1], then keep C1 unseen during prompt edits."
+  },
+  {
+    "id": "policy-source-revision",
+    "topics": ["data", "x-pinning", "a-versioning"],
+    "title": "The applicable revision beats the newer draft",
+    "situation": "Fictional policy owner Leila prepares two Retail Everyday fixtures. RE-7 is marked applicable in the test manifest; RE-8 is explicitly a draft, not a real approved policy.",
+    "decision": "Filter by the manifest before ranking passages. A later revision number does not override RE-8’s draft state; pin RE-7 and the manifest in the test run.",
+    "failure": "Wrong draft: \"The maximum is 45 days [RE-8].\" A genuine quotation from an inapplicable source still gives the wrong policy.",
+    "evidence": "Assert that returned passage IDs contain RE-7 and exclude RE-8. Rerun with RE-7 authority removed and expect unresolved, not an automatic fallback to the draft.",
+    "input": "Question: \"What is the maximum pause?\" RE-7 says \"maximum 30 days; adviser must confirm eligibility\". RE-8 says \"maximum 45 days\". Manifest: applicableRevision = RE-7; RE-8 state = draft.",
+    "expected": "Draft: \"The applicable test policy RE-7 permits a maximum of 30 days, subject to adviser eligibility confirmation.\" The citation identifies RE-7."
+  },
+  {
+    "id": "explicit-request-outcomes",
+    "topics": ["api-contract", "a-tool-contract", "x-selective-prediction"],
+    "title": "Missing product means clarify, not an empty success",
+    "situation": "Fictional adviser Maya selects Retail and types a policy question. The request contract requires both division and product before retrieval.",
+    "decision": "The missing field prevents source selection. Preserve its absence and return an explicit clarification instead of choosing Everyday as an implicit default.",
+    "failure": "Wrong response: {\"outcome\":\"draft\",\"answer\":\"\"}. The interface cannot distinguish missing scope from a successful answer with no text.",
+    "evidence": "Submit q-17 without product, then with product = Everyday. Assert the first returns clarify with zero retrieval calls; the second reaches the Everyday source scope.",
+    "input": "Request: {\"requestId\":\"q-17\",\"division\":\"Retail\",\"question\":\"Can I pause for 10 days?\"}. The product field is absent.",
+    "expected": "Response: {\"requestId\":\"q-17\",\"outcome\":\"clarify\",\"missing\":[\"product\"],\"message\":\"Which Retail product: Everyday or Plus?\"}. Retrieval calls: 0."
+  },
+  {
+    "id": "scope-before-retrieval",
+    "topics": ["a-authorization", "api-contract", "a-prompt-injection"],
+    "title": "A request body cannot grant Business access",
+    "situation": "Fictional adviser Maya has a server-authenticated session with allowedDivisions = [Retail]. Business Team evidence is restricted in this test.",
+    "decision": "Use the server session permissions and ignore the body’s access claim. Reject before opening Business evidence, including any cached Business answer.",
+    "failure": "Wrong result: \"Business Team permits 60 days, but you may not have access.\" The denial arrives after the restricted fact has already leaked.",
+    "evidence": "Send the forged request with a warm Business cache and again without it. Assert both responses are denied and neither execution reads Business passages nor calls the model.",
+    "input": "Request: {\"division\":\"Business\",\"product\":\"Team\",\"question\":\"What is the pause limit?\",\"allowedDivisions\":[\"Retail\",\"Business\"]}. Session permissions still contain only Retail.",
+    "expected": "Response: {\"outcome\":\"denied\",\"reason\":\"Division is outside your permitted scope\"}. Business retrieval calls: 0; model calls: 0."
+  },
+  {
+    "id": "retrieval-before-generation",
+    "topics": ["x-retrieval-recall", "search", "p-reranker"],
+    "title": "Recall at two reveals the missing exception",
+    "situation": "Fictional search engineer Ari labels two passages as relevant to a Retail Everyday question. P1 contains the general pause rule; P2 contains an exclusion.",
+    "decision": "Inspect passage retrieval before editing the answer prompt. A hit alone hides the missing exclusion, while recall exposes that only half the labelled evidence arrived.",
+    "failure": "Wrong report: \"Retrieval passed: hit@2 is 100%.\" Wrong draft: \"Yes, if you have not paused in 12 months,\" despite the missing exclusion.",
+    "evidence": "Intersect [P1, P9] with [P1, P2] and assert one match. Replace P9 with P2 in a controlled run and assert recall@2 becomes 2 / 2 = 100%.",
+    "input": "Question: \"Can an account under review take a pause?\" Relevant IDs = [P1, P2]. P1: \"One pause per 12 months.\" P2: \"Accounts under review are excluded.\" Returned top two = [P1, P9]; P9 is an unrelated fee paragraph.",
+    "expected": "Recall@2 = 1 / 2 = 50%; hit@2 = 1 because at least one relevant passage was found. The exclusion P2 is missing, so the evidence cannot settle this question."
+  },
+  {
+    "id": "claims-follow-evidence",
+    "topics": ["x-support-checking", "p-support-checker", "generation"],
+    "title": "A citation cannot turn review into approval",
+    "situation": "Fictional adviser Jo drafts an answer using clause EX-2. The clause says: \"Requests above 30 days may be reviewed by a specialist; review does not guarantee approval.\"",
+    "decision": "The source supports possible review, not certain approval. Compare the actual promise with the quoted condition instead of checking only whether a citation exists.",
+    "failure": "Wrong verdict: \"Supported, because EX-2 discusses requests above 30 days.\" Topic overlap does not support the word \"will\".",
+    "evidence": "Mark the claim \"will be approved\" as unsupported against EX-2. Change only that claim to \"may be reviewed\" and assert that this narrower claim is supported.",
+    "input": "Question: \"Will a 45-day pause be approved?\" Proposed answer: \"Your 45-day pause will be approved [EX-2].\"",
+    "expected": "Support verdict: unsupported. Corrected draft: \"A specialist may review a 45-day request, but EX-2 does not guarantee approval.\""
+  },
+  {
+    "id": "identifiers-at-every-boundary",
+    "topics": ["p-moderation-pii", "data", "a-tracing"],
+    "title": "Block the synthetic account number before the model call",
+    "situation": "Fictional adviser Maya uses invented account ID ACCT-4821 in a test request. This teaching fixture treats the pattern ACCT- followed by four digits as an identifier to block.",
+    "decision": "Stop the raw text at the service boundary and omit it from traces. The adviser can resubmit \"Can a Retail Everyday account take a 10-day pause?\" without the identifier.",
+    "failure": "Wrong behavior: the screen displays \"ACCT-****\" but the model payload or trace still contains ACCT-4821.",
+    "evidence": "Inspect the captured model-call list and trace bytes for q-18. Assert zero model calls and no ACCT-4821 in traces; test other formats separately because this one pattern does not prove complete detection.",
+    "input": "Question: \"Can ACCT-4821 take a 10-day pause?\" Request ID: q-18. The policy tool needs the product and duration, not an account identifier.",
+    "expected": "Response: {\"outcome\":\"clarify\",\"message\":\"Remove the account identifier and ask a general policy question.\"}. Model calls: 0. Trace: {\"requestId\":\"q-18\",\"outcome\":\"identifier_blocked\"}."
+  },
+  {
+    "id": "retry-without-duplicate-referral",
+    "topics": ["a-retry", "a-idempotency", "a-tool-contract"],
+    "title": "The second submission returns the first referral",
+    "situation": "Fictional reviewer system R accepts Maya’s referral, but the caller loses the acknowledgement. The operation key identifies one intended referral.",
+    "decision": "Persist the key with the operation outcome and compare the payload on reuse. A duplicate delivery repeats the result, while changed content under ref-31 returns a conflict.",
+    "failure": "Wrong result: retrying creates R-9 and sends a second review task. Another wrong result is silently accepting a new requestId under ref-31.",
+    "evidence": "Lose the first response after R-8 is saved, then deliver the retry twice. Assert one stored referral and three references to R-8; submit changed content with ref-31 and assert conflict.",
+    "input": "First submission: key = ref-31, payload = {\"requestId\":\"q-19\",\"reason\":\"second pause\"}. It creates referral R-8. Retry: the same key and identical payload.",
+    "expected": "The retry returns {\"referralId\":\"R-8\",\"state\":\"open\"}. Exactly one referral exists for ref-31; no R-9 is created."
+  },
+  {
+    "id": "cancel-stale-draft",
+    "topics": ["a-cancel", "a-tool-loop", "a-authorization"],
+    "title": "The cancelled Retail answer cannot replace the Business draft",
+    "situation": "In this fictional test, adviser Maya is permitted to use both divisions. She cancels Retail request q-20 before starting Business request q-21.",
+    "decision": "Match the returned request ID and revision against the active request before displaying or acting on the result. Arrival order cannot establish which answer is current.",
+    "failure": "Wrong display: \"Everyday policy\" under the Business Team selection. A late q-20 approval also must not authorise an action for q-21.",
+    "evidence": "Deliver responses in the stated order and assert activeRequestId = q-21 and visible draft = \"Team policy\". Assert no approval or effect is produced for cancelled q-20.",
+    "input": "Completion order: start q-20 for Retail Everyday; cancel q-20; start q-21 for Business Team; receive q-21 draft \"Team policy\"; then receive late q-20 draft \"Everyday policy\".",
+    "expected": "The interface still shows q-21 and \"Team policy\". q-20 remains cancelled; its late draft is discarded and cannot request approval."
+  },
+  {
+    "id": "promise-for-a-useful-outcome",
+    "topics": ["a-user-slo", "a-slo", "x-unit-economics"],
+    "title": "Count useful outcomes within the promised time",
+    "situation": "Fictional operations manager Nia proposes a teaching target: at least 90% of eligible requests receive a useful answer or referral within five seconds. These numbers are invented, not a production SLO.",
+    "decision": "Count the referral because it is a useful outcome. Exclude the fast error and the late answer from the numerator, but retain both eligible requests in the denominator.",
+    "failure": "Wrong report: \"90% success, because nine responses were fast.\" That substitutes response speed for the agreed useful-and-timely outcome.",
+    "evidence": "Label all ten requests by outcome and duration. Assert eight satisfy both conditions, two do not, and the calculated 80% is below the illustrative 90% target.",
+    "input": "Ten eligible requests: 7 correct answers within five seconds; 1 correct referral in four seconds; 1 error page in one second; 1 correct answer in eight seconds.",
+    "expected": "The useful-and-timely rate is (7 + 1) / 10 = 80%. The proposed 90% target is missed, even though nine responses arrived within five seconds."
+  },
+  {
+    "id": "withdraw-a-policy-release",
+    "topics": ["a-rollback", "x-pinning", "a-incidents"],
+    "title": "Rollback must remove the withdrawn source from the index and cache",
+    "situation": "Fictional release lead Sam has release R1 = service S1 + index I7 + policy RE-7. Release R2 = S2 + I8 + RE-8 is withdrawn after a source-authority test fails.",
+    "decision": "Restore the release set and exclude cache entries from the withdrawn revision. Restoring only S1 would leave both I8 and C8 able to supply the wrong policy.",
+    "failure": "Wrong result: the deployment reports R1, but the answer still says \"45 days [RE-8]\" from C8.",
+    "evidence": "Warm C8 before rollback, execute the restore, then issue the question again. Assert active source RE-7, no RE-8 citation and no reuse of C8; preserve the failed-release record.",
+    "input": "Current state: S2, I8, RE-8 and cached draft C8 citing RE-8. Rollback target: R1. A fresh question asks: \"What is the maximum pause?\" RE-7 says 30 days; RE-8 says 45.",
+    "expected": "Active state becomes S1 + I7 + RE-7. C8 is ineligible for reuse. The next draft cites RE-7 and says 30 days, or returns unavailable until that release set is ready."
+  },
+  {
+    "id": "advice-with-explicit-limits",
+    "topics": [
+      "x-selective-prediction",
+      "x-construct-validity",
+      "annotation-rubric"
+    ],
+    "title": "A stated budget changes the advisory recommendation",
+    "situation": "Fictional planning adviser Jo compares two workshop venues. Option A costs 400 units and seats 12; option B costs 700 units and seats 20.",
+    "decision": "Both constraints are explicit, so neither venue is a valid recommendation. Ask about a changed constraint instead of inventing a discount or ignoring three attendees.",
+    "failure": "Wrong advice: \"Choose A because it is cheaper,\" or \"B fits the budget.\" The first loses three seats; the second ignores 700 > 500.",
+    "evidence": "Check A: 12 < 15, so capacity fails. Check B: 700 > 500, so budget fails. Raise the budget to 700 in a second case and assert B becomes feasible without changing the attendee count.",
+    "input": "Request: \"Choose a venue for 15 people with a maximum budget of 500 units. Do not split the group.\" Those are the only available options.",
+    "expected": "Recommendation: \"Neither option meets all requirements. A is within budget but has only 12 seats; B seats 20 but exceeds the budget by 200. Can the budget or venue list change?\""
+  },
+  {
+    "id": "business-rule-exception",
+    "topics": ["api-contract", "a-authorization", "golden-dataset"],
+    "title": "Urgency does not change the spending route",
+    "situation": "Fictional operations lead Nia drafts a purchase rule: up to 1,000 units goes to the team lead; above 1,000 goes to Finance. Only Finance can approve a route exception in this teaching fixture.",
+    "decision": "Use the 1,200 amount for the route and the authenticated role for exception authority. Urgency can accompany the Finance review, but the requester’s flag grants nothing.",
+    "failure": "Wrong result: {\"route\":\"team-lead\",\"exceptionApproved\":true}. That lets the requesting role approve its own bypass.",
+    "evidence": "Assert that 1,000 routes to team lead and 1,001 routes to Finance. Submit the 1,200 urgent request and assert Finance routing, exceptionApproved = false and zero purchase effects.",
+    "input": "Request: {\"amount\":1200,\"reason\":\"Urgent replacement\",\"requesterRole\":\"team-lead\",\"approveException\":true}. The requester is not Finance.",
+    "expected": "Response: {\"route\":\"Finance\",\"exceptionApproved\":false,\"reason\":\"Amount exceeds 1000; requester cannot approve an exception\"}. No purchase is submitted."
+  },
+  {
+    "id": "keep-rule-and-exception-together",
+    "topics": ["p-chunking"],
+    "title": "Keep a policy condition in the same retrievable chunk",
+    "situation": "Fictional handbook RE-7 has a \"Pause duration\" heading with a rule and its exception in adjacent sentences. Ari is choosing how to split it for search.",
+    "input": "Source text: \"A pause can last up to 30 days. Accounts under review are excluded.\" Question: \"Can an account under review pause for 10 days?\"",
+    "expected": "Retrieved chunk: \"Pause duration — A pause can last up to 30 days. Accounts under review are excluded.\" Draft: \"No under this rule: accounts under review are excluded [RE-7].\"",
+    "decision": "Keep this short rule and exception together under their heading. A chunk containing only the duration sentence cannot answer the eligibility question correctly.",
+    "failure": "Wrong chunk: \"A pause can last up to 30 days.\" Wrong draft: \"Yes, 10 days is within the limit.\" The split removed the decisive condition.",
+    "evidence": "Run the stated question and assert the returned text includes both \"30 days\" and \"under review are excluded\" with RE-7 provenance. Inspect the chunk text, not only whether RE-7 appeared among the results."
+  },
+  {
+    "id": "referral-classifier-counts",
+    "topics": ["p-classifier", "x-precision-recall"],
+    "title": "Four classifier outcomes produce different precision and recall",
+    "situation": "Fictional reviewer Leila labels ten synthetic questions as referral-required or routine. The classifier predicts whether a specialist referral is needed.",
+    "input": "Labels: referral-required = Q1–Q5; routine = Q6–Q10. Predicted referral = Q1, Q2, Q3, Q6. Predicted routine = Q4, Q5, Q7, Q8, Q9, Q10.",
+    "expected": "TP = 3, FP = 1, FN = 2, TN = 4. Precision = 3/4 = 75%; recall = 3/5 = 60%; false-positive rate = 1/5 = 20%.",
+    "decision": "Q4 and Q5 are missed referrals, while Q6 is an unnecessary referral. Report both errors because precision alone cannot reveal that two required referrals were missed.",
+    "failure": "Wrong calculation: \"Recall is 75%, since three of four predicted referrals were correct.\" That is precision; recall divides by all five required referrals.",
+    "evidence": "Compare each predicted label with its reference label. Assert Q4/Q5 form the false-negative set, Q6 forms the false-positive set, and recompute the three fractions from those sets."
+  },
+  {
+    "id": "make-the-guard-test-fail",
+    "topics": ["x-mutation"],
+    "title": "Remove the permission guard and watch the test reject it",
+    "situation": "Fictional engineer Ari has a contract test for a Retail-only adviser requesting Business Team. The current implementation denies the request before calling retrieval.",
+    "input": "Original path: check permission, then retrieve. Mutation: skip the permission check and return the Business passage. Test request: session divisions = [Retail], requested division = Business.",
+    "expected": "Original test passes with outcome = denied and retrievalCalls = 0. Mutated test fails because the response is a draft and retrievalCalls = 1.",
+    "decision": "The deliberate defect removes the exact protection the test claims to verify. A test that still passes after this mutation has not demonstrated that it detects cross-scope access.",
+    "failure": "Weak test: assert HTTP status = 200. Both the denied response and the leaked draft use that status, so the test passes on the mutant.",
+    "evidence": "Run the original test, apply only the guard-removal mutation, and rerun. Confirm a failure on the denial or zero-call assertion, then restore the guard; a syntax error does not count as detecting the access defect."
+  }
+]

@@ -57,6 +57,7 @@ export default function Handoff({ project, update }: EditorProps) {
         </div>
         <Field
           label="Assumptions to carry into the next phase"
+          placeholder="Fictional example: The client coordinator can provide the request log; access is unconfirmed. Without it, request-volume claims remain unknown."
           multiline
           value={project.assumptions.join("\n")}
           onChange={(value) =>

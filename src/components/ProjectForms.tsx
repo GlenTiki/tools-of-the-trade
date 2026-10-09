@@ -1,3 +1,4 @@
+import GuideHelp from "./GuideHelp";
 import type { Project, Need, Rule, Source } from "../domain";
 import { newId } from "../workspace/files";
 import { removeNeed, removeRule } from "../workspace/editing";
@@ -28,6 +29,13 @@ export function OutcomeForm({ project, update }: EditorProps) {
         />
       </div>
       <Field
+        help={
+          <GuideHelp
+            context="outcome"
+            label="Intended outcome"
+            value={project.objective}
+          />
+        }
         label="The outcome we want"
         multiline
         value={project.objective}
@@ -36,14 +44,30 @@ export function OutcomeForm({ project, update }: EditorProps) {
       />
       <div className="form-grid">
         <Field
+          help={
+            <GuideHelp
+              context="success"
+              label="Current baseline"
+              value={project.baseline}
+            />
+          }
           label="What happens today?"
+          placeholder="Fictional example: In a walkthrough of 10 urgent requests, 3 had no accountable owner. Historical request volumes are still unknown."
           multiline
           value={project.baseline}
           onChange={(v) => set("baseline", v)}
           hint="Describe the current task and its cost. Leave measurements unknown until you collect them."
         />
         <Field
+          help={
+            <GuideHelp
+              context="success"
+              label="Success criteria"
+              value={project.successMeasure}
+            />
+          }
           label="How would we recognise success?"
+          placeholder="Fictional example: The service owner can name an accountable responder for all 10 urgent walkthrough cases; any unassigned urgent case rejects the proposal."
           multiline
           value={project.successMeasure}
           onChange={(v) => set("successMeasure", v)}
@@ -87,6 +111,9 @@ function NeedCard({
           placeholder="Service coordinator"
         />
         <Field
+          help={
+            <GuideHelp context="need" label="User task" value={need.task} />
+          }
           label="What do they need to do?"
           value={need.task}
           onChange={(v) => set("task", v)}
@@ -99,7 +126,15 @@ function NeedCard({
         onChange={(v) => set("outcome", v)}
       />
       <Field
+        help={
+          <GuideHelp
+            context="acceptance"
+            label="Acceptance examples"
+            value={need.acceptance}
+          />
+        }
         label="A result they would accept"
+        placeholder="Fictional example: Q-17: the public entrance is locked. Expected: the coordinator assigns Facilities as accountable owner and shows its contact route."
         multiline
         value={need.acceptance}
         onChange={(v) => set("acceptance", v)}
@@ -182,32 +217,65 @@ function RuleCard({
       <div className="form-grid">
         <Field
           label="When this is true…"
+          placeholder="Fictional example: The request is urgent and a coordinator proposes changing its owner."
           multiline
           value={rule.when}
           onChange={(v) => set("when", v)}
         />
         <Field
+          help={
+            <GuideHelp
+              context="rule"
+              label="Required behaviour"
+              value={rule.then}
+            />
+          }
           label="The system must…"
+          placeholder="Fictional example: Keep the current owner until the duty lead approves reassignment."
           multiline
           value={rule.then}
           onChange={(v) => set("then", v)}
         />
       </div>
       <Field
+        help={
+          <GuideHelp
+            context="rule"
+            label="Exceptions"
+            value={rule.exceptions}
+          />
+        }
         label="Exceptions or missing information"
+        placeholder="Fictional example: If no duty lead is available, retain Facilities as owner and escalate to the service manager."
         value={rule.exceptions}
         onChange={(v) => set("exceptions", v)}
         hint="Say when to ask a person, refuse, or choose a different path."
       />
       <div className="form-grid">
         <Field
+          help={
+            <GuideHelp
+              context="acceptance"
+              label="Passing example"
+              value={rule.examplePass}
+            />
+          }
           label="An example that should pass"
+          placeholder="Fictional example: Urgent Q-17 stays with Facilities while duty-lead approval is pending."
           multiline
           value={rule.examplePass}
           onChange={(v) => set("examplePass", v)}
         />
         <Field
+          help={
+            <GuideHelp
+              context="acceptance"
+              label="Failing example"
+              value={rule.exampleFail}
+            />
+          }
           label="An example that should fail"
+          placeholder="Fictional example: A coordinator moves urgent Q-17 to Security without the duty lead’s approval."
           multiline
           value={rule.exampleFail}
           onChange={(v) => set("exampleFail", v)}
@@ -280,18 +348,41 @@ function SourceCard({
           onChange={(v) => set("owner", v)}
         />
         <Field
+          help={
+            <GuideHelp
+              context="source"
+              label="Source authority"
+              value={source.authority}
+            />
+          }
           label="Authority when sources disagree"
+          placeholder="Fictional example: Approved bulletin B7 supersedes procedure P3 section 4; otherwise refer the conflict to the service owner."
           value={source.authority}
           onChange={(v) => set("authority", v)}
         />
         <Field
+          help={
+            <GuideHelp
+              context="source"
+              label="Source revisions"
+              value={source.updateCadence}
+            />
+          }
           label="How often does it change?"
           value={source.updateCadence}
           onChange={(v) => set("updateCadence", v)}
         />
       </div>
       <Field
+        help={
+          <GuideHelp
+            context="source"
+            label="Permitted use"
+            value={source.allowedUse}
+          />
+        }
         label="Who may use it, and for what?"
+        placeholder="Fictional example: Staff may consult the public ownership guide; named case records stay in the client repository and cannot enter the public demo."
         multiline
         value={source.allowedUse}
         onChange={(v) => set("allowedUse", v)}

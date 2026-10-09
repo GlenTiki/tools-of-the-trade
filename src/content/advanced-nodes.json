@@ -1079,14 +1079,7 @@
         "url": "https://arxiv.org/abs/2406.11695"
       }
     ],
-    "code": [
-      {
-        "language": "python",
-        "status": "illustrative",
-        "source": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md",
-        "text": "import dspy\n\n# Supply your configured program, metric and separate data splits.\noptimizer = dspy.MIPROv2(metric=task_metric)\ncandidate = optimizer.compile(program, trainset=train_cases)\n# Evaluate candidate on untouched test_cases before release.\n"
-      }
-    ]
+    "code": []
   },
   {
     "id": "a-sft",

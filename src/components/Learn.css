@@ -830,3 +830,32 @@
     overflow-wrap: anywhere;
   }
 }
+
+.worked-examples article + article {
+  border-top: 1px solid var(--border);
+  margin-top: 22px;
+  padding-top: 22px;
+}
+.worked-examples dt {
+  font-weight: 600;
+  margin: 16px 0 6px;
+}
+.worked-examples dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.worked-examples .worked-case-input {
+  white-space: pre-wrap;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #f4f6f9;
+}
+.worked-examples .worked-case-result {
+  white-space: pre-wrap;
+  padding: 14px;
+  border-left: 4px solid #42846c;
+  background: #edf7f1;
+}
